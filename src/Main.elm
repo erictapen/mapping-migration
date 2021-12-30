@@ -1,31 +1,17 @@
-module Main exposing (..)
+module Main exposing (main)
 
 import Browser
-import Html exposing (Html, div, option, select, text)
+import Html exposing (Html, div, option, select, text, legend, br)
 import Html.Attributes exposing (value)
 import Html.Events exposing (onInput)
 import Http exposing (get)
 import Json.Decode as JD
 import List exposing (map)
 import Platform.Cmd
-import Svg exposing (g, svg)
-import Svg.Attributes exposing (..)
 import Task
 import Time
+import Graphics exposing (..)
 
-
-stickFigure ( x, y ) =
-    g
-        [ transform ("translate(" ++ String.fromFloat x ++ "," ++ String.fromFloat y ++ ")")
-        ]
-        [ Svg.path
-            [ fill "white"
-            , stroke "black"
-            , strokeWidth "0.2"
-            , d "M 0 0 l -2 2 m 2 -2 l 2 2 m -2 -2 l 0 -3 m 0 0 l 2 0 m -2 0 l -2 0 m 2 0 a 1 1 0 0 0 0 -2 a 1 1 0 0 0 0 2"
-            ]
-            []
-        ]
 
 
 main =
@@ -74,17 +60,6 @@ countryName (Country str) =
     str
 
 
-type alias Point =
-    ( Float, Float )
-
-
-type alias StickFigure =
-    { position : Point
-    , start : Point
-    , destination : Point
-    }
-
-
 type alias Model =
     { coo : Country
     , coa : Country
@@ -111,12 +86,6 @@ update msg model =
         GotCountries countrieNames ->
             ( { model | availableCountries = Just <| map Country <| Result.withDefault [] countrieNames }, Cmd.none )
 
-
-moveStickFigure : StickFigure -> StickFigure
-moveStickFigure sf =
-    { sf | position = ( Tuple.first sf.position + 0.1, Tuple.second sf.position + 0.1 ) }
-
-
 subscriptions : Model -> Sub Msg
 subscriptions _ =
     Time.every (1000 / 60) Tick
@@ -128,11 +97,14 @@ countryOption (Country cname) =
 
 countrySelect maybeCountries =
     case maybeCountries of
-        Just countries ->
-            select [ onInput ChangeCoo ] <| map countryOption countries
-
         Nothing ->
             text "Loading countries..."
+
+        Just countries ->
+            div [] [
+                legend [] [ text "country of origin"],
+               select [ onInput ChangeCoo ] <| map countryOption countries
+            ]
 
 
 view : Model -> Browser.Document Msg
@@ -141,7 +113,8 @@ view model =
     , body =
         [ div []
             [ countrySelect model.availableCountries
-            , text <| countryName model.coo
+            , br [] []
+            , text <| "CoO: " ++ countryName model.coo
             ]
         ]
     }
