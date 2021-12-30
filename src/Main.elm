@@ -1,7 +1,11 @@
 module Main exposing (..)
 
 import Browser
-import Html exposing (Html, div)
+import Html exposing (Html, div, option, select, text)
+import Html.Attributes exposing (value)
+import Html.Events exposing (onInput)
+import Http exposing (get)
+import Json.Decode as JD
 import List exposing (map)
 import Platform.Cmd
 import Svg exposing (g, svg)
@@ -37,6 +41,7 @@ init : () -> ( Model, Cmd Msg )
 init _ =
     ( { coo = Country "Afghanistan"
       , coa = Country "Pakistan"
+      , availableCountries = Nothing
       , stickFigures =
             [ { position = ( 0, 0 )
               , start = ( 0, 0 )
@@ -44,12 +49,29 @@ init _ =
               }
             ]
       }
-    , Cmd.none
+    , Http.request
+        { method = "GET"
+        , headers = [ Http.header "Accept" "application/json" ]
+        , url = "https://api.unhcr.org/population/v1/countries/"
+        , body = Http.emptyBody
+        , expect = Http.expectJson GotCountries countriesDecoder
+        , timeout = Nothing
+        , tracker = Nothing
+        }
     )
+
+
+countriesDecoder : JD.Decoder (List String)
+countriesDecoder =
+    JD.field "items" <| JD.list <| JD.field "name" JD.string
 
 
 type Country
     = Country String
+
+
+countryName (Country str) =
+    str
 
 
 type alias Point =
@@ -67,16 +89,27 @@ type alias Model =
     { coo : Country
     , coa : Country
     , stickFigures : List StickFigure
+    , availableCountries : Maybe (List Country)
     }
 
 
 type Msg
     = Tick Time.Posix
+    | ChangeCoo String
+    | GotCountries (Result Http.Error (List String))
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
-update (Tick _) model =
-    ( { model | stickFigures = map moveStickFigure model.stickFigures }, Cmd.none )
+update msg model =
+    case msg of
+        Tick _ ->
+            ( { model | stickFigures = map moveStickFigure model.stickFigures }, Cmd.none )
+
+        ChangeCoo str ->
+            ( { model | coo = Country str }, Cmd.none )
+
+        GotCountries countrieNames ->
+            ( { model | availableCountries = Just <| map Country <| Result.withDefault [] countrieNames }, Cmd.none )
 
 
 moveStickFigure : StickFigure -> StickFigure
@@ -89,17 +122,26 @@ subscriptions _ =
     Time.every (1000 / 60) Tick
 
 
+countryOption (Country cname) =
+    option [ value cname ] [ text cname ]
+
+
+countrySelect maybeCountries =
+    case maybeCountries of
+        Just countries ->
+            select [ onInput ChangeCoo ] <| map countryOption countries
+
+        Nothing ->
+            text "Loading countries..."
+
+
 view : Model -> Browser.Document Msg
 view model =
     { title = "Mapping migration"
     , body =
         [ div []
-            [ svg
-                [ width "1200px"
-                , height "800px"
-                , viewBox "0 0 100 100"
-                ]
-                (map (.position >> stickFigure) model.stickFigures)
+            [ countrySelect model.availableCountries
+            , text <| countryName model.coo
             ]
         ]
     }
