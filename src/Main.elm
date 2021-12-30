@@ -1,7 +1,8 @@
 module Main exposing (main)
 
 import Browser
-import Html exposing (Html, div, option, select, text, legend, br)
+import Graphics exposing (..)
+import Html exposing (Html, br, div, fieldset, legend, option, select, text)
 import Html.Attributes exposing (value)
 import Html.Events exposing (onInput)
 import Http exposing (get)
@@ -10,8 +11,6 @@ import List exposing (map)
 import Platform.Cmd
 import Task
 import Time
-import Graphics exposing (..)
-
 
 
 main =
@@ -84,7 +83,13 @@ update msg model =
             ( { model | coo = Country str }, Cmd.none )
 
         GotCountries countrieNames ->
-            ( { model | availableCountries = Just <| map Country <| Result.withDefault [] countrieNames }, Cmd.none )
+            ( { model
+                | availableCountries =
+                    Just <| map Country <| Result.withDefault [] countrieNames
+              }
+            , Cmd.none
+            )
+
 
 subscriptions : Model -> Sub Msg
 subscriptions _ =
@@ -101,10 +106,10 @@ countrySelect maybeCountries =
             text "Loading countries..."
 
         Just countries ->
-            div [] [
-                legend [] [ text "country of origin"],
-               select [ onInput ChangeCoo ] <| map countryOption countries
-            ]
+            fieldset []
+                [ legend [] [ text "country of origin" ]
+                , select [ onInput ChangeCoo ] <| map countryOption countries
+                ]
 
 
 view : Model -> Browser.Document Msg
