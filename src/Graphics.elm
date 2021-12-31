@@ -3,6 +3,7 @@ module Graphics exposing (..)
 import Svg exposing (g, svg)
 import Svg.Attributes exposing (..)
 
+
 stickFigure ( x, y ) =
     g
         [ transform ("translate(" ++ String.fromFloat x ++ "," ++ String.fromFloat y ++ ")")
@@ -16,6 +17,7 @@ stickFigure ( x, y ) =
             []
         ]
 
+
 type alias Point =
     ( Float, Float )
 
@@ -27,8 +29,6 @@ type alias StickFigure =
     }
 
 
-
 moveStickFigure : StickFigure -> StickFigure
 moveStickFigure sf =
     { sf | position = ( Tuple.first sf.position + 0.1, Tuple.second sf.position + 0.1 ) }
-

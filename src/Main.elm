@@ -1,12 +1,12 @@
 module Main exposing (main)
 
+import Api exposing (Country, fetchCountries, handleGotCountries, unknownCountry)
 import Browser
 import Graphics exposing (..)
 import Html exposing (Html, br, div, fieldset, legend, option, select, text)
 import Html.Attributes exposing (value)
 import Html.Events exposing (onInput)
 import Http exposing (get)
-import Json.Decode as JD
 import List exposing (filter, head, map)
 import Maybe exposing (withDefault)
 import Platform.Cmd
@@ -35,41 +35,8 @@ init _ =
               }
             ]
       }
-    , Http.request
-        { method = "GET"
-        , headers = [ Http.header "Accept" "application/json" ]
-        , url = "https://api.unhcr.org/population/v1/countries/"
-        , body = Http.emptyBody
-        , expect = Http.expectJson GotCountries countriesDecoder
-        , timeout = Nothing
-        , tracker = Nothing
-        }
+    , fetchCountries GotCountries
     )
-
-
-countriesDecoder : JD.Decoder (List Country)
-countriesDecoder =
-    JD.field "items" <|
-        JD.list <|
-            JD.map2 Country
-                (JD.field "name" JD.string)
-                (JD.field "code" JD.string)
-
-
-country name code =
-    { name = name, code = code }
-
-
-type alias Country =
-    { name : String
-
-    -- UNHCR three letter country code notation
-    , code : String
-    }
-
-
-unknownCountry =
-    { name = "Unknown", code = "UKN" }
 
 
 type alias Model =
@@ -103,12 +70,7 @@ update msg model =
             ( { model | coo = coo }, Cmd.none )
 
         GotCountries countryNames ->
-            ( { model
-                | availableCountries =
-                    Result.toMaybe countryNames
-              }
-            , Cmd.none
-            )
+            handleGotCountries model countryNames
 
 
 subscriptions : Model -> Sub Msg
