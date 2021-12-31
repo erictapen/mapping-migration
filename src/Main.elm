@@ -7,7 +7,8 @@ import Html.Attributes exposing (value)
 import Html.Events exposing (onInput)
 import Http exposing (get)
 import Json.Decode as JD
-import List exposing (map)
+import List exposing (filter, head, map)
+import Maybe exposing (withDefault)
 import Platform.Cmd
 import Task
 import Time
@@ -24,8 +25,8 @@ main =
 
 init : () -> ( Model, Cmd Msg )
 init _ =
-    ( { coo = Country "Afghanistan"
-      , coa = Country "Pakistan"
+    ( { coo = unknownCountry
+      , coa = unknownCountry
       , availableCountries = Nothing
       , stickFigures =
             [ { position = ( 0, 0 )
@@ -46,17 +47,29 @@ init _ =
     )
 
 
-countriesDecoder : JD.Decoder (List String)
+countriesDecoder : JD.Decoder (List Country)
 countriesDecoder =
-    JD.field "items" <| JD.list <| JD.field "name" JD.string
+    JD.field "items" <|
+        JD.list <|
+            JD.map2 Country
+                (JD.field "name" JD.string)
+                (JD.field "code" JD.string)
 
 
-type Country
-    = Country String
+country name code =
+    { name = name, code = code }
 
 
-countryName (Country str) =
-    str
+type alias Country =
+    { name : String
+
+    -- UNHCR three letter country code notation
+    , code : String
+    }
+
+
+unknownCountry =
+    { name = "Unknown", code = "UKN" }
 
 
 type alias Model =
@@ -70,7 +83,7 @@ type alias Model =
 type Msg
     = Tick Time.Posix
     | ChangeCoo String
-    | GotCountries (Result Http.Error (List String))
+    | GotCountries (Result Http.Error (List Country))
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -79,13 +92,20 @@ update msg model =
         Tick _ ->
             ( { model | stickFigures = map moveStickFigure model.stickFigures }, Cmd.none )
 
-        ChangeCoo str ->
-            ( { model | coo = Country str }, Cmd.none )
+        ChangeCoo countryCode ->
+            let
+                coo =
+                    withDefault unknownCountry <|
+                        head <|
+                            filter (\x -> x.code == countryCode) <|
+                                withDefault [] model.availableCountries
+            in
+            ( { model | coo = coo }, Cmd.none )
 
-        GotCountries countrieNames ->
+        GotCountries countryNames ->
             ( { model
                 | availableCountries =
-                    Just <| map Country <| Result.withDefault [] countrieNames
+                    Result.toMaybe countryNames
               }
             , Cmd.none
             )
@@ -96,11 +116,11 @@ subscriptions _ =
     Time.every (1000 / 60) Tick
 
 
-countryOption (Country cname) =
-    option [ value cname ] [ text cname ]
+cooOption { name, code } =
+    option [ value code ] [ text name ]
 
 
-countrySelect maybeCountries =
+cooSelect maybeCountries =
     case maybeCountries of
         Nothing ->
             text "Loading countries..."
@@ -108,7 +128,7 @@ countrySelect maybeCountries =
         Just countries ->
             fieldset []
                 [ legend [] [ text "country of origin" ]
-                , select [ onInput ChangeCoo ] <| map countryOption countries
+                , select [ onInput ChangeCoo ] <| map cooOption countries
                 ]
 
 
@@ -117,9 +137,9 @@ view model =
     { title = "Mapping migration"
     , body =
         [ div []
-            [ countrySelect model.availableCountries
+            [ cooSelect model.availableCountries
             , br [] []
-            , text <| "CoO: " ++ countryName model.coo
+            , text <| "CoO: " ++ .name model.coo ++ " (" ++ .code model.coo ++ ")"
             ]
         ]
     }
