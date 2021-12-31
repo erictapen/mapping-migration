@@ -1,6 +1,6 @@
 module Main exposing (main)
 
-import Api exposing (Country, fetchCountries, handleGotCountries, unknownCountry)
+import Api exposing (..)
 import Browser
 import Graphics exposing (..)
 import Html exposing (Html, br, div, fieldset, legend, option, select, text)
@@ -12,6 +12,7 @@ import Maybe exposing (withDefault)
 import Platform.Cmd
 import Task
 import Time
+import Dict
 
 
 main =
@@ -28,6 +29,7 @@ init _ =
     ( { coo = unknownCountry
       , coa = unknownCountry
       , availableCountries = Nothing
+      , availableCOAs = Nothing
       , stickFigures =
             [ { position = ( 0, 0 )
               , start = ( 0, 0 )
@@ -44,6 +46,7 @@ type alias Model =
     , coa : Country
     , stickFigures : List StickFigure
     , availableCountries : Maybe (List Country)
+    , availableCOAs : Maybe AvailableCOAs
     }
 
 
@@ -51,6 +54,7 @@ type Msg
     = Tick Time.Posix
     | ChangeCoo String
     | GotCountries (Result Http.Error (List Country))
+    | GotAsylumDecisions (Result Http.Error AvailableCOAs)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -67,10 +71,12 @@ update msg model =
                             filter (\x -> x.code == countryCode) <|
                                 withDefault [] model.availableCountries
             in
-            ( { model | coo = coo }, Cmd.none )
+            ( { model | coo = coo, availableCOAs = Nothing }, fetchAsylumDecisions GotAsylumDecisions model.coo)
 
-        GotCountries countryNames ->
-            handleGotCountries model countryNames
+        GotCountries countryNamesResult ->
+            handleGotCountries model countryNamesResult
+
+        GotAsylumDecisions asylumDecisionsResult -> ({ model | availableCOAs = Result.toMaybe <| Result.mapError (Debug.toString >> Debug.log) asylumDecisionsResult }, Cmd.none)
 
 
 subscriptions : Model -> Sub Msg
@@ -78,7 +84,7 @@ subscriptions _ =
     Time.every (1000 / 60) Tick
 
 
-cooOption { name, code } =
+countryOption { name, code } =
     option [ value code ] [ text name ]
 
 
@@ -90,9 +96,15 @@ cooSelect maybeCountries =
         Just countries ->
             fieldset []
                 [ legend [] [ text "country of origin" ]
-                , select [ onInput ChangeCoo ] <| map cooOption countries
+                , select [ onInput ChangeCoo ] <| map countryOption countries
                 ]
 
+coaSelect maybeCOAs = case maybeCOAs of
+        Nothing -> text ""
+        Just coas -> fieldset []
+          [ legend [] [ text "country of asylum" ]
+          , select [ ] <| map countryOption <| map (\code -> Country code code) <| Dict.keys coas
+          ]
 
 view : Model -> Browser.Document Msg
 view model =
@@ -100,6 +112,7 @@ view model =
     , body =
         [ div []
             [ cooSelect model.availableCountries
+            , coaSelect model.availableCOAs
             , br [] []
             , text <| "CoO: " ++ .name model.coo ++ " (" ++ .code model.coo ++ ")"
             ]
