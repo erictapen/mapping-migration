@@ -2,6 +2,7 @@ module Main exposing (main)
 
 import Api exposing (..)
 import Browser
+import Dict
 import Graphics exposing (..)
 import Html exposing (Html, br, div, fieldset, legend, option, select, text)
 import Html.Attributes exposing (value)
@@ -12,7 +13,6 @@ import Maybe exposing (withDefault)
 import Platform.Cmd
 import Task
 import Time
-import Dict
 
 
 main =
@@ -29,7 +29,7 @@ init _ =
     ( { coo = unknownCountry
       , coa = unknownCountry
       , availableCountries = Nothing
-      , availableCOAs = Nothing
+      , availableCOAs = NotLoaded
       , stickFigures =
             [ { position = ( 0, 0 )
               , start = ( 0, 0 )
@@ -41,12 +41,25 @@ init _ =
     )
 
 
+{-| Some wrapper type we use to express that some stuff can:
+
+  - Not loaded yet
+  - Be in the process of loading
+  - Loaded, that wraps a Maybe. Nothing signifies an error!
+
+-}
+type Loadable a
+    = NotLoaded
+    | Loading
+    | Loaded (Maybe a)
+
+
 type alias Model =
     { coo : Country
     , coa : Country
     , stickFigures : List StickFigure
     , availableCountries : Maybe (List Country)
-    , availableCOAs : Maybe AvailableCOAs
+    , availableCOAs : Loadable AvailableCOAs
     }
 
 
@@ -71,17 +84,27 @@ update msg model =
                             filter (\x -> x.code == countryCode) <|
                                 withDefault [] model.availableCountries
             in
-            ( { model | coo = coo, availableCOAs = Nothing }, fetchAsylumDecisions GotAsylumDecisions model.coo)
+            ( { model
+                | coo = coo
+                , availableCOAs = Loading
+              }
+            , fetchAsylumDecisions GotAsylumDecisions model.coo
+            )
 
         GotCountries countryNamesResult ->
             handleGotCountries model countryNamesResult
 
-        GotAsylumDecisions asylumDecisionsResult -> ({ model | availableCOAs = Result.toMaybe <| Result.mapError (Debug.toString >> Debug.log) asylumDecisionsResult }, Cmd.none)
+        GotAsylumDecisions asylumDecisionsResult ->
+            ( { model
+                | availableCOAs = Loaded <| Result.toMaybe asylumDecisionsResult
+              }
+            , Cmd.none
+            )
 
 
 subscriptions : Model -> Sub Msg
-subscriptions _ = Sub.none
-    -- Time.every (1000 / 60) Tick
+subscriptions _ =
+    Sub.none
 
 
 countryOption { name, code } =
@@ -99,12 +122,35 @@ cooSelect maybeCountries =
                 , select [ onInput ChangeCoo ] <| map countryOption countries
                 ]
 
-coaSelect maybeCOAs = case maybeCOAs of
-        Nothing -> text ""
-        Just coas -> fieldset []
-          [ legend [] [ text "country of asylum" ]
-          , select [ ] <| map countryOption <| map (\code -> Country code code) <| Dict.keys coas
-          ]
+
+coaSelect loadableCOAs =
+    case loadableCOAs of
+        NotLoaded ->
+            text ""
+
+        Loading ->
+            text "loading..."
+
+        Loaded coasMaybe ->
+            case coasMaybe of
+                Nothing ->
+                    text "An error occured!"
+
+                Just coas ->
+                    if Dict.isEmpty coas then
+                        text "no data available."
+
+                    else
+                        fieldset []
+                            [ legend [] [ text "country of asylum" ]
+                            , select [] <|
+                                map
+                                    countryOption
+                                <|
+                                    map (\code -> Country code code) <|
+                                        Dict.keys coas
+                            ]
+
 
 view : Model -> Browser.Document Msg
 view model =

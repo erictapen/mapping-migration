@@ -1,4 +1,12 @@
-module Api exposing (Country, fetchCountries, fetchAsylumDecisions, handleGotCountries, unknownCountry, AvailableCOAs, asylumDecisionsDecoder)
+module Api exposing
+    ( AvailableCOAs
+    , Country
+    , asylumDecisionsDecoder
+    , fetchAsylumDecisions
+    , fetchCountries
+    , handleGotCountries
+    , unknownCountry
+    )
 
 import Dict exposing (Dict, insert, update)
 import Http
@@ -154,18 +162,18 @@ fetchAsylumDecisions msgConstructor coo =
 asylumDecisionsDecoder : JD.Decoder AvailableCOAs
 asylumDecisionsDecoder =
     JD.andThen (availableCOAs >> succeed) <|
-    JD.field "items" <|
-        JD.list <|
-            (JD.succeed AsylumDecisionsJson
-                |> required "year" int
-                |> required "coo" string
-                |> required "coo_name" string
-                |> required "coa" string
-                |> required "coa_name" string
-                |> required "procedure_type" procedureType
-                |> optional "app_type" applicationType Nothing
-                |> required "dec_total" int
-            )
+        JD.field "items" <|
+            JD.list <|
+                (JD.succeed AsylumDecisionsJson
+                    |> required "year" int
+                    |> required "coo" string
+                    |> required "coo_name" string
+                    |> required "coa" string
+                    |> required "coa_name" string
+                    |> required "procedure_type" procedureType
+                    |> optional "app_type" applicationType Nothing
+                    |> required "dec_total" int
+                )
 
 
 procedureType : JD.Decoder ProcedureType
