@@ -106,13 +106,34 @@ update msg model =
         GotCountries countriesResult ->
             ( { model
                 | countries = Loaded <| Result.toMaybe countriesResult
+                , coo =
+                    withDefault unknownCountry <|
+                        Maybe.map Tuple.second <|
+                            head <|
+                                List.sortBy Tuple.first <|
+                                    Dict.toList <|
+                                        Result.withDefault Dict.empty countriesResult
               }
-            , Cmd.none
+            , fetchAsylumDecisions GotAsylumDecisions model.coo
             )
 
         GotAsylumDecisions asylumDecisionsResult ->
             ( { model
                 | availableCOAs = Loaded <| Result.toMaybe asylumDecisionsResult
+                , coa =
+                    withDefault unknownCountry <|
+                        Maybe.andThen
+                            (\cc ->
+                                Dict.get cc <|
+                                    withDefault Dict.empty <|
+                                        unwrapLoadable model.countries
+                            )
+                        <|
+                            Maybe.map Tuple.first <|
+                                head <|
+                                    List.sortBy Tuple.first <|
+                                        Dict.toList <|
+                                            Result.withDefault Dict.empty asylumDecisionsResult
               }
             , Cmd.none
             )
