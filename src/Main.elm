@@ -11,6 +11,7 @@ import Http exposing (get)
 import List exposing (filter, head, map)
 import Maybe exposing (withDefault)
 import Platform.Cmd
+import String exposing (fromInt)
 import Task
 import Time
 
@@ -202,10 +203,14 @@ coaVis maybeCoa =
 coaYearVis : ( Year, AsylumDecisions ) -> Html Msg
 coaYearVis ( year, ad ) =
     div [] <|
-        [ h1 [] [ text <| String.fromInt year ] ]
+        [ h1 [] [ text <| fromInt year ] ]
             ++ procedureType ad.procedureType
             ++ applicationType ad.applicationType
-            ++ [ text <| "decisions total: " ++ String.fromInt ad.decisionsTotal
+            ++ displayInt "decisions recognized: " ad.decisionsRecognized
+            ++ displayInt "other decisions: " ad.decisionsOther
+            ++ displayInt "decisions rejected: " ad.decisionsRejected
+            ++ displayInt "decisions closed: " ad.decisionsClosed
+            ++ [ text <| "decisions total: " ++ fromInt ad.decisionsTotal
                ]
 
 
@@ -245,6 +250,16 @@ applicationType maybeAt =
                        )
     , br [] []
     ]
+
+
+displayInt : String -> Maybe Int -> List (Html Msg)
+displayInt prefix maybeInt =
+    case maybeInt of
+        Nothing ->
+            []
+
+        Just dr ->
+            [ text <| prefix ++ fromInt dr, br [] [] ]
 
 
 view : Model -> Browser.Document Msg
