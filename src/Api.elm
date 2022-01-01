@@ -1,7 +1,12 @@
 module Api exposing
-    ( AvailableCOAs
+    ( ApplicationType(..)
+    , AsylumDecisions
+    , AvailableCOAs
+    , COA
     , Country
     , CountryCode
+    , ProcedureType(..)
+    , Year
     , asylumDecisionsDecoder
     , fetchAsylumDecisions
     , fetchCountries

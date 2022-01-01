@@ -4,7 +4,7 @@ import Api exposing (..)
 import Browser
 import Dict exposing (Dict)
 import Graphics exposing (..)
-import Html exposing (Html, br, div, fieldset, legend, option, select, text)
+import Html exposing (Html, br, div, fieldset, h1, legend, option, select, text)
 import Html.Attributes exposing (value)
 import Html.Events exposing (onInput)
 import Http exposing (get)
@@ -78,7 +78,8 @@ type alias Model =
 
 type Msg
     = Tick Time.Posix
-    | ChangeCoo String
+    | ChangeCoo CountryCode
+    | ChangeCoa CountryCode
     | GotCountries (Result Http.Error (Dict CountryCode Country))
     | GotAsylumDecisions (Result Http.Error AvailableCOAs)
 
@@ -114,6 +115,13 @@ update msg model =
               }
             , Cmd.none
             )
+
+        ChangeCoa countryCode ->
+            let
+                coa =
+                    withDefault unknownCountry <| Dict.get countryCode <| withDefault Dict.empty <| unwrapLoadable model.countries
+            in
+            ( { model | coa = coa }, Cmd.none )
 
 
 subscriptions : Model -> Sub Msg
@@ -165,7 +173,7 @@ coaSelect countries loadableCOAs =
                     else
                         fieldset []
                             [ legend [] [ text "country of asylum" ]
-                            , select [] <|
+                            , select [ onInput ChangeCoa ] <|
                                 map
                                     countryOption
                                 <|
@@ -181,6 +189,64 @@ coaSelect countries loadableCOAs =
                             ]
 
 
+coaVis : Maybe COA -> Html Msg
+coaVis maybeCoa =
+    case maybeCoa of
+        Nothing ->
+            text ""
+
+        Just coa ->
+            div [] <| map coaYearVis <| List.sortBy Tuple.first <| Dict.toList coa
+
+
+coaYearVis : ( Year, AsylumDecisions ) -> Html Msg
+coaYearVis ( year, ad ) =
+    div [] <|
+        [ h1 [] [ text <| String.fromInt year ] ]
+            ++ procedureType ad.procedureType
+            ++ applicationType ad.applicationType
+            ++ [ text <| "decisions total: " ++ String.fromInt ad.decisionsTotal
+               ]
+
+
+procedureType : ProcedureType -> List (Html Msg)
+procedureType pt =
+    [ case pt of
+        Government ->
+            text "Asylum applications were processed by the local government."
+
+        Joint ->
+            text "Asylum applications were processed by both the local government and UNHCR."
+
+        UNHCR ->
+            text "Asylum applications were processed by the UNHCR."
+    , br [] []
+    ]
+
+
+applicationType : Maybe ApplicationType -> List (Html Msg)
+applicationType maybeAt =
+    [ case maybeAt of
+        Nothing ->
+            text ""
+
+        Just at ->
+            text <|
+                "application type: "
+                    ++ (case at of
+                            New ->
+                                "New"
+
+                            Repeat ->
+                                "Repeat"
+
+                            Appeal ->
+                                "Appea"
+                       )
+    , br [] []
+    ]
+
+
 view : Model -> Browser.Document Msg
 view model =
     { title = "Mapping migration"
@@ -188,6 +254,7 @@ view model =
         [ div []
             [ cooSelect model.countries
             , coaSelect model.countries model.availableCOAs
+            , coaVis <| Dict.get model.coa.code <| withDefault Dict.empty <| unwrapLoadable model.availableCOAs
             , br [] []
             ]
         ]
