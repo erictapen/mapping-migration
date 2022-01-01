@@ -122,7 +122,7 @@ subscriptions _ =
 
 
 countryOption { name, code } =
-    option [ value code ] [ text name ]
+    option [ value code ] [ text (name ++ " (" ++ code ++ ")") ]
 
 
 cooSelect loadableCountries =
@@ -189,7 +189,6 @@ view model =
             [ cooSelect model.countries
             , coaSelect model.countries model.availableCOAs
             , br [] []
-            , text <| "CoO: " ++ .name model.coo ++ " (" ++ .code model.coo ++ ")"
             ]
         ]
     }
