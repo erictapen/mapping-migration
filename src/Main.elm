@@ -141,7 +141,7 @@ cooSelect loadableCountries =
                 Just countries ->
                     fieldset []
                         [ legend [] [ text "country of origin" ]
-                        , select [ onInput ChangeCoo ] <| map countryOption <| Dict.values countries
+                        , select [ onInput ChangeCoo ] <| map countryOption <| List.sortBy .name <| Dict.values countries
                         ]
 
 
