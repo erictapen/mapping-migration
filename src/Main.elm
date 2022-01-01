@@ -2,7 +2,7 @@ module Main exposing (main)
 
 import Api exposing (..)
 import Browser
-import Dict
+import Dict exposing (Dict)
 import Graphics exposing (..)
 import Html exposing (Html, br, div, fieldset, legend, option, select, text)
 import Html.Attributes exposing (value)
@@ -28,7 +28,7 @@ init : () -> ( Model, Cmd Msg )
 init _ =
     ( { coo = unknownCountry
       , coa = unknownCountry
-      , availableCountries = Nothing
+      , countries = NotLoaded
       , availableCOAs = NotLoaded
       , stickFigures =
             [ { position = ( 0, 0 )
@@ -54,11 +54,24 @@ type Loadable a
     | Loaded (Maybe a)
 
 
+unwrapLoadable : Loadable a -> Maybe a
+unwrapLoadable loadable =
+    case loadable of
+        NotLoaded ->
+            Nothing
+
+        Loading ->
+            Nothing
+
+        Loaded maybe ->
+            maybe
+
+
 type alias Model =
     { coo : Country
     , coa : Country
     , stickFigures : List StickFigure
-    , availableCountries : Maybe (List Country)
+    , countries : Loadable (Dict CountryCode Country)
     , availableCOAs : Loadable AvailableCOAs
     }
 
@@ -66,7 +79,7 @@ type alias Model =
 type Msg
     = Tick Time.Posix
     | ChangeCoo String
-    | GotCountries (Result Http.Error (List Country))
+    | GotCountries (Result Http.Error (Dict CountryCode Country))
     | GotAsylumDecisions (Result Http.Error AvailableCOAs)
 
 
@@ -79,10 +92,7 @@ update msg model =
         ChangeCoo countryCode ->
             let
                 coo =
-                    withDefault unknownCountry <|
-                        head <|
-                            filter (\x -> x.code == countryCode) <|
-                                withDefault [] model.availableCountries
+                    withDefault unknownCountry <| Dict.get countryCode <| withDefault Dict.empty <| unwrapLoadable model.countries
             in
             ( { model
                 | coo = coo
@@ -91,8 +101,12 @@ update msg model =
             , fetchAsylumDecisions GotAsylumDecisions model.coo
             )
 
-        GotCountries countryNamesResult ->
-            handleGotCountries model countryNamesResult
+        GotCountries countriesResult ->
+            ( { model
+                | countries = Loaded <| Result.toMaybe countriesResult
+              }
+            , Cmd.none
+            )
 
         GotAsylumDecisions asylumDecisionsResult ->
             ( { model
@@ -111,19 +125,27 @@ countryOption { name, code } =
     option [ value code ] [ text name ]
 
 
-cooSelect maybeCountries =
-    case maybeCountries of
-        Nothing ->
+cooSelect loadableCountries =
+    case loadableCountries of
+        NotLoaded ->
+            text ""
+
+        Loading ->
             text "Loading countries..."
 
-        Just countries ->
-            fieldset []
-                [ legend [] [ text "country of origin" ]
-                , select [ onInput ChangeCoo ] <| map countryOption countries
-                ]
+        Loaded countriesMaybe ->
+            case countriesMaybe of
+                Nothing ->
+                    text "An error occured while fetching asylumDecisions!"
+
+                Just countries ->
+                    fieldset []
+                        [ legend [] [ text "country of origin" ]
+                        , select [ onInput ChangeCoo ] <| map countryOption <| Dict.values countries
+                        ]
 
 
-coaSelect loadableCOAs =
+coaSelect countries loadableCOAs =
     case loadableCOAs of
         NotLoaded ->
             text ""
@@ -134,7 +156,7 @@ coaSelect loadableCOAs =
         Loaded coasMaybe ->
             case coasMaybe of
                 Nothing ->
-                    text "An error occured!"
+                    text "An error occured while fetching asylumDecisions!"
 
                 Just coas ->
                     if Dict.isEmpty coas then
@@ -147,7 +169,14 @@ coaSelect loadableCOAs =
                                 map
                                     countryOption
                                 <|
-                                    map (\code -> Country code code) <|
+                                    map
+                                        (\c ->
+                                            withDefault unknownCountry <|
+                                                Dict.get c <|
+                                                    withDefault Dict.empty <|
+                                                        unwrapLoadable countries
+                                        )
+                                    <|
                                         Dict.keys coas
                             ]
 
@@ -157,8 +186,8 @@ view model =
     { title = "Mapping migration"
     , body =
         [ div []
-            [ cooSelect model.availableCountries
-            , coaSelect model.availableCOAs
+            [ cooSelect model.countries
+            , coaSelect model.countries model.availableCOAs
             , br [] []
             , text <| "CoO: " ++ .name model.coo ++ " (" ++ .code model.coo ++ ")"
             ]

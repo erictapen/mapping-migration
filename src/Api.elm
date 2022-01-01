@@ -1,10 +1,10 @@
 module Api exposing
     ( AvailableCOAs
     , Country
+    , CountryCode
     , asylumDecisionsDecoder
     , fetchAsylumDecisions
     , fetchCountries
-    , handleGotCountries
     , unknownCountry
     )
 
@@ -72,13 +72,22 @@ fetchCountries msgConstructor =
         }
 
 
-countriesDecoder : JD.Decoder (List Country)
+countriesDecoder : JD.Decoder (Dict CountryCode Country)
 countriesDecoder =
-    JD.field "items" <|
-        JD.list <|
-            JD.map2 Country
-                (JD.field "name" JD.string)
-                (JD.field "code" JD.string)
+    JD.andThen (countriesDict >> JD.succeed) <|
+        JD.field "items" <|
+            JD.list <|
+                JD.map2 Country
+                    (JD.field "name" JD.string)
+                    (JD.field "code" JD.string)
+
+
+countriesDict : List Country -> Dict CountryCode Country
+countriesDict countries =
+    Dict.fromList <|
+        List.map2 (\a -> \b -> ( a, b ))
+            (map .code countries)
+            countries
 
 
 country name code =
@@ -87,15 +96,6 @@ country name code =
 
 unknownCountry =
     { name = "Unknown", code = "UKN" }
-
-
-handleGotCountries model countryNamesResult =
-    ( { model
-        | availableCountries =
-            Result.toMaybe countryNamesResult
-      }
-    , Cmd.none
-    )
 
 
 {-| Intermediate representation of the JSON output to make decoding easier to comprehend.
