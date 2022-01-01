@@ -1,4 +1,4 @@
-module Api exposing (Country, fetchCountries, fetchAsylumDecisions, handleGotCountries, unknownCountry, AvailableCOAs)
+module Api exposing (Country, fetchCountries, fetchAsylumDecisions, handleGotCountries, unknownCountry, AvailableCOAs, asylumDecisionsDecoder)
 
 import Dict exposing (Dict, insert, update)
 import Http
@@ -179,7 +179,7 @@ procedureType =
                 "J" ->
                     JD.succeed Joint
 
-                "UNHCR" ->
+                "U" ->
                     JD.succeed UNHCR
 
                 unknownType ->

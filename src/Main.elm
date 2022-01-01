@@ -80,8 +80,8 @@ update msg model =
 
 
 subscriptions : Model -> Sub Msg
-subscriptions _ =
-    Time.every (1000 / 60) Tick
+subscriptions _ = Sub.none
+    -- Time.every (1000 / 60) Tick
 
 
 countryOption { name, code } =
