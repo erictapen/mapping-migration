@@ -113,6 +113,7 @@ type alias AsylumDecisionsJson =
     , coa_name : String
     , procedureType : ProcedureType
     , applicationType : Maybe ApplicationType
+    , decisionsLevel : Maybe DecisionsLevel
     , decisionsTotal : Int
     }
 
@@ -136,21 +137,9 @@ type alias Year =
 type alias AsylumDecisions =
     { procedureType : ProcedureType
     , applicationType : Maybe ApplicationType
+    , decisionsLevel : Maybe DecisionsLevel
     , decisionsTotal : Int
     }
-
-
-type ProcedureType
-    = Government
-    | Joint
-    | UNHCR
-
-
-type ApplicationType
-    = New
-    | Repeat
-    | Appeal
-
 
 fetchAsylumDecisions msgConstructor coo =
     Http.request
@@ -177,8 +166,15 @@ asylumDecisionsDecoder =
                     |> required "coa_name" string
                     |> required "procedure_type" procedureType
                     |> optional "app_type" applicationType Nothing
+                    |> optional "dec_level" decisionsLevel Nothing
                     |> required "dec_total" int
                 )
+
+
+type ProcedureType
+    = Government
+    | Joint
+    | UNHCR
 
 
 procedureType : JD.Decoder ProcedureType
@@ -201,6 +197,12 @@ procedureType =
         JD.string
 
 
+type ApplicationType
+    = New
+    | Repeat
+    | Appeal
+
+
 applicationType : JD.Decoder (Maybe ApplicationType)
 applicationType =
     JD.andThen
@@ -220,6 +222,43 @@ applicationType =
         )
         JD.string
 
+type DecisionsLevel
+    = NewApplications
+    | FirstInstance
+    | AdministrativeReview
+    | RepeatedApplications
+    | USCitizenShipAndImmigrationServices
+    | USExecutiveOfficeOfImmigrationReview
+    | JudicialReview
+    | SubsidiaryProtection
+    | FirstInstanceAndAppeal
+    | TemporaryProtection
+    | TemporaryAsylum
+    | Backlog
+    | TemporaryLeave
+    | CantonalSwitzerland
+
+decisionsLevelDict = Dict.fromList [
+    ("NA", NewApplications),
+    ("FI", FirstInstance),
+    ("AR", AdministrativeReview),
+    ("RA", RepeatedApplications),
+    ("IN", USCitizenShipAndImmigrationServices),
+    ("EO", USExecutiveOfficeOfImmigrationReview),
+    ("JR", JudicialReview),
+    ("SP", SubsidiaryProtection),
+    ("FA", FirstInstanceAndAppeal),
+    ("TP", TemporaryProtection),
+    ("TA", TemporaryAsylum),
+    ("BL", Backlog),
+    ("TR", TemporaryLeave),
+    ("CA", CantonalSwitzerland)
+        ]
+
+{-| TODO maybe fail here for unknown abbreviations?-}
+decisionsLevel : JD.Decoder (Maybe DecisionsLevel)
+decisionsLevel = JD.map (\str -> Dict.get str decisionsLevelDict) JD.string
+
 
 availableCOAs : List AsylumDecisionsJson -> AvailableCOAs
 availableCOAs =
@@ -232,6 +271,7 @@ buildAvailableCOAs obj old =
         coa o =
             { procedureType = o.procedureType
             , applicationType = o.applicationType
+            , decisionsLevel = o.decisionsLevel
             , decisionsTotal = o.decisionsTotal
             }
 
