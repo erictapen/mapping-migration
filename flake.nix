@@ -6,11 +6,13 @@
     pkgs = import nixpkgs config;
   in {
 
-    defaultPackage.x86_64-linux = self.packages.x86_64-linux.website;
+    defaultPackage.x86_64-linux = self.packages.x86_64-linux.webapp;
 
-    packages.x86_64-linux.website = import ./default.nix {
+    packages.x86_64-linux.webapp = import ./default.nix {
       inherit nixpkgs config;
     };
+
+    nixosModule = import ./module.nix self.packages.x86_64-linux.webapp;
 
     devShell.x86_64-linux = pkgs.mkShell {
       buildInputs = with pkgs; with elmPackages; [
