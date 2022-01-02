@@ -1,17 +1,54 @@
 webapp:
-{ config, lib, pkgs, ... }: {
+{ config, lib, pkgs, ... }:
+let
+  cfg = config.services.mappingmigration;
+in
+{
 
-  services.nginx = {
-    enable = true;
-    virtualHosts."${cfg.domain}" = {
-         locations = {
-           "/".root = webapp;
-           "/".tryFiles = "$uri/Main.html =404";
-         };
-         enableACME = true;
-         forceSSL = true;
-       };
+  options.services.mappingmigration = {
+    enable = lib.mkEnableOption "Mapping migration Nginx config";
+    domain = lib.mkOption {
+      description = "The domain serving the webapp.";
+      example = "mappingmigration.example.org";
+      type = lib.types.str;
+    };
+  };
 
+  config = lib.mkIf cfg.enable {
+
+    services.nginx = {
+      enable = true;
+      appendHttpConfig = ''
+        proxy_cache_path /var/cache/nginx/api.unhcr.org levels=1:2 keys_zone=unhcr:2m;
+      '';
+      virtualHosts."${cfg.domain}" = {
+        locations =
+          let
+            extraConfig = ''
+              proxy_cache unhcr;
+              proxy_cache_valid 200 720h;
+              proxy_ignore_headers X-Accel-Expires Expires Cache-Control;
+            '';
+          in
+          {
+            "/" = {
+              root = webapp;
+              tryFiles = "$uri/Main.html =404";
+            };
+            "= /unhcr-api/population/v1/countries/" = {
+              proxyPass = "https://api.unhcr.org/population/v1/countries/";
+              inherit extraConfig;
+            };
+            "/unhcr-api/population/v1/asylum-decisions/" = {
+              proxyPass = "https://api.unhcr.org/population/v1/asylum-decisions/";
+              inherit extraConfig;
+            };
+          };
+        enableACME = true;
+        forceSSL = true;
+      };
+
+    };
   };
 
 }

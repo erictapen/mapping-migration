@@ -69,7 +69,7 @@ fetchCountries msgConstructor =
     Http.request
         { method = "GET"
         , headers = headers
-        , url = "https://api.unhcr.org/population/v1/countries/"
+        , url = "/unhcr-api/population/v1/countries/"
         , body = Http.emptyBody
         , expect = Http.expectJson msgConstructor countriesDecoder
         , timeout = Nothing
@@ -154,7 +154,7 @@ fetchAsylumDecisions msgConstructor coo =
     Http.request
         { method = "GET"
         , headers = headers
-        , url = "https://api.unhcr.org/population/v1/asylum-decisions/?coa_all=true&coo=" ++ coo.code
+        , url = "/unhcr-api/population/v1/asylum-decisions/?coa_all=true&coo=" ++ coo.code
         , body = Http.emptyBody
         , expect = Http.expectJson msgConstructor asylumDecisionsDecoder
         , timeout = Nothing
