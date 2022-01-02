@@ -12,6 +12,15 @@ in
       example = "mappingmigration.example.org";
       type = lib.types.str;
     };
+    userAgent = lib.mkOption {
+      description = ''
+        User-Agent string that is sent to upstream, so they have
+        some way to reach out to the API user. Setting it to an email address
+        might be fine.
+      '';
+      example = "contact@example.org";
+      type = lib.types.str;
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -28,6 +37,7 @@ in
               proxy_cache unhcr;
               proxy_cache_valid 200 720h;
               proxy_ignore_headers X-Accel-Expires Expires Cache-Control;
+              proxy_set_header User-Agent "${cfg.userAgent}";
             '';
           in
           {
