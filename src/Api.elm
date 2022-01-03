@@ -8,6 +8,7 @@ module Api exposing
     , ProcedureType(..)
     , Year
     , asylumDecisionsDecoder
+    , asylumDecisionsPath
     , compareCountry
     , compareCountryCode
     , fetchAsylumDecisions
@@ -171,11 +172,16 @@ type alias AsylumDecisions =
     }
 
 
+asylumDecisionsPath : CountryCode -> String
+asylumDecisionsPath coo =
+    baseUrl ++ "/population/v1/asylum-decisions/?coa_all=true&coo=" ++ coo
+
+
 fetchAsylumDecisions msgConstructor coo =
     Http.request
         { method = "GET"
         , headers = headers
-        , url = baseUrl ++ "/population/v1/asylum-decisions/?coa_all=true&coo=" ++ coo
+        , url = asylumDecisionsPath coo
         , body = Http.emptyBody
         , expect = Http.expectJson msgConstructor asylumDecisionsDecoder
         , timeout = Nothing

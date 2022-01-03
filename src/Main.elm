@@ -290,10 +290,17 @@ view model =
                 COALoading (COOSelect countries _) ->
                     [ cooSelect countries, text "loading..." ]
 
-                COASelected (COOSelect countries _) (COASelect availableCOAs selectedCOA) ->
+                COASelected (COOSelect countries selectedCOO) (COASelect availableCOAs selectedCOA) ->
                     [ cooSelect countries
                     , coaSelect countries availableCOAs
                     , coaVis <| Dict.get selectedCOA availableCOAs
+                    , br [] []
+                    , Html.pre []
+                        [ text <|
+                            "curl -H 'Accept: application/json' '"
+                                ++ asylumDecisionsPath selectedCOO
+                                ++ "'"
+                        ]
                     ]
             )
         ]
