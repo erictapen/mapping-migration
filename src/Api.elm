@@ -154,7 +154,7 @@ fetchAsylumDecisions msgConstructor coo =
     Http.request
         { method = "GET"
         , headers = headers
-        , url = "/unhcr-api/population/v1/asylum-decisions/?coa_all=true&coo=" ++ coo.code
+        , url = "/unhcr-api/population/v1/asylum-decisions/?coa_all=true&coo=" ++ coo
         , body = Http.emptyBody
         , expect = Http.expectJson msgConstructor asylumDecisionsDecoder
         , timeout = Nothing

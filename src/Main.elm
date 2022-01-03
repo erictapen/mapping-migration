@@ -27,19 +27,7 @@ main =
 
 init : () -> ( Model, Cmd Msg )
 init _ =
-    ( { coo = unknownCountry
-      , coa = unknownCountry
-      , countries = NotLoaded
-      , availableCOAs = NotLoaded
-      , stickFigures =
-            [ { position = ( 0, 0 )
-              , start = ( 0, 0 )
-              , destination = ( 100, 100 )
-              }
-            ]
-      }
-    , fetchCountries GotCountries
-    )
+    ( CountriesLoading, fetchCountries GotCountries )
 
 
 {-| Some wrapper type we use to express that some stuff can:
@@ -68,82 +56,99 @@ unwrapLoadable loadable =
             maybe
 
 
-type alias Model =
-    { coo : Country
-    , coa : Country
-    , stickFigures : List StickFigure
-    , countries : Loadable (Dict CountryCode Country)
-    , availableCOAs : Loadable AvailableCOAs
-    }
+{-|
+
+  - `CountriesLoading`: The origin state of the application, that is only used for initialization.
+  - `CountriesLoadingFailed`: Error on /countries
+  - `COALoading`: COA data is being requested
+  - `COASelected`: COA data is loaded and displayed
+
+-}
+type Model
+    = CountriesLoading
+    | CountriesLoadingFailed
+    | COALoading COOSelect
+    | COASelected COOSelect COASelect
+
+
+type COOSelect
+    = COOSelect (Dict CountryCode Country) CountryCode
+
+
+type COASelect
+    = COASelect AvailableCOAs CountryCode
 
 
 type Msg
     = Tick Time.Posix
-    | ChangeCoo CountryCode
-    | ChangeCoa CountryCode
     | GotCountries (Result Http.Error (Dict CountryCode Country))
+    | ChangeCoo CountryCode
     | GotAsylumDecisions (Result Http.Error AvailableCOAs)
+    | ChangeCoa CountryCode
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
+    let
+        noop =
+            ( model, Cmd.none )
+    in
     case msg of
         Tick _ ->
-            ( { model | stickFigures = map moveStickFigure model.stickFigures }, Cmd.none )
-
-        ChangeCoo countryCode ->
-            let
-                coo =
-                    withDefault unknownCountry <| Dict.get countryCode <| withDefault Dict.empty <| unwrapLoadable model.countries
-            in
-            ( { model
-                | coo = coo
-                , availableCOAs = Loading
-              }
-            , fetchAsylumDecisions GotAsylumDecisions model.coo
-            )
+            ( model, Cmd.none )
 
         GotCountries countriesResult ->
-            ( { model
-                | countries = Loaded <| Result.toMaybe countriesResult
-                , coo =
-                    withDefault unknownCountry <|
-                        Maybe.map Tuple.second <|
-                            head <|
-                                List.sortBy Tuple.first <|
-                                    Dict.toList <|
-                                        Result.withDefault Dict.empty countriesResult
-              }
-            , fetchAsylumDecisions GotAsylumDecisions model.coo
-            )
+            case countriesResult of
+                Err _ ->
+                    ( CountriesLoadingFailed, Cmd.none )
+
+                Ok countries ->
+                    let
+                        coo =
+                            withDefault unknownCountry.code <| Maybe.map (Tuple.second >> .code) <| head <| List.sortBy Tuple.first <| Dict.toList countries
+                    in
+                    ( COALoading (COOSelect countries coo), fetchAsylumDecisions GotAsylumDecisions coo )
+
+        ChangeCoo countryCode ->
+            case model of
+                -- TODO not sure wether we should do noop in this case.
+                COALoading (COOSelect countries _) ->
+                    ( COALoading (COOSelect countries countryCode)
+                    , fetchAsylumDecisions GotAsylumDecisions countryCode
+                    )
+
+                COASelected (COOSelect countries _) _ ->
+                    ( COALoading (COOSelect countries countryCode)
+                    , fetchAsylumDecisions GotAsylumDecisions countryCode
+                    )
+
+                _ ->
+                    noop
 
         GotAsylumDecisions asylumDecisionsResult ->
-            ( { model
-                | availableCOAs = Loaded <| Result.toMaybe asylumDecisionsResult
-                , coa =
-                    withDefault unknownCountry <|
-                        Maybe.andThen
-                            (\cc ->
-                                Dict.get cc <|
-                                    withDefault Dict.empty <|
-                                        unwrapLoadable model.countries
-                            )
-                        <|
-                            Maybe.map Tuple.first <|
-                                head <|
-                                    List.sortBy Tuple.first <|
-                                        Dict.toList <|
-                                            Result.withDefault Dict.empty asylumDecisionsResult
-              }
-            , Cmd.none
-            )
+            case asylumDecisionsResult of
+                Err _ ->
+                    ( CountriesLoadingFailed, Cmd.none )
+
+                Ok asylumDecisions ->
+                    case model of
+                        COALoading (COOSelect countries coo) ->
+                            let
+                                coa =
+                                    .code <| withDefault unknownCountry <| Maybe.andThen (\cc -> Dict.get cc countries) <| Maybe.map Tuple.first <| head <| List.sortBy Tuple.first <| Dict.toList asylumDecisions
+                            in
+                            ( COASelected (COOSelect countries coo) (COASelect asylumDecisions coa), Cmd.none )
+
+                        _ ->
+                            noop
 
         ChangeCoa countryCode ->
-            let
-                coa =
-                    withDefault unknownCountry <| Dict.get countryCode <| withDefault Dict.empty <| unwrapLoadable model.countries
-            in
-            ( { model | coa = coa }, Cmd.none )
+            case model of
+                COASelected cooS (COASelect availableCOAs _) ->
+                    ( COASelected cooS (COASelect availableCOAs countryCode), Cmd.none )
+
+                _ ->
+                    noop
 
 
 subscriptions : Model -> Sub Msg
@@ -155,60 +160,32 @@ countryOption { name, code } =
     option [ value code ] [ text (name ++ " (" ++ code ++ ")") ]
 
 
-cooSelect loadableCountries =
-    case loadableCountries of
-        NotLoaded ->
-            text ""
-
-        Loading ->
-            text "Loading countries..."
-
-        Loaded countriesMaybe ->
-            case countriesMaybe of
-                Nothing ->
-                    text "An error occured while fetching asylumDecisions!"
-
-                Just countries ->
-                    fieldset []
-                        [ legend [] [ text "country of origin" ]
-                        , select [ onInput ChangeCoo ] <| map countryOption <| List.sortBy .name <| Dict.values countries
-                        ]
+cooSelect countries =
+    fieldset []
+        [ legend [] [ text "country of origin" ]
+        , select [ onInput ChangeCoo ] <| map countryOption <| List.sortBy .name <| Dict.values countries
+        ]
 
 
-coaSelect countries loadableCOAs =
-    case loadableCOAs of
-        NotLoaded ->
-            text ""
+coaSelect countries coas =
+    if Dict.isEmpty coas then
+        text "no data available."
 
-        Loading ->
-            text "loading..."
-
-        Loaded coasMaybe ->
-            case coasMaybe of
-                Nothing ->
-                    text "An error occured while fetching asylumDecisions!"
-
-                Just coas ->
-                    if Dict.isEmpty coas then
-                        text "no data available."
-
-                    else
-                        fieldset []
-                            [ legend [] [ text "country of asylum" ]
-                            , select [ onInput ChangeCoa ] <|
-                                map
-                                    countryOption
-                                <|
-                                    map
-                                        (\c ->
-                                            withDefault unknownCountry <|
-                                                Dict.get c <|
-                                                    withDefault Dict.empty <|
-                                                        unwrapLoadable countries
-                                        )
-                                    <|
-                                        Dict.keys coas
-                            ]
+    else
+        fieldset []
+            [ legend [] [ text "country of asylum" ]
+            , select [ onInput ChangeCoa ] <|
+                map
+                    countryOption
+                <|
+                    map
+                        (\c ->
+                            withDefault unknownCountry <|
+                                Dict.get c countries
+                        )
+                    <|
+                        Dict.keys coas
+            ]
 
 
 coaVis : Maybe COA -> Html Msg
@@ -288,10 +265,21 @@ view model =
     { title = "Mapping migration"
     , body =
         [ div []
-            [ cooSelect model.countries
-            , coaSelect model.countries model.availableCOAs
-            , coaVis <| Dict.get model.coa.code <| withDefault Dict.empty <| unwrapLoadable model.availableCOAs
-            , br [] []
-            ]
+            (case model of
+                CountriesLoading ->
+                    [ text "Loading countries..." ]
+
+                CountriesLoadingFailed ->
+                    [ text "An error occured while fetching the countries!" ]
+
+                COALoading (COOSelect countries _) ->
+                    [ cooSelect countries, text "loading..." ]
+
+                COASelected (COOSelect countries _) (COASelect availableCOAs selectedCOA) ->
+                    [ cooSelect countries
+                    , coaSelect countries availableCOAs
+                    , coaVis <| Dict.get selectedCOA availableCOAs
+                    ]
+            )
         ]
     }
