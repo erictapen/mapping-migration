@@ -105,7 +105,7 @@ update msg model =
                 Ok countries ->
                     let
                         coo =
-                            withDefault unknownCountry.code <|
+                            withDefault unknownCountryCode <|
                                 head <|
                                     List.sortWith compareCountryCode <|
                                         Dict.keys countries
@@ -138,7 +138,7 @@ update msg model =
                         COALoading (COOSelect countries coo) ->
                             let
                                 coa =
-                                    withDefault unknownCountry.code <|
+                                    withDefault unknownCountryCode <|
                                         head <|
                                             List.sortWith compareCountryCode <|
                                                 Dict.keys asylumDecisions
@@ -166,7 +166,8 @@ subscriptions _ =
     Sub.none
 
 
-countryOption { name, code } =
+countryOption : ( CountryCode, Country ) -> Html Msg
+countryOption ( code, { name } ) =
     option [ value code ] [ text (name ++ " (" ++ code ++ ")") ]
 
 
@@ -175,8 +176,8 @@ cooSelect countries =
         [ legend [] [ text "country of origin" ]
         , select [ onInput ChangeCoo ]
             (map countryOption <|
-                List.sortWith compareCountry <|
-                    Dict.values countries
+                List.sortWith (compareCountryCode2 Tuple.first) <|
+                    Dict.toList countries
             )
         ]
 
@@ -193,9 +194,11 @@ coaSelect countries coas =
                     countryOption
                 <|
                     map
-                        (\c ->
-                            withDefault unknownCountry <|
-                                Dict.get c countries
+                        (\cc ->
+                            ( cc
+                            , withDefault unknownCountry <|
+                                Dict.get cc countries
+                            )
                         )
                     <|
                         List.sortWith compareCountryCode <|

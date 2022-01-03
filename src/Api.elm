@@ -9,11 +9,12 @@ module Api exposing
     , Year
     , asylumDecisionsDecoder
     , asylumDecisionsPath
-    , compareCountry
     , compareCountryCode
+    , compareCountryCode2
     , fetchAsylumDecisions
     , fetchCountries
     , unknownCountry
+    , unknownCountryCode
     )
 
 import Dict exposing (Dict, insert, update)
@@ -54,19 +55,13 @@ headers =
 
 type alias Country =
     { name : String
-
-    -- UNHCR three letter country code notation
-    , code : CountryCode
     }
 
 
+{-| UNHCR three letter country code notation
+-}
 type alias CountryCode =
     String
-
-
-compareCountry : Country -> Country -> Order
-compareCountry c1 c2 =
-    compareCountryCode c1.code c2.code
 
 
 compareCountryCode : CountryCode -> CountryCode -> Order
@@ -74,14 +69,18 @@ compareCountryCode =
     compare
 
 
-
-{- | Like any good API, the UNHCR API is ambigous about their types...
-   E.g. they encode a 0 as "0"...
-   TODO: Make sure only 0 are encoded as strings, as we currently assume 0 when
-   we discover a string!
+{-| Helper function that helps when the CountryCode is embedded in some other structure
 -}
+compareCountryCode2 : (a -> CountryCode) -> a -> a -> Order
+compareCountryCode2 f c1 c2 =
+    compareCountryCode (f c1) (f c2)
 
 
+{-| Like any good API, the UNHCR API is ambigous about their types...
+E.g. they encode a 0 as "0"...
+TODO: Make sure only 0 are encoded as strings, as we currently assume 0 when
+we discover a string!
+-}
 ambigousNumber : JD.Decoder Int
 ambigousNumber =
     JD.oneOf [ int, succeed 0 ]
@@ -104,29 +103,31 @@ countriesDecoder =
     JD.andThen (countriesDict >> JD.succeed) <|
         JD.field "items" <|
             JD.list <|
-                JD.map2 Country
-                    (JD.field "name" JD.string)
+                JD.map2 Tuple.pair
                     (JD.field "code" JD.string)
+                    (JD.field "name" JD.string)
 
 
-countriesDict : List Country -> Dict CountryCode Country
-countriesDict unsortedCountries =
+countriesDict : List ( CountryCode, String ) -> Dict CountryCode Country
+countriesDict unsortedPairs =
     let
-        countries =
-            List.sortWith compareCountry unsortedCountries
+        unsortedCountries =
+            map (\( cc, str ) -> ( cc, Country str )) unsortedPairs
     in
     Dict.fromList <|
-        List.map2 Tuple.pair
-            (map .code countries)
-            countries
+        List.sortWith (compareCountryCode2 Tuple.first) unsortedCountries
 
 
 country name code =
     { name = name, code = code }
 
 
+unknownCountryCode =
+    "UKN"
+
+
 unknownCountry =
-    { name = "Unknown", code = "UKN" }
+    { name = "Unknown" }
 
 
 {-| Intermediate representation of the JSON output to make decoding easier to comprehend.
