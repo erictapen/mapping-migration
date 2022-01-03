@@ -110,11 +110,15 @@ countriesDecoder =
 
 
 countriesDict : List Country -> Dict CountryCode Country
-countriesDict countries =
+countriesDict unsortedCountries =
+    let
+        countries =
+            List.sortWith compareCountry unsortedCountries
+    in
     Dict.fromList <|
         List.map2 Tuple.pair
             (map .code countries)
-            (List.sortWith compareCountry countries)
+            countries
 
 
 country name code =
