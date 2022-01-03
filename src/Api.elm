@@ -22,6 +22,14 @@ import Maybe exposing (withDefault)
 
 
 
+-- baseUrl = "https://api.unhcr.org"
+
+
+baseUrl =
+    "https://mappingmigration.erictapen.name/unhcr-api"
+
+
+
 -- Some words on UNHCR terminology:
 -- - COO: Country of origin
 -- - COA: Country of asylum
@@ -69,7 +77,7 @@ fetchCountries msgConstructor =
     Http.request
         { method = "GET"
         , headers = headers
-        , url = "/unhcr-api/population/v1/countries/"
+        , url = baseUrl ++ "/population/v1/countries/"
         , body = Http.emptyBody
         , expect = Http.expectJson msgConstructor countriesDecoder
         , timeout = Nothing
@@ -154,7 +162,7 @@ fetchAsylumDecisions msgConstructor coo =
     Http.request
         { method = "GET"
         , headers = headers
-        , url = "/unhcr-api/population/v1/asylum-decisions/?coa_all=true&coo=" ++ coo
+        , url = baseUrl ++ "/population/v1/asylum-decisions/?coa_all=true&coo=" ++ coo
         , body = Http.emptyBody
         , expect = Http.expectJson msgConstructor asylumDecisionsDecoder
         , timeout = Nothing
