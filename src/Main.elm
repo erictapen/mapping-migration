@@ -105,7 +105,10 @@ update msg model =
                 Ok countries ->
                     let
                         coo =
-                            withDefault unknownCountry.code <| Maybe.map (Tuple.second >> .code) <| head <| List.sortBy Tuple.first <| Dict.toList countries
+                            withDefault unknownCountry.code <|
+                                head <|
+                                    List.sortWith compareCountryCode <|
+                                        Dict.keys countries
                     in
                     ( COALoading (COOSelect countries coo), fetchAsylumDecisions GotAsylumDecisions coo )
 
@@ -135,9 +138,16 @@ update msg model =
                         COALoading (COOSelect countries coo) ->
                             let
                                 coa =
-                                    .code <| withDefault unknownCountry <| Maybe.andThen (\cc -> Dict.get cc countries) <| Maybe.map Tuple.first <| head <| List.sortBy Tuple.first <| Dict.toList asylumDecisions
+                                    withDefault unknownCountry.code <|
+                                        head <|
+                                            List.sortWith compareCountryCode <|
+                                                Dict.keys asylumDecisions
                             in
-                            ( COASelected (COOSelect countries coo) (COASelect asylumDecisions coa), Cmd.none )
+                            ( COASelected
+                                (COOSelect countries coo)
+                                (COASelect asylumDecisions coa)
+                            , Cmd.none
+                            )
 
                         _ ->
                             noop
@@ -163,7 +173,11 @@ countryOption { name, code } =
 cooSelect countries =
     fieldset []
         [ legend [] [ text "country of origin" ]
-        , select [ onInput ChangeCoo ] <| map countryOption <| List.sortBy .name <| Dict.values countries
+        , select [ onInput ChangeCoo ]
+            (map countryOption <|
+                List.sortWith compareCountry <|
+                    Dict.values countries
+            )
         ]
 
 
@@ -184,7 +198,8 @@ coaSelect countries coas =
                                 Dict.get c countries
                         )
                     <|
-                        Dict.keys coas
+                        List.sortWith compareCountryCode <|
+                            Dict.keys coas
             ]
 
 

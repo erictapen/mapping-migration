@@ -8,6 +8,8 @@ module Api exposing
     , ProcedureType(..)
     , Year
     , asylumDecisionsDecoder
+    , compareCountry
+    , compareCountryCode
     , fetchAsylumDecisions
     , fetchCountries
     , unknownCountry
@@ -61,11 +63,22 @@ type alias CountryCode =
     String
 
 
+compareCountry : Country -> Country -> Order
+compareCountry c1 c2 =
+    compareCountryCode c1.code c2.code
 
--- Like any good API, the UNHCR API is ambigous about their types...
--- E.g. they encode a 0 as "0"...
--- TODO: Make sure only 0 are encoded as strings, as we currently assume 0 when
--- we discover a string!
+
+compareCountryCode : CountryCode -> CountryCode -> Order
+compareCountryCode =
+    compare
+
+
+
+{- | Like any good API, the UNHCR API is ambigous about their types...
+   E.g. they encode a 0 as "0"...
+   TODO: Make sure only 0 are encoded as strings, as we currently assume 0 when
+   we discover a string!
+-}
 
 
 ambigousNumber : JD.Decoder Int
@@ -98,9 +111,9 @@ countriesDecoder =
 countriesDict : List Country -> Dict CountryCode Country
 countriesDict countries =
     Dict.fromList <|
-        List.map2 (\a -> \b -> ( a, b ))
+        List.map2 Tuple.pair
             (map .code countries)
-            countries
+            (List.sortWith compareCountry countries)
 
 
 country name code =
