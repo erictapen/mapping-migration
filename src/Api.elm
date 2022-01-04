@@ -177,9 +177,19 @@ type alias AsylumDecisions =
     }
 
 
+{-| This should be high enough to always get all the entries at once.
+-}
+paginationLimit =
+    "10000"
+
+
 asylumDecisionsPath : CountryCode -> String
 asylumDecisionsPath coo =
-    baseUrl ++ "/population/v1/asylum-decisions/?coa_all=true&coo=" ++ coo
+    baseUrl
+        ++ "/population/v1/asylum-decisions/?coa_all=true&limit="
+        ++ paginationLimit
+        ++ "&coo="
+        ++ coo
 
 
 fetchAsylumDecisions msgConstructor coo =
@@ -208,11 +218,11 @@ asylumDecisionsDecoder =
                     |> required "procedure_type" procedureType
                     |> optional "app_type" applicationType Nothing
                     |> optional "dec_level" decisionsLevel Nothing
-                    |> optional "dec_recognized" (maybe int) Nothing
-                    |> optional "dec_other" (maybe int) Nothing
-                    |> optional "dec_rejected" (maybe int) Nothing
-                    |> optional "dec_closed" (maybe int) Nothing
-                    |> required "dec_total" int
+                    |> optional "dec_recognized" (maybe ambigousNumber) Nothing
+                    |> optional "dec_other" (maybe ambigousNumber) Nothing
+                    |> optional "dec_rejected" (maybe ambigousNumber) Nothing
+                    |> optional "dec_closed" (maybe ambigousNumber) Nothing
+                    |> required "dec_total" ambigousNumber
                 )
 
 
