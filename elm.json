@@ -17,13 +17,13 @@
             "elm/random": "1.0.0",
             "elm/svg": "1.0.1",
             "elm/time": "1.0.0",
-            "rtfeldman/elm-css": "17.0.5"
+            "rtfeldman/elm-css": "17.0.5",
+            "elm/url": "1.0.0"
         },
         "indirect": {
             "dzuk-mutant/elm-html-styled-aria": "1.0.1",
             "elm/bytes": "1.0.8",
             "elm/file": "1.0.5",
-            "elm/url": "1.0.0",
             "elm/virtual-dom": "1.0.2",
             "elm-community/list-extra": "8.5.2",
             "elm-community/random-extra": "3.2.0",

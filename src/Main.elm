@@ -4,6 +4,7 @@ import Api exposing (..)
 import Browser
 import Browser.Events
 import Data
+import Url exposing (Url)
 import Dict exposing (Dict)
 import Html
     exposing
@@ -62,16 +63,18 @@ import Time
 
 
 main =
-    Browser.document
+    Browser.application
         { init = init
         , view = view
         , update = update
         , subscriptions = subscriptions
+        , onUrlRequest = always NoOp
+        , onUrlChange = always NoOp
         }
 
 
-init : () -> ( Model, Cmd Msg )
-init _ =
+init : () -> Url -> Browser.Navigation.Key -> ( Model, Cmd Msg )
+init _ url key =
     ( CountriesLoading, fetchCountries GotCountries )
 
 
@@ -140,6 +143,7 @@ update msg model =
 
                 _ ->
                     ( model, Cmd.none )
+        NoOp -> noop
 
         GotCountries countriesResult ->
             case countriesResult of
