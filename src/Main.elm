@@ -213,7 +213,7 @@ coaVis maybeCoa =
             text ""
 
         Just coa ->
-            div [] <| map coaYearVis <| List.sortBy Tuple.first <| Dict.toList coa
+            div [] <| map coaYearVis <| List.reverse <| List.sortBy Tuple.first <| Dict.toList coa
 
 
 coaYearVis : ( Year, AsylumDecisions ) -> Html Msg
