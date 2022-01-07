@@ -282,29 +282,26 @@ view : Model -> Browser.Document Msg
 view model =
     { title = "Mapping migration"
     , body =
-        [ div []
-            (case model of
-                CountriesLoading ->
-                    [ text "Loading countries..." ]
+        case model of
+            CountriesLoading ->
+                [ text "Loading countries..." ]
 
-                CountriesLoadingFailed ->
-                    [ text "An error occured while fetching the countries!" ]
+            CountriesLoadingFailed ->
+                [ text "An error occured while fetching the countries!" ]
 
-                COALoading (COOSelect countries _) ->
-                    [ cooSelect countries, text "loading..." ]
+            COALoading (COOSelect countries _) ->
+                [ cooSelect countries, text "loading..." ]
 
-                COASelected (COOSelect countries selectedCOO) (COASelect availableCOAs selectedCOA) ->
-                    [ cooSelect countries
-                    , coaSelect countries availableCOAs
-                    , coaVis <| Dict.get selectedCOA availableCOAs
-                    , br [] []
-                    , Html.pre []
-                        [ text <|
-                            "curl -H 'Accept: application/json' '"
-                                ++ asylumDecisionsPath selectedCOO
-                                ++ "'"
-                        ]
+            COASelected (COOSelect countries selectedCOO) (COASelect availableCOAs selectedCOA) ->
+                [ cooSelect countries
+                , coaSelect countries availableCOAs
+                , coaVis <| Dict.get selectedCOA availableCOAs
+                , br [] []
+                , Html.pre []
+                    [ text <|
+                        "curl -H 'Accept: application/json' '"
+                            ++ asylumDecisionsPath selectedCOO
+                            ++ "'"
                     ]
-            )
-        ]
+                ]
     }
