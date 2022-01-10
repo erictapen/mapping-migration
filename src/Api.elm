@@ -1,11 +1,9 @@
 module Api exposing
-    ( ApplicationType(..)
-    , AsylumDecisions
+    ( AsylumDecisions
     , AvailableCOAs
     , COA
     , Country
     , CountryCode
-    , ProcedureType(..)
     , Year
     , asylumDecisionsDecoder
     , asylumDecisionsPath
@@ -138,9 +136,6 @@ type alias AsylumDecisionsJson =
     , coo_name : String
     , coa_code : String
     , coa_name : String
-    , procedureType : ProcedureType
-    , applicationType : Maybe ApplicationType
-    , decisionsLevel : Maybe DecisionsLevel
     , decisionsRecognized : Maybe Int
     , decisionsOther : Maybe Int
     , decisionsRejected : Maybe Int
@@ -166,15 +161,37 @@ type alias Year =
 
 
 type alias AsylumDecisions =
-    { procedureType : ProcedureType
-    , applicationType : Maybe ApplicationType
-    , decisionsLevel : Maybe DecisionsLevel
-    , decisionsRecognized : Maybe Int
+    { decisionsRecognized : Maybe Int
     , decisionsOther : Maybe Int
     , decisionsRejected : Maybe Int
     , decisionsClosed : Maybe Int
     , decisionsTotal : Int
     }
+
+
+mergeAsylumDecisions : AsylumDecisions -> AsylumDecisions -> AsylumDecisions
+mergeAsylumDecisions origin addition =
+    { decisionsRecognized = maybeAdd origin.decisionsRecognized addition.decisionsRecognized
+    , decisionsOther = maybeAdd origin.decisionsOther addition.decisionsOther
+    , decisionsRejected = maybeAdd origin.decisionsRejected addition.decisionsRejected
+    , decisionsClosed = maybeAdd origin.decisionsClosed addition.decisionsClosed
+    , decisionsTotal = origin.decisionsTotal + addition.decisionsTotal
+    }
+
+
+maybeAdd : Maybe Int -> Maybe Int -> Maybe Int
+maybeAdd m1 m2 =
+    case m1 of
+        Nothing ->
+            m2
+
+        Just i1 ->
+            case m2 of
+                Nothing ->
+                    Just i1
+
+                Just i2 ->
+                    Just <| i1 + i2
 
 
 {-| This should be high enough to always get all the entries at once.
@@ -215,110 +232,12 @@ asylumDecisionsDecoder =
                     |> required "coo_name" string
                     |> required "coa" string
                     |> required "coa_name" string
-                    |> required "procedure_type" procedureType
-                    |> optional "app_type" applicationType Nothing
-                    |> optional "dec_level" decisionsLevel Nothing
                     |> optional "dec_recognized" (maybe ambigousNumber) Nothing
                     |> optional "dec_other" (maybe ambigousNumber) Nothing
                     |> optional "dec_rejected" (maybe ambigousNumber) Nothing
                     |> optional "dec_closed" (maybe ambigousNumber) Nothing
                     |> required "dec_total" ambigousNumber
                 )
-
-
-type ProcedureType
-    = Government
-    | Joint
-    | UNHCR
-
-
-procedureType : JD.Decoder ProcedureType
-procedureType =
-    JD.andThen
-        (\str ->
-            case str of
-                "G" ->
-                    JD.succeed Government
-
-                "J" ->
-                    JD.succeed Joint
-
-                "U" ->
-                    JD.succeed UNHCR
-
-                unknownType ->
-                    JD.fail <| "Unknown procedure_type " ++ unknownType
-        )
-        JD.string
-
-
-type ApplicationType
-    = New
-    | Repeat
-    | Appeal
-
-
-applicationType : JD.Decoder (Maybe ApplicationType)
-applicationType =
-    JD.andThen
-        (\str ->
-            case str of
-                "N" ->
-                    JD.succeed <| Just New
-
-                "R" ->
-                    JD.succeed <| Just Repeat
-
-                "A" ->
-                    JD.succeed <| Just Appeal
-
-                unknownType ->
-                    JD.fail <| "Unknown app_type " ++ unknownType
-        )
-        JD.string
-
-
-type DecisionsLevel
-    = NewApplications
-    | FirstInstance
-    | AdministrativeReview
-    | RepeatedApplications
-    | USCitizenShipAndImmigrationServices
-    | USExecutiveOfficeOfImmigrationReview
-    | JudicialReview
-    | SubsidiaryProtection
-    | FirstInstanceAndAppeal
-    | TemporaryProtection
-    | TemporaryAsylum
-    | Backlog
-    | TemporaryLeave
-    | CantonalSwitzerland
-
-
-decisionsLevelDict =
-    Dict.fromList
-        [ ( "NA", NewApplications )
-        , ( "FI", FirstInstance )
-        , ( "AR", AdministrativeReview )
-        , ( "RA", RepeatedApplications )
-        , ( "IN", USCitizenShipAndImmigrationServices )
-        , ( "EO", USExecutiveOfficeOfImmigrationReview )
-        , ( "JR", JudicialReview )
-        , ( "SP", SubsidiaryProtection )
-        , ( "FA", FirstInstanceAndAppeal )
-        , ( "TP", TemporaryProtection )
-        , ( "TA", TemporaryAsylum )
-        , ( "BL", Backlog )
-        , ( "TR", TemporaryLeave )
-        , ( "CA", CantonalSwitzerland )
-        ]
-
-
-{-| TODO maybe fail here for unknown abbreviations?
--}
-decisionsLevel : JD.Decoder (Maybe DecisionsLevel)
-decisionsLevel =
-    JD.map (\str -> Dict.get str decisionsLevelDict) JD.string
 
 
 availableCOAs : List AsylumDecisionsJson -> AvailableCOAs
@@ -329,18 +248,23 @@ availableCOAs =
 buildAvailableCOAs : AsylumDecisionsJson -> AvailableCOAs -> AvailableCOAs
 buildAvailableCOAs obj old =
     let
-        coa o =
-            { procedureType = o.procedureType
-            , applicationType = o.applicationType
-            , decisionsLevel = o.decisionsLevel
-            , decisionsRecognized = o.decisionsRecognized
-            , decisionsOther = o.decisionsOther
-            , decisionsRejected = o.decisionsRejected
-            , decisionsClosed = o.decisionsClosed
-            , decisionsTotal = o.decisionsTotal
+        coa =
+            { decisionsRecognized = obj.decisionsRecognized
+            , decisionsOther = obj.decisionsOther
+            , decisionsRejected = obj.decisionsRejected
+            , decisionsClosed = obj.decisionsClosed
+            , decisionsTotal = obj.decisionsTotal
             }
 
+        updateYear value =
+            case value of
+                Nothing ->
+                    Just coa
+
+                Just origin ->
+                    Just <| mergeAsylumDecisions origin coa
+
         updateCOA value =
-            Just <| insert obj.year (coa obj) <| withDefault Dict.empty value
+            Just <| update obj.year updateYear <| withDefault Dict.empty value
     in
     update obj.coa_code updateCOA old

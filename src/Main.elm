@@ -220,52 +220,12 @@ coaYearVis : ( Year, AsylumDecisions ) -> Html Msg
 coaYearVis ( year, ad ) =
     div [] <|
         [ h1 [] [ text <| fromInt year ] ]
-            ++ procedureType ad.procedureType
-            ++ applicationType ad.applicationType
             ++ displayInt "decisions recognized: " ad.decisionsRecognized
             ++ displayInt "other decisions: " ad.decisionsOther
             ++ displayInt "decisions rejected: " ad.decisionsRejected
             ++ displayInt "decisions closed: " ad.decisionsClosed
             ++ [ text <| "decisions total: " ++ fromInt ad.decisionsTotal
                ]
-
-
-procedureType : ProcedureType -> List (Html Msg)
-procedureType pt =
-    [ case pt of
-        Government ->
-            text "Asylum applications were processed by the local government."
-
-        Joint ->
-            text "Asylum applications were processed by both the local government and UNHCR."
-
-        UNHCR ->
-            text "Asylum applications were processed by the UNHCR."
-    , br [] []
-    ]
-
-
-applicationType : Maybe ApplicationType -> List (Html Msg)
-applicationType maybeAt =
-    [ case maybeAt of
-        Nothing ->
-            text ""
-
-        Just at ->
-            text <|
-                "application type: "
-                    ++ (case at of
-                            New ->
-                                "New"
-
-                            Repeat ->
-                                "Repeat"
-
-                            Appeal ->
-                                "Appea"
-                       )
-    , br [] []
-    ]
 
 
 displayInt : String -> Maybe Int -> List (Html Msg)
