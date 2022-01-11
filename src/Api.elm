@@ -16,6 +16,7 @@ module Api exposing
     , unknownCountryCode
     )
 
+import Data
 import Dict exposing (Dict, insert, update)
 import Http
 import Json.Decode as JD exposing (int, maybe, string, succeed)
@@ -54,10 +55,12 @@ headers =
 
 type alias Country =
     { name : String
+    , iso : String
     }
 
 
 {-| UNHCR three letter country code notation
+Not to confuse with the ISO codes!
 -}
 type alias CountryCode =
     String
@@ -97,21 +100,36 @@ fetchCountries msgConstructor =
         }
 
 
+triple : a -> b -> c -> ( a, b, c )
+triple a b c =
+    ( a, b, c )
+
+
 countriesDecoder : JD.Decoder (Dict CountryCode Country)
 countriesDecoder =
     JD.andThen (countriesDict >> JD.succeed) <|
         JD.field "items" <|
             JD.list <|
-                JD.map2 Tuple.pair
+                JD.map3 triple
                     (JD.field "code" JD.string)
                     (JD.field "name" JD.string)
+                    (JD.field "iso" (JD.nullable JD.string))
 
 
-countriesDict : List ( CountryCode, String ) -> Dict CountryCode Country
+countriesDict : List ( CountryCode, String, Maybe String ) -> Dict CountryCode Country
 countriesDict unsortedPairs =
     let
         unsortedCountries =
-            map (\( cc, str ) -> ( cc, Country str )) unsortedPairs
+            List.filterMap
+                (\( cc, str, maybeIso ) ->
+                    case maybeIso of
+                        Nothing ->
+                            Nothing
+
+                        Just iso ->
+                            Just ( cc, Country str iso )
+                )
+                unsortedPairs
     in
     Dict.fromList <|
         List.sortWith (compareCountryCode2 Tuple.first) unsortedCountries
@@ -126,7 +144,9 @@ unknownCountryCode =
 
 
 unknownCountry =
-    { name = "Unknown" }
+    { name = "Unknown"
+    , iso = "UKN"
+    }
 
 
 {-| Intermediate representation of the JSON output to make decoding easier to comprehend.

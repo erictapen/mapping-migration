@@ -2,6 +2,7 @@ module Main exposing (main)
 
 import Api exposing (..)
 import Browser
+import Data
 import Dict exposing (Dict)
 import Graphics exposing (..)
 import Html exposing (Html, br, div, fieldset, h1, legend, option, select, text)
@@ -140,8 +141,8 @@ update msg model =
                                 coa =
                                     withDefault unknownCountryCode <|
                                         head <|
-                                            List.sortWith compareCountryCode <|
-                                                Dict.keys asylumDecisions
+                                            map Tuple.first <|
+                                                filteredAndSortedCOAs countries asylumDecisions
                             in
                             ( COASelected
                                 (COOSelect countries coo)
@@ -171,6 +172,32 @@ countryOption ( code, { name } ) =
     option [ value code ] [ text (name ++ " (" ++ code ++ ")") ]
 
 
+{-| We only want european countries in sorted order.
+-}
+filteredAndSortedCOAs : Dict CountryCode Country -> AvailableCOAs -> List ( CountryCode, Country )
+filteredAndSortedCOAs countries coas =
+    List.filterMap
+        (\cc ->
+            let
+                maybeCountry =
+                    Dict.get cc countries
+            in
+            case maybeCountry of
+                Nothing ->
+                    Nothing
+
+                Just country ->
+                    if List.member country.iso Data.europeanCountries then
+                        Just ( cc, country )
+
+                    else
+                        Nothing
+        )
+    <|
+        List.sortWith compareCountryCode <|
+            Dict.keys coas
+
+
 cooSelect countries =
     fieldset []
         [ legend [] [ text "country of origin" ]
@@ -190,53 +217,57 @@ coaSelect countries coas =
         fieldset []
             [ legend [] [ text "country of asylum" ]
             , select [ onInput ChangeCoa ] <|
-                map
-                    countryOption
-                <|
-                    map
-                        (\cc ->
-                            ( cc
-                            , withDefault unknownCountry <|
-                                Dict.get cc countries
-                            )
-                        )
-                    <|
-                        List.sortWith compareCountryCode <|
-                            Dict.keys coas
+                map countryOption <|
+                    filteredAndSortedCOAs countries coas
             ]
 
 
-coaVis : Maybe COA -> Html Msg
-coaVis maybeCoa =
+coaVis : Result String Int -> Maybe COA -> Html Msg
+coaVis maybePopulation maybeCoa =
     case maybeCoa of
         Nothing ->
             text ""
 
         Just coa ->
-            div [] <| map coaYearVis <| List.reverse <| List.sortBy Tuple.first <| Dict.toList coa
+            case maybePopulation of
+                Err e ->
+                    text e
+
+                Ok population ->
+                    div [] <|
+                        map (coaYearVis population) <|
+                            List.reverse <|
+                                List.sortBy Tuple.first <|
+                                    Dict.toList coa
 
 
-coaYearVis : ( Year, AsylumDecisions ) -> Html Msg
-coaYearVis ( year, ad ) =
+perCapitaUnit =
+    100000
+
+
+coaYearVis : Int -> ( Year, AsylumDecisions ) -> Html Msg
+coaYearVis population ( year, ad ) =
     div [] <|
         [ h1 [] [ text <| fromInt year ] ]
             ++ displayPersonsOrCases ad.personsOrCases
-            ++ displayInt "decisions recognized: " ad.decisionsRecognized
-            ++ displayInt "other decisions: " ad.decisionsOther
-            ++ displayInt "decisions rejected: " ad.decisionsRejected
-            ++ displayInt "decisions closed: " ad.decisionsClosed
-            ++ [ text <| "decisions total: " ++ fromInt ad.decisionsTotal
+            ++ displayInt "decisions recognized per 100k inhabitants: " ad.decisionsRecognized population
+            ++ displayInt "other decisions per 100k inhabitants: " ad.decisionsOther population
+            ++ displayInt "decisions rejected per 100k inhabitants: " ad.decisionsRejected population
+            ++ displayInt "decisions closed per 100k inhabitants: " ad.decisionsClosed population
+            ++ [ text <|
+                    "decisions per 100k inhabitants: "
+                        ++ (fromInt <| (ad.decisionsTotal * perCapitaUnit) // population)
                ]
 
 
-displayInt : String -> Maybe Int -> List (Html Msg)
-displayInt prefix maybeInt =
+displayInt : String -> Maybe Int -> Int -> List (Html Msg)
+displayInt prefix maybeInt div =
     case maybeInt of
         Nothing ->
             []
 
         Just dr ->
-            [ text <| prefix ++ fromInt dr, br [] [] ]
+            [ text <| prefix ++ fromInt ((dr * perCapitaUnit) // div), br [] [] ]
 
 
 displayPersonsOrCases : PersonsOrCases -> List (Html Msg)
@@ -249,6 +280,17 @@ displayPersonsOrCases pOrC =
             text "This data is based on Cases counts."
     , br [] []
     ]
+
+
+coaPopulation : Dict CountryCode Country -> CountryCode -> Result String Int
+coaPopulation countries cc =
+    case Dict.get cc countries of
+        Nothing ->
+            Err <| "Country " ++ cc ++ "not available."
+
+        Just country ->
+            Result.fromMaybe ("No population data for " ++ country.iso ++ ".") <|
+                (Dict.get country.iso >> Maybe.andThen (Dict.get 2018)) Data.population
 
 
 view : Model -> Browser.Document Msg
@@ -268,7 +310,7 @@ view model =
             COASelected (COOSelect countries selectedCOO) (COASelect availableCOAs selectedCOA) ->
                 [ cooSelect countries
                 , coaSelect countries availableCOAs
-                , coaVis <| Dict.get selectedCOA availableCOAs
+                , coaVis (coaPopulation countries selectedCOA) <| Dict.get selectedCOA availableCOAs
                 , br [] []
                 , Html.pre []
                     [ text <|
