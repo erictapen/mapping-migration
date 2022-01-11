@@ -4,8 +4,8 @@ module Api exposing
     , COA
     , Country
     , CountryCode
-    , Year
     , PersonsOrCases(..)
+    , Year
     , asylumDecisionsDecoder
     , asylumDecisionsPath
     , compareCountryCode
@@ -145,6 +145,7 @@ type alias AsylumDecisionsJson =
     , personsOrCases : PersonsOrCases
     }
 
+
 asylumDecisionsDecoder : JD.Decoder AvailableCOAs
 asylumDecisionsDecoder =
     JD.andThen (availableCOAs >> succeed) <|
@@ -180,14 +181,25 @@ type alias COA =
 type alias Year =
     Int
 
-type PersonsOrCases = Persons | Cases
+
+type PersonsOrCases
+    = Persons
+    | Cases
+
 
 personsOrCases : JD.Decoder PersonsOrCases
-personsOrCases = JD.andThen (\str ->
+personsOrCases =
+    JD.andThen
+        (\str ->
             case str of
-                "P" -> JD.succeed Persons
-                "C" -> JD.succeed Cases
-                unknownType -> JD.fail <| "Unknown dec_pc " ++ unknownType
+                "P" ->
+                    JD.succeed Persons
+
+                "C" ->
+                    JD.succeed Cases
+
+                unknownType ->
+                    JD.fail <| "Unknown dec_pc " ++ unknownType
         )
         JD.string
 
@@ -253,7 +265,6 @@ fetchAsylumDecisions msgConstructor coo =
         , timeout = Nothing
         , tracker = Nothing
         }
-
 
 
 availableCOAs : List AsylumDecisionsJson -> AvailableCOAs

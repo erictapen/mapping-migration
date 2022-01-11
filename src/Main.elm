@@ -238,12 +238,18 @@ displayInt prefix maybeInt =
         Just dr ->
             [ text <| prefix ++ fromInt dr, br [] [] ]
 
+
 displayPersonsOrCases : PersonsOrCases -> List (Html Msg)
-displayPersonsOrCases pOrC = [ case pOrC of
-        Persons -> text "This data is based on Person counts."
-        Cases -> text "This data is based on Cases counts."
-        , br [] []
-        ]
+displayPersonsOrCases pOrC =
+    [ case pOrC of
+        Persons ->
+            text "This data is based on Person counts."
+
+        Cases ->
+            text "This data is based on Cases counts."
+    , br [] []
+    ]
+
 
 view : Model -> Browser.Document Msg
 view model =
