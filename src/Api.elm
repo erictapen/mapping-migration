@@ -5,6 +5,7 @@ module Api exposing
     , Country
     , CountryCode
     , Year
+    , PersonsOrCases(..)
     , asylumDecisionsDecoder
     , asylumDecisionsPath
     , compareCountryCode
@@ -141,7 +142,27 @@ type alias AsylumDecisionsJson =
     , decisionsRejected : Maybe Int
     , decisionsClosed : Maybe Int
     , decisionsTotal : Int
+    , personsOrCases : PersonsOrCases
     }
+
+asylumDecisionsDecoder : JD.Decoder AvailableCOAs
+asylumDecisionsDecoder =
+    JD.andThen (availableCOAs >> succeed) <|
+        JD.field "items" <|
+            JD.list <|
+                (JD.succeed AsylumDecisionsJson
+                    |> required "year" int
+                    |> required "coo" string
+                    |> required "coo_name" string
+                    |> required "coa" string
+                    |> required "coa_name" string
+                    |> optional "dec_recognized" (maybe ambigousNumber) Nothing
+                    |> optional "dec_other" (maybe ambigousNumber) Nothing
+                    |> optional "dec_rejected" (maybe ambigousNumber) Nothing
+                    |> optional "dec_closed" (maybe ambigousNumber) Nothing
+                    |> required "dec_total" ambigousNumber
+                    |> required "dec_pc" personsOrCases
+                )
 
 
 {-| All the available data for a given COO
@@ -159,6 +180,17 @@ type alias COA =
 type alias Year =
     Int
 
+type PersonsOrCases = Persons | Cases
+
+personsOrCases : JD.Decoder PersonsOrCases
+personsOrCases = JD.andThen (\str ->
+            case str of
+                "P" -> JD.succeed Persons
+                "C" -> JD.succeed Cases
+                unknownType -> JD.fail <| "Unknown dec_pc " ++ unknownType
+        )
+        JD.string
+
 
 type alias AsylumDecisions =
     { decisionsRecognized : Maybe Int
@@ -166,6 +198,7 @@ type alias AsylumDecisions =
     , decisionsRejected : Maybe Int
     , decisionsClosed : Maybe Int
     , decisionsTotal : Int
+    , personsOrCases : PersonsOrCases
     }
 
 
@@ -176,6 +209,7 @@ mergeAsylumDecisions origin addition =
     , decisionsRejected = maybeAdd origin.decisionsRejected addition.decisionsRejected
     , decisionsClosed = maybeAdd origin.decisionsClosed addition.decisionsClosed
     , decisionsTotal = origin.decisionsTotal + addition.decisionsTotal
+    , personsOrCases = origin.personsOrCases
     }
 
 
@@ -221,24 +255,6 @@ fetchAsylumDecisions msgConstructor coo =
         }
 
 
-asylumDecisionsDecoder : JD.Decoder AvailableCOAs
-asylumDecisionsDecoder =
-    JD.andThen (availableCOAs >> succeed) <|
-        JD.field "items" <|
-            JD.list <|
-                (JD.succeed AsylumDecisionsJson
-                    |> required "year" int
-                    |> required "coo" string
-                    |> required "coo_name" string
-                    |> required "coa" string
-                    |> required "coa_name" string
-                    |> optional "dec_recognized" (maybe ambigousNumber) Nothing
-                    |> optional "dec_other" (maybe ambigousNumber) Nothing
-                    |> optional "dec_rejected" (maybe ambigousNumber) Nothing
-                    |> optional "dec_closed" (maybe ambigousNumber) Nothing
-                    |> required "dec_total" ambigousNumber
-                )
-
 
 availableCOAs : List AsylumDecisionsJson -> AvailableCOAs
 availableCOAs =
@@ -254,6 +270,7 @@ buildAvailableCOAs obj old =
             , decisionsRejected = obj.decisionsRejected
             , decisionsClosed = obj.decisionsClosed
             , decisionsTotal = obj.decisionsTotal
+            , personsOrCases = obj.personsOrCases
             }
 
         updateYear value =
