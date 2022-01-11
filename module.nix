@@ -43,7 +43,15 @@ in
           {
             "/" = {
               root = webapp;
-              tryFiles = "$uri/Main.html =404";
+              tryFiles = "$uri/index.html =404";
+            };
+            "/Main.min.js" = {
+              root = webapp;
+              tryFiles = "$uri =404";
+            };
+            "/Main.js" = {
+              root = webapp;
+              tryFiles = "$uri =404";
             };
             "= /unhcr-api/population/v1/countries/" = {
               proxyPass = "https://api.unhcr.org/population/v1/countries/";
