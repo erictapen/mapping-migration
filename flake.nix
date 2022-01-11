@@ -22,6 +22,9 @@
           elm-format
           elm-test
           elm2nix
+          (python3.withPackages (ps: with ps; [
+            pandas
+          ]))
         ];
       };
 
