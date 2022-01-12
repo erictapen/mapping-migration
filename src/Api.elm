@@ -226,22 +226,22 @@ personsOrCases =
 
 
 type alias AsylumDecisions =
-    { decisionsRecognized : Maybe Int
-    , decisionsOther : Maybe Int
-    , decisionsRejected : Maybe Int
-    , decisionsClosed : Maybe Int
-    , decisionsTotal : Int
+    { recognized : Maybe Int
+    , other : Maybe Int
+    , rejected : Maybe Int
+    , closed : Maybe Int
+    , total : Int
     , personsOrCases : PersonsOrCases
     }
 
 
 mergeAsylumDecisions : AsylumDecisions -> AsylumDecisions -> AsylumDecisions
 mergeAsylumDecisions origin addition =
-    { decisionsRecognized = maybeAdd origin.decisionsRecognized addition.decisionsRecognized
-    , decisionsOther = maybeAdd origin.decisionsOther addition.decisionsOther
-    , decisionsRejected = maybeAdd origin.decisionsRejected addition.decisionsRejected
-    , decisionsClosed = maybeAdd origin.decisionsClosed addition.decisionsClosed
-    , decisionsTotal = origin.decisionsTotal + addition.decisionsTotal
+    { recognized = maybeAdd origin.recognized addition.recognized
+    , other = maybeAdd origin.other addition.other
+    , rejected = maybeAdd origin.rejected addition.rejected
+    , closed = maybeAdd origin.closed addition.closed
+    , total = origin.total + addition.total
     , personsOrCases = origin.personsOrCases
     }
 
@@ -297,11 +297,11 @@ buildAvailableCOAs : AsylumDecisionsJson -> AvailableCOAs -> AvailableCOAs
 buildAvailableCOAs obj old =
     let
         coa =
-            { decisionsRecognized = obj.decisionsRecognized
-            , decisionsOther = obj.decisionsOther
-            , decisionsRejected = obj.decisionsRejected
-            , decisionsClosed = obj.decisionsClosed
-            , decisionsTotal = obj.decisionsTotal
+            { recognized = obj.decisionsRecognized
+            , other = obj.decisionsOther
+            , rejected = obj.decisionsRejected
+            , closed = obj.decisionsClosed
+            , total = obj.decisionsTotal
             , personsOrCases = obj.personsOrCases
             }
 

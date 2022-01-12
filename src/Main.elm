@@ -12,6 +12,8 @@ import List exposing (filter, head, map)
 import Maybe exposing (withDefault)
 import Platform.Cmd
 import String exposing (fromInt)
+import Svg as S exposing (Svg, rect, svg)
+import Svg.Attributes as SA exposing (height, viewBox, width, x, y)
 import Task
 import Time
 
@@ -262,18 +264,31 @@ coaVis maybePopulation maybeAsylumDecisions =
                     text e
 
                 Ok population ->
-                    div [] <|
-                        displayPersonsOrCases ad.personsOrCases
-                            ++ displayInt "decisions recognized per 100k inhabitants: " ad.decisionsRecognized population
-                            ++ displayInt "other decisions per 100k inhabitants: " ad.decisionsOther population
-                            ++ displayInt "decisions rejected per 100k inhabitants: " ad.decisionsRejected population
-                            ++ displayInt "decisions closed per 100k inhabitants: " ad.decisionsClosed population
-                            ++ [ text <|
-                                    "decisions per 100k inhabitants: "
-                                        ++ (fromInt <| (ad.decisionsTotal * perCapitaUnit) // population)
-                               ]
+                    div []
+                        [ h1 [] [ text "Country name placeholder" ]
+                        , coaSvg ad
+                        ]
 
 
+coaSvg : AsylumDecisions -> Html Msg
+coaSvg ad =
+    svg
+        [ width "100"
+        , height "100"
+        , viewBox "0 0 100 100"
+        ]
+        [ rect
+            [ x <| fromInt <| (withDefault 0 ad.other) // ad.total
+            , width "10"
+            , height "100"
+            , SA.id "other"
+            ]
+            []
+        ]
+
+
+{-| Granularity in which we calculate asylum decision count in relation to population of the COA
+-}
 perCapitaUnit =
     100000
 
