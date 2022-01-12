@@ -258,31 +258,34 @@ yearInput years =
 
 coaVis : String -> Result String Int -> Maybe AsylumDecisions -> Html Msg
 coaVis countryName maybePopulation maybeAsylumDecisions =
-    case maybeAsylumDecisions of
-        Nothing ->
-            text "No data for this year."
+    div []
+        ([ h1 [] [ text countryName ] ]
+            ++ (case maybeAsylumDecisions of
+                    Nothing ->
+                        [ text "No data for this year." ]
 
-        Just ad ->
-            case maybePopulation of
-                Err e ->
-                    text e
+                    Just ad ->
+                        case maybePopulation of
+                            Err e ->
+                                [ text e ]
 
-                Ok population ->
-                    div []
-                        ([ h1 [] [ text countryName ]
-                         , text <|
-                            "Per " ++ perCapitaUnitString ++ " inhabitants there were "
-                                ++ fromInt (ad.total * perCapitaUnit // population)
-                                ++ " decisions in total"
-                         , coaSvg ad
-                         , br [] []
-                         ]
-                            ++ displayPersonsOrCases ad.personsOrCases
-                            ++ displayInt "otherwise closed: " ad.closed population
-                            ++ displayInt "complementary protection: " ad.other population
-                            ++ displayInt "recognized: " ad.recognized population
-                            ++ displayInt "rejected: " ad.rejected population
-                        )
+                            Ok population ->
+                                [ text <|
+                                    "Per "
+                                        ++ perCapitaUnitString
+                                        ++ " inhabitants there were "
+                                        ++ fromInt (ad.total * perCapitaUnit // population)
+                                        ++ " decisions in total"
+                                , coaSvg ad
+                                , br [] []
+                                ]
+                                    ++ displayPersonsOrCases ad.personsOrCases
+                                    ++ displayInt "otherwise closed: " ad.closed population
+                                    ++ displayInt "complementary protection: " ad.other population
+                                    ++ displayInt "recognized: " ad.recognized population
+                                    ++ displayInt "rejected: " ad.rejected population
+               )
+        )
 
 
 coaSvg : AsylumDecisions -> Html Msg
