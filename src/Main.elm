@@ -256,8 +256,8 @@ yearInput years =
         map yearOption years
 
 
-coaVis : Result String Int -> Maybe AsylumDecisions -> Html Msg
-coaVis maybePopulation maybeAsylumDecisions =
+coaVis : String -> Result String Int -> Maybe AsylumDecisions -> Html Msg
+coaVis countryName maybePopulation maybeAsylumDecisions =
     case maybeAsylumDecisions of
         Nothing ->
             text "No data for this year."
@@ -269,7 +269,7 @@ coaVis maybePopulation maybeAsylumDecisions =
 
                 Ok population ->
                     div []
-                        ([ h1 [] [ text "Country name placeholder" ]
+                        ([ h1 [] [ text countryName ]
                          , coaSvg ad
                          , br [] []
                          ]
@@ -403,7 +403,13 @@ view model =
                     , text selectedYear
                     ]
                 , div [ id "vis", class "base" ]
-                    [ coaVis (coaPopulation countries selectedCOA) <|
+                    [ coaVis
+                        (withDefault "Country Name not found!" <|
+                            Maybe.map .name <|
+                                Dict.get selectedCOA countries
+                        )
+                        (coaPopulation countries selectedCOA)
+                      <|
                         Maybe.andThen (Dict.get selectedYear) <|
                             Dict.get selectedCOA availableCOAs
                     , br [] []
