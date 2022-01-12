@@ -11,9 +11,9 @@ import Http exposing (get)
 import List exposing (filter, head, map)
 import Maybe exposing (withDefault)
 import Platform.Cmd
-import String exposing (fromInt)
+import String exposing (fromFloat, fromInt)
 import Svg as S exposing (Svg, rect, svg)
-import Svg.Attributes as SA exposing (height, viewBox, width, x, y)
+import Svg.Attributes as SA exposing (fill, height, stroke, viewBox, width, x, y, preserveAspectRatio)
 import Task
 import Time
 
@@ -265,26 +265,67 @@ coaVis maybePopulation maybeAsylumDecisions =
 
                 Ok population ->
                     div []
-                        [ h1 [] [ text "Country name placeholder" ]
-                        , coaSvg ad
-                        ]
+                        ([ h1 [] [ text "Country name placeholder" ]
+                         , coaSvg ad
+                         , br [] []
+                         ]
+                            ++ displayPersonsOrCases ad.personsOrCases
+                            ++ displayInt "decisions recognized per 100k inhabitants: " ad.recognized population
+                            ++ displayInt "other decisions per 100k inhabitants: " ad.other population
+                            ++ displayInt "decisions rejected per 100k inhabitants: " ad.rejected population
+                            ++ displayInt "decisions closed per 100k inhabitants: " ad.closed population
+                            ++ [ text <|
+                                    "decisions per 100k inhabitants: "
+                                        ++ (fromInt <| (ad.total * perCapitaUnit) // population)
+                               ]
+                        )
+
+
+
+-- complementary: #afafaf
 
 
 coaSvg : AsylumDecisions -> Html Msg
 coaSvg ad =
     svg
-        [ width "100"
-        , height "100"
-        , viewBox "0 0 100 100"
+        [ width "1"
+        , height "1"
+        , viewBox "0 0 1 1"
+        , id "bar"
+        , preserveAspectRatio "none"
         ]
-        [ rect
-            [ x <| fromInt <| withDefault 0 ad.other // ad.total
-            , width "10"
-            , height "100"
-            , SA.id "other"
-            ]
-            []
+        [ barElement
+            ad.total
+            (withDefault 0 ad.other)
+            0
+            "other"
+            "#c6c6c6"
+        , barElement
+            ad.total
+            (withDefault 0 ad.recognized)
+            (withDefault 0 ad.other)
+            "recognized"
+            "#8e8d8d"
+        , barElement
+            ad.total
+            (withDefault 0 ad.rejected)
+            (withDefault 0 ad.other + withDefault 0 ad.recognized)
+            "rejected"
+            "#6d6d6d"
         ]
+
+
+barElement : Int -> Int -> Int -> String -> String -> Svg Msg
+barElement total dividend position id color =
+    rect
+        [ x <| fromFloat <| toFloat position / toFloat total
+        , width <| fromFloat <| toFloat dividend / toFloat total
+        , height "1"
+        , stroke "none"
+        , fill color
+        , SA.id id
+        ]
+        []
 
 
 {-| Granularity in which we calculate asylum decision count in relation to population of the COA
