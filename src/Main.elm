@@ -6,7 +6,7 @@ import Data
 import Dict exposing (Dict)
 import Graphics exposing (..)
 import Html exposing (Html, br, div, fieldset, h1, legend, option, select, text)
-import Html.Attributes exposing (value)
+import Html.Attributes exposing (id, value, class)
 import Html.Events exposing (onInput)
 import Http exposing (get)
 import List exposing (filter, head, map)
@@ -308,15 +308,19 @@ view model =
                 [ cooSelect countries, text "loading..." ]
 
             COASelected (COOSelect countries selectedCOO) (COASelect availableCOAs selectedCOA) ->
-                [ cooSelect countries
-                , coaSelect countries availableCOAs
-                , coaVis (coaPopulation countries selectedCOA) <| Dict.get selectedCOA availableCOAs
-                , br [] []
-                , Html.pre []
-                    [ text <|
-                        "curl -H 'Accept: application/json' '"
-                            ++ asylumDecisionsPath selectedCOO
-                            ++ "'"
+                [ div [ id "menu", class "base" ]
+                    [ cooSelect countries
+                    , coaSelect countries availableCOAs
+                    ]
+                , div [ id "vis", class "base" ]
+                    [ coaVis (coaPopulation countries selectedCOA) <| Dict.get selectedCOA availableCOAs
+                    , br [] []
+                    , Html.pre []
+                        [ text <|
+                            "curl -H 'Accept: application/json' '"
+                                ++ asylumDecisionsPath selectedCOO
+                                ++ "'"
+                        ]
                     ]
                 ]
     }
