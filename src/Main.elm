@@ -4,8 +4,8 @@ import Api exposing (..)
 import Browser
 import Data
 import Dict exposing (Dict)
-import Html exposing (Html, br, div, fieldset, h1, legend, option, select, text)
-import Html.Attributes exposing (class, id, value)
+import Html exposing (Html, br, div, fieldset, h1, input, legend, option, select, text)
+import Html.Attributes as HA exposing (class, id, type_, value)
 import Html.Events exposing (onInput)
 import Http exposing (get)
 import List exposing (filter, head, map)
@@ -13,7 +13,7 @@ import Maybe exposing (withDefault)
 import Platform.Cmd
 import String exposing (fromFloat, fromInt)
 import Svg as S exposing (Svg, rect, svg)
-import Svg.Attributes as SA exposing (fill, height, stroke, viewBox, width, x, y, preserveAspectRatio)
+import Svg.Attributes as SA exposing (fill, height, preserveAspectRatio, stroke, viewBox, width, x, y)
 import Task
 import Time
 
@@ -142,7 +142,7 @@ update msg model =
 
                                 year =
                                     withDefault "unknownYear" <|
-                                        Maybe.andThen head <|
+                                        Maybe.andThen List.maximum <|
                                             Maybe.map Dict.keys <|
                                                 Dict.get coa availableCOAs
                             in
@@ -161,7 +161,7 @@ update msg model =
                     let
                         year =
                             withDefault "unknownYear" <|
-                                Maybe.andThen head <|
+                                Maybe.andThen List.maximum <|
                                     Maybe.map Dict.keys <|
                                         Dict.get selectedCoa availableCOAs
                     in
@@ -244,19 +244,23 @@ yearOption year =
     option [ value year ] [ text year ]
 
 
-yearSelect : List Year -> Html Msg
-yearSelect years =
-    fieldset []
-        [ legend [] [ text "year" ]
-        , select [ onInput ChangeYear ] <| map yearOption years
+yearInput : List Year -> Html Msg
+yearInput years =
+    input
+        [ type_ "range"
+        , onInput ChangeYear
+        , HA.min <| withDefault "0" <| List.minimum years
+        , HA.max <| withDefault "0" <| List.maximum years
         ]
+    <|
+        map yearOption years
 
 
 coaVis : Result String Int -> Maybe AsylumDecisions -> Html Msg
 coaVis maybePopulation maybeAsylumDecisions =
     case maybeAsylumDecisions of
         Nothing ->
-            text ""
+            text "No data for this year."
 
         Just ad ->
             case maybePopulation of
@@ -390,7 +394,13 @@ view model =
                 [ div [ id "menu", class "base" ]
                     [ cooSelect countries
                     , coaSelect countries availableCOAs
-                    , div [] [ yearSelect <| withDefault [] <| Maybe.map Dict.keys <| Dict.get selectedCOA availableCOAs ]
+                    , div []
+                        [ yearInput <|
+                            withDefault [] <|
+                                Maybe.map Dict.keys <|
+                                    Dict.get selectedCOA availableCOAs
+                        ]
+                    , text selectedYear
                     ]
                 , div [ id "vis", class "base" ]
                     [ coaVis (coaPopulation countries selectedCOA) <|
