@@ -349,11 +349,11 @@ barElement total dividend position id color =
 {-| Granularity in which we calculate asylum decision count in relation to population of the COA
 -}
 perCapitaUnit =
-    100000
+    500000
 
 
 perCapitaUnitString =
-    "100,000"
+    "500,000"
 
 
 displayInt : String -> Maybe Int -> Int -> List (Html Msg)
