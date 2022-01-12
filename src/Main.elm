@@ -4,7 +4,6 @@ import Api exposing (..)
 import Browser
 import Data
 import Dict exposing (Dict)
-import Graphics exposing (..)
 import Html exposing (Html, br, div, fieldset, h1, legend, option, select, text)
 import Html.Attributes exposing (class, id, value)
 import Html.Events exposing (onInput)
