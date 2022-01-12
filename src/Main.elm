@@ -278,22 +278,10 @@ coaVis countryName maybePopulation maybeAsylumDecisions =
                          , br [] []
                          ]
                             ++ displayPersonsOrCases ad.personsOrCases
-                            ++ displayInt
-                                ("decisions recognized per " ++ perCapitaUnitString ++ " inhabitants: ")
-                                ad.recognized
-                                population
-                            ++ displayInt
-                                ("other decisions per " ++ perCapitaUnitString ++ " inhabitants: ")
-                                ad.other
-                                population
-                            ++ displayInt
-                                ("decisions rejected per " ++ perCapitaUnitString ++ " inhabitants: ")
-                                ad.rejected
-                                population
-                            ++ displayInt
-                                ("decisions closed per " ++ perCapitaUnitString ++ " inhabitants: ")
-                                ad.closed
-                                population
+                            ++ displayInt "otherwise closed: " ad.closed population
+                            ++ displayInt "complementary protection: " ad.other population
+                            ++ displayInt "recognized: " ad.recognized population
+                            ++ displayInt "rejected: " ad.rejected population
                         )
 
 
@@ -310,7 +298,7 @@ coaSvg ad =
             ad.total
             (withDefault 0 ad.closed)
             0
-            "other"
+            "otherwise_closed"
             "#c6c6c6"
         , barElement
             ad.total
