@@ -270,6 +270,10 @@ coaVis countryName maybePopulation maybeAsylumDecisions =
                 Ok population ->
                     div []
                         ([ h1 [] [ text countryName ]
+                         , text <|
+                            "Per 100,000 inhabitants there were "
+                                ++ fromInt (ad.total * perCapitaUnit // population)
+                                ++ " decisions in total"
                          , coaSvg ad
                          , br [] []
                          ]
@@ -278,10 +282,6 @@ coaVis countryName maybePopulation maybeAsylumDecisions =
                             ++ displayInt "other decisions per 100k inhabitants: " ad.other population
                             ++ displayInt "decisions rejected per 100k inhabitants: " ad.rejected population
                             ++ displayInt "decisions closed per 100k inhabitants: " ad.closed population
-                            ++ [ text <|
-                                    "decisions per 100k inhabitants: "
-                                        ++ (fromInt <| (ad.total * perCapitaUnit) // population)
-                               ]
                         )
 
 
