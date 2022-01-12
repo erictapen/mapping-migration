@@ -206,6 +206,7 @@ type alias Year =
 type PersonsOrCases
     = Persons
     | Cases
+    | Mixed
 
 
 personsOrCases : JD.Decoder PersonsOrCases
@@ -242,7 +243,12 @@ mergeAsylumDecisions origin addition =
     , rejected = maybeAdd origin.rejected addition.rejected
     , closed = maybeAdd origin.closed addition.closed
     , total = origin.total + addition.total
-    , personsOrCases = origin.personsOrCases
+    , personsOrCases =
+        if origin.personsOrCases == addition.personsOrCases then
+            origin.personsOrCases
+
+        else
+            Mixed
     }
 
 

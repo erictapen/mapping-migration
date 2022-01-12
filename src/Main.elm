@@ -278,7 +278,7 @@ coaSvg ad =
         , viewBox "0 0 100 100"
         ]
         [ rect
-            [ x <| fromInt <| (withDefault 0 ad.other) // ad.total
+            [ x <| fromInt <| withDefault 0 ad.other // ad.total
             , width "10"
             , height "100"
             , SA.id "other"
@@ -311,6 +311,9 @@ displayPersonsOrCases pOrC =
 
         Cases ->
             text "This data is based on Cases counts."
+
+        Mixed ->
+            text "This data is based on both Cases and Person counts!"
     , br [] []
     ]
 
