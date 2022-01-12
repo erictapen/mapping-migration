@@ -6,7 +6,7 @@ import Data
 import Dict exposing (Dict)
 import Graphics exposing (..)
 import Html exposing (Html, br, div, fieldset, h1, legend, option, select, text)
-import Html.Attributes exposing (id, value, class)
+import Html.Attributes exposing (class, id, value)
 import Html.Events exposing (onInput)
 import Http exposing (get)
 import List exposing (filter, head, map)
@@ -77,7 +77,7 @@ type COOSelect
 
 
 type COASelect
-    = COASelect AvailableCOAs CountryCode
+    = COASelect AvailableCOAs CountryCode Year
 
 
 type Msg
@@ -86,6 +86,7 @@ type Msg
     | ChangeCoo CountryCode
     | GotAsylumDecisions (Result Http.Error AvailableCOAs)
     | ChangeCoa CountryCode
+    | ChangeYear Year
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -113,17 +114,11 @@ update msg model =
                     in
                     ( COALoading (COOSelect countries coo), fetchAsylumDecisions GotAsylumDecisions coo )
 
-        ChangeCoo countryCode ->
+        ChangeCoo selectedCoo ->
             case model of
-                -- TODO not sure wether we should do noop in this case.
-                COALoading (COOSelect countries _) ->
-                    ( COALoading (COOSelect countries countryCode)
-                    , fetchAsylumDecisions GotAsylumDecisions countryCode
-                    )
-
                 COASelected (COOSelect countries _) _ ->
-                    ( COALoading (COOSelect countries countryCode)
-                    , fetchAsylumDecisions GotAsylumDecisions countryCode
+                    ( COALoading (COOSelect countries selectedCoo)
+                    , fetchAsylumDecisions GotAsylumDecisions selectedCoo
                     )
 
                 _ ->
@@ -134,7 +129,7 @@ update msg model =
                 Err _ ->
                     ( CountriesLoadingFailed, Cmd.none )
 
-                Ok asylumDecisions ->
+                Ok availableCOAs ->
                     case model of
                         COALoading (COOSelect countries coo) ->
                             let
@@ -142,21 +137,42 @@ update msg model =
                                     withDefault unknownCountryCode <|
                                         head <|
                                             map Tuple.first <|
-                                                filteredAndSortedCOAs countries asylumDecisions
+                                                filteredAndSortedCOAs countries availableCOAs
+
+                                year =
+                                    withDefault "unknownYear" <|
+                                        Maybe.andThen head <|
+                                            Maybe.map Dict.keys <|
+                                                Dict.get coa availableCOAs
                             in
                             ( COASelected
                                 (COOSelect countries coo)
-                                (COASelect asylumDecisions coa)
+                                (COASelect availableCOAs coa year)
                             , Cmd.none
                             )
 
                         _ ->
                             noop
 
-        ChangeCoa countryCode ->
+        ChangeCoa selectedCoa ->
             case model of
-                COASelected cooS (COASelect availableCOAs _) ->
-                    ( COASelected cooS (COASelect availableCOAs countryCode), Cmd.none )
+                COASelected cooS (COASelect availableCOAs _ _) ->
+                    let
+                        year =
+                            withDefault "unknownYear" <|
+                                Maybe.andThen head <|
+                                    Maybe.map Dict.keys <|
+                                        Dict.get selectedCoa availableCOAs
+                    in
+                    ( COASelected cooS (COASelect availableCOAs selectedCoa year), Cmd.none )
+
+                _ ->
+                    noop
+
+        ChangeYear year ->
+            case model of
+                COASelected cooS (COASelect availableCOAs coa _) ->
+                    ( COASelected cooS (COASelect availableCOAs coa year), Cmd.none )
 
                 _ ->
                     noop
@@ -222,8 +238,21 @@ coaSelect countries coas =
             ]
 
 
-coaVis : Result String Int -> Maybe COA -> Html Msg
-coaVis maybePopulation maybeCoa =
+yearOption : String -> Html Msg
+yearOption year =
+    option [ value year ] [ text year ]
+
+
+yearSelect : List Year -> Html Msg
+yearSelect years =
+    fieldset []
+        [ legend [] [ text "year" ]
+        , select [ onInput ChangeYear ] <| map yearOption years
+        ]
+
+
+coaVis : Year -> Result String Int -> Maybe COA -> Html Msg
+coaVis year maybePopulation maybeCoa =
     case maybeCoa of
         Nothing ->
             text ""
@@ -234,11 +263,12 @@ coaVis maybePopulation maybeCoa =
                     text e
 
                 Ok population ->
-                    div [] <|
-                        map (coaYearVis population) <|
-                            List.reverse <|
-                                List.sortBy Tuple.first <|
-                                    Dict.toList coa
+                    case Dict.get year coa of
+                        Nothing ->
+                            text "Error"
+
+                        Just data ->
+                            coaYearVis population ( year, data )
 
 
 perCapitaUnit =
@@ -248,7 +278,7 @@ perCapitaUnit =
 coaYearVis : Int -> ( Year, AsylumDecisions ) -> Html Msg
 coaYearVis population ( year, ad ) =
     div [] <|
-        [ h1 [] [ text <| fromInt year ] ]
+        [ h1 [] [ text year ] ]
             ++ displayPersonsOrCases ad.personsOrCases
             ++ displayInt "decisions recognized per 100k inhabitants: " ad.decisionsRecognized population
             ++ displayInt "other decisions per 100k inhabitants: " ad.decisionsOther population
@@ -305,15 +335,17 @@ view model =
                 [ text "An error occured while fetching the countries!" ]
 
             COALoading (COOSelect countries _) ->
-                [ cooSelect countries, text "loading..." ]
+                [ div [ id "menu", class "base" ]
+                    [ cooSelect countries, text "loading..." ] ]
 
-            COASelected (COOSelect countries selectedCOO) (COASelect availableCOAs selectedCOA) ->
+            COASelected (COOSelect countries selectedCOO) (COASelect availableCOAs selectedCOA selectedYear) ->
                 [ div [ id "menu", class "base" ]
                     [ cooSelect countries
                     , coaSelect countries availableCOAs
+                    , div [] [ yearSelect <| withDefault [] <| Maybe.map Dict.keys <| Dict.get selectedCOA availableCOAs ]
                     ]
                 , div [ id "vis", class "base" ]
-                    [ coaVis (coaPopulation countries selectedCOA) <| Dict.get selectedCOA availableCOAs
+                    [ coaVis selectedYear (coaPopulation countries selectedCOA) <| Dict.get selectedCOA availableCOAs
                     , br [] []
                     , Html.pre []
                         [ text <|

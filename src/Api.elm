@@ -23,6 +23,7 @@ import Json.Decode as JD exposing (int, maybe, string, succeed)
 import Json.Decode.Pipeline exposing (optional, required)
 import List exposing (foldr, map)
 import Maybe exposing (withDefault)
+import String exposing (fromInt)
 
 
 
@@ -172,7 +173,7 @@ asylumDecisionsDecoder =
         JD.field "items" <|
             JD.list <|
                 (JD.succeed AsylumDecisionsJson
-                    |> required "year" int
+                    |> required "year" (JD.andThen (fromInt >> succeed) int)
                     |> required "coo" string
                     |> required "coo_name" string
                     |> required "coa" string
@@ -199,7 +200,7 @@ type alias COA =
 
 
 type alias Year =
-    Int
+    String
 
 
 type PersonsOrCases
