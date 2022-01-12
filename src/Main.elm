@@ -256,31 +256,26 @@ coaVis maybePopulation maybeAsylumDecisions =
         Nothing ->
             text ""
 
-        Just asylumDecisions ->
+        Just ad ->
             case maybePopulation of
                 Err e ->
                     text e
 
                 Ok population ->
-                    coaYearVis population asylumDecisions
+                    div [] <|
+                        displayPersonsOrCases ad.personsOrCases
+                            ++ displayInt "decisions recognized per 100k inhabitants: " ad.decisionsRecognized population
+                            ++ displayInt "other decisions per 100k inhabitants: " ad.decisionsOther population
+                            ++ displayInt "decisions rejected per 100k inhabitants: " ad.decisionsRejected population
+                            ++ displayInt "decisions closed per 100k inhabitants: " ad.decisionsClosed population
+                            ++ [ text <|
+                                    "decisions per 100k inhabitants: "
+                                        ++ (fromInt <| (ad.decisionsTotal * perCapitaUnit) // population)
+                               ]
 
 
 perCapitaUnit =
     100000
-
-
-coaYearVis : Int -> AsylumDecisions -> Html Msg
-coaYearVis population ad =
-    div [] <|
-        displayPersonsOrCases ad.personsOrCases
-            ++ displayInt "decisions recognized per 100k inhabitants: " ad.decisionsRecognized population
-            ++ displayInt "other decisions per 100k inhabitants: " ad.decisionsOther population
-            ++ displayInt "decisions rejected per 100k inhabitants: " ad.decisionsRejected population
-            ++ displayInt "decisions closed per 100k inhabitants: " ad.decisionsClosed population
-            ++ [ text <|
-                    "decisions per 100k inhabitants: "
-                        ++ (fromInt <| (ad.decisionsTotal * perCapitaUnit) // population)
-               ]
 
 
 displayInt : String -> Maybe Int -> Int -> List (Html Msg)
