@@ -285,10 +285,6 @@ coaVis countryName maybePopulation maybeAsylumDecisions =
                         )
 
 
-
--- complementary: #afafaf
-
-
 coaSvg : AsylumDecisions -> Html Msg
 coaSvg ad =
     svg
@@ -300,20 +296,26 @@ coaSvg ad =
         ]
         [ barElement
             ad.total
-            (withDefault 0 ad.other)
+            (withDefault 0 ad.closed)
             0
             "other"
             "#c6c6c6"
         , barElement
             ad.total
-            (withDefault 0 ad.recognized)
             (withDefault 0 ad.other)
+            (withDefault 0 ad.closed)
+            "complimentary_protection"
+            "#afafaf"
+        , barElement
+            ad.total
+            (withDefault 0 ad.recognized)
+            (withDefault 0 ad.closed + withDefault 0 ad.other)
             "recognized"
             "#8e8d8d"
         , barElement
             ad.total
             (withDefault 0 ad.rejected)
-            (withDefault 0 ad.other + withDefault 0 ad.recognized)
+            (withDefault 0 ad.closed + withDefault 0 ad.other + withDefault 0 ad.recognized)
             "rejected"
             "#6d6d6d"
         ]
