@@ -45,11 +45,15 @@ in
               root = webapp;
               tryFiles = "$uri/index.html =404";
             };
-            "/Main.min.js" = {
+            "= /Main.min.js" = {
               root = webapp;
               tryFiles = "$uri =404";
             };
-            "/Main.js" = {
+            "= /Main.js" = {
+              root = webapp;
+              tryFiles = "$uri =404";
+            };
+            "= /style.css" = {
               root = webapp;
               tryFiles = "$uri =404";
             };

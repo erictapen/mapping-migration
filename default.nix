@@ -41,6 +41,7 @@ let
           ''}
         '') targets)}
         cp ${./assets}/index.html $out/
+        cp ${./assets}/style.css $out/
       '';
     };
 in mkDerivation {
