@@ -251,35 +251,29 @@ yearSelect years =
         ]
 
 
-coaVis : Year -> Result String Int -> Maybe COA -> Html Msg
-coaVis year maybePopulation maybeCoa =
-    case maybeCoa of
+coaVis : Result String Int -> Maybe AsylumDecisions -> Html Msg
+coaVis maybePopulation maybeAsylumDecisions =
+    case maybeAsylumDecisions of
         Nothing ->
             text ""
 
-        Just coa ->
+        Just asylumDecisions ->
             case maybePopulation of
                 Err e ->
                     text e
 
                 Ok population ->
-                    case Dict.get year coa of
-                        Nothing ->
-                            text "Error"
-
-                        Just data ->
-                            coaYearVis population ( year, data )
+                    coaYearVis population asylumDecisions
 
 
 perCapitaUnit =
     100000
 
 
-coaYearVis : Int -> ( Year, AsylumDecisions ) -> Html Msg
-coaYearVis population ( year, ad ) =
+coaYearVis : Int -> AsylumDecisions -> Html Msg
+coaYearVis population ad =
     div [] <|
-        [ h1 [] [ text year ] ]
-            ++ displayPersonsOrCases ad.personsOrCases
+        displayPersonsOrCases ad.personsOrCases
             ++ displayInt "decisions recognized per 100k inhabitants: " ad.decisionsRecognized population
             ++ displayInt "other decisions per 100k inhabitants: " ad.decisionsOther population
             ++ displayInt "decisions rejected per 100k inhabitants: " ad.decisionsRejected population
@@ -336,7 +330,8 @@ view model =
 
             COALoading (COOSelect countries _) ->
                 [ div [ id "menu", class "base" ]
-                    [ cooSelect countries, text "loading..." ] ]
+                    [ cooSelect countries, text "loading..." ]
+                ]
 
             COASelected (COOSelect countries selectedCOO) (COASelect availableCOAs selectedCOA selectedYear) ->
                 [ div [ id "menu", class "base" ]
@@ -345,7 +340,9 @@ view model =
                     , div [] [ yearSelect <| withDefault [] <| Maybe.map Dict.keys <| Dict.get selectedCOA availableCOAs ]
                     ]
                 , div [ id "vis", class "base" ]
-                    [ coaVis selectedYear (coaPopulation countries selectedCOA) <| Dict.get selectedCOA availableCOAs
+                    [ coaVis (coaPopulation countries selectedCOA) <|
+                        Maybe.andThen (Dict.get selectedYear) <|
+                            Dict.get selectedCOA availableCOAs
                     , br [] []
                     , Html.pre []
                         [ text <|
