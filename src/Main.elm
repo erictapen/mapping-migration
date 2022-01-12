@@ -271,17 +271,29 @@ coaVis countryName maybePopulation maybeAsylumDecisions =
                     div []
                         ([ h1 [] [ text countryName ]
                          , text <|
-                            "Per 100,000 inhabitants there were "
+                            "Per " ++ perCapitaUnitString ++ " inhabitants there were "
                                 ++ fromInt (ad.total * perCapitaUnit // population)
                                 ++ " decisions in total"
                          , coaSvg ad
                          , br [] []
                          ]
                             ++ displayPersonsOrCases ad.personsOrCases
-                            ++ displayInt "decisions recognized per 100k inhabitants: " ad.recognized population
-                            ++ displayInt "other decisions per 100k inhabitants: " ad.other population
-                            ++ displayInt "decisions rejected per 100k inhabitants: " ad.rejected population
-                            ++ displayInt "decisions closed per 100k inhabitants: " ad.closed population
+                            ++ displayInt
+                                ("decisions recognized per " ++ perCapitaUnitString ++ " inhabitants: ")
+                                ad.recognized
+                                population
+                            ++ displayInt
+                                ("other decisions per " ++ perCapitaUnitString ++ " inhabitants: ")
+                                ad.other
+                                population
+                            ++ displayInt
+                                ("decisions rejected per " ++ perCapitaUnitString ++ " inhabitants: ")
+                                ad.rejected
+                                population
+                            ++ displayInt
+                                ("decisions closed per " ++ perCapitaUnitString ++ " inhabitants: ")
+                                ad.closed
+                                population
                         )
 
 
@@ -338,6 +350,10 @@ barElement total dividend position id color =
 -}
 perCapitaUnit =
     100000
+
+
+perCapitaUnitString =
+    "100,000"
 
 
 displayInt : String -> Maybe Int -> Int -> List (Html Msg)
