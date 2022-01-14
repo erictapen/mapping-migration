@@ -246,14 +246,18 @@ yearOption year =
 
 yearInput : List Year -> Html Msg
 yearInput years =
-    input
-        [ type_ "range"
-        , onInput ChangeYear
-        , HA.min <| withDefault "0" <| List.minimum years
-        , HA.max <| withDefault "0" <| List.maximum years
-        ]
-    <|
-        map yearOption years
+    if List.length years <= 1 then
+        text ""
+
+    else
+        input
+            [ type_ "range"
+            , onInput ChangeYear
+            , HA.min <| withDefault "0" <| List.minimum years
+            , HA.max <| withDefault "0" <| List.maximum years
+            ]
+        <|
+            map yearOption years
 
 
 coaVis : String -> Result String Int -> Maybe AsylumDecisions -> Html Msg
