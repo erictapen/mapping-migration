@@ -4,7 +4,7 @@ import Api exposing (..)
 import Browser
 import Data
 import Dict exposing (Dict)
-import Html exposing (Html, br, div, fieldset, h1, input, legend, option, select, text)
+import Html exposing (Html, br, div, fieldset, h1, h2, input, legend, option, select, text)
 import Html.Attributes as HA exposing (class, id, type_, value)
 import Html.Events exposing (onInput)
 import Http exposing (get)
@@ -12,7 +12,7 @@ import List exposing (filter, head, map)
 import Maybe exposing (withDefault)
 import Platform.Cmd
 import String exposing (fromFloat, fromInt)
-import Svg as S exposing (Svg, rect, svg)
+import Svg as S exposing (Svg, rect, svg, g, text_)
 import Svg.Attributes as SA exposing (fill, height, preserveAspectRatio, stroke, viewBox, width, x, y)
 import Task
 import Time
@@ -263,7 +263,7 @@ yearInput years =
 coaVis : String -> Result String Int -> Maybe AsylumDecisions -> Html Msg
 coaVis countryName maybePopulation maybeAsylumDecisions =
     div []
-        ([ h1 [] [ text countryName ] ]
+        ([ h2 [] [ text countryName ] ]
             ++ (case maybeAsylumDecisions of
                     Nothing ->
                         [ text "No data for this year." ]
@@ -330,15 +330,27 @@ coaSvg ad =
 
 barElement : Int -> Int -> Int -> String -> String -> Svg Msg
 barElement total dividend position id color =
-    rect
-        [ x <| fromFloat <| toFloat position / toFloat total
-        , width <| fromFloat <| toFloat dividend / toFloat total
-        , height "1"
-        , stroke "none"
-        , fill color
-        , SA.id id
+    g []
+        [ rect
+            [ x <| fromFloat <| toFloat position / toFloat total
+            , width <| fromFloat <| toFloat dividend / toFloat total
+            , height "1"
+            , stroke "none"
+            , fill color
+            , SA.id id
+            ]
+            []
+        , svg
+            [ x "0"
+            , y "0"
+            , width "0.1"
+            , height "0.1"
+            , viewBox "0 0 0.1 0.1"
+            , preserveAspectRatio "xMidYMid"
+            ]
+            [ text_ [ x "0", width "0.05" ] [ S.text "test"]
+            ]
         ]
-        []
 
 
 {-| Granularity in which we calculate asylum decision count in relation to population of the COA
@@ -405,7 +417,8 @@ view model =
 
             COASelected (COOSelect countries selectedCOO) (COASelect availableCOAs selectedCOA selectedYear) ->
                 [ div [ id "menu", class "base" ]
-                    [ cooSelect countries
+                    [ h1 [] [ text "Seeking Asylum" ]
+                    , cooSelect countries
                     , coaSelect countries availableCOAs
                     , div []
                         [ yearInput <|
