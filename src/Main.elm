@@ -376,7 +376,7 @@ coaSvg ad =
               <|
                 map Tuple.first barElements
             ]
-        , div [ style "position: relative; width: 100%; margin-bottom: 2em;" ] <| map Tuple.second barElements
+        , div [ style "position: relative; width: 100%; margin-bottom: 3em;" ] <| map Tuple.second barElements
         ]
 
 
@@ -389,14 +389,23 @@ barElement total dividend position textContent color =
         width =
             fromFloat <| 100 * (toFloat dividend / toFloat total)
     in
-    ( rect
-        [ x xPos
-        , SA.width width
-        , height "100"
-        , stroke "none"
-        , fill color
+    ( g []
+        [ rect
+            [ x xPos
+            , SA.width width
+            , height "100"
+            , stroke "none"
+            , fill color
+            ]
+            []
+        , svg
+            [ viewBox "0 0 100 100"
+            , x (xPos ++ "%")
+            , SA.width (width ++ "%")
+            , preserveAspectRatio "xMidYMax meet"
+            ]
+            []
         ]
-        []
     , div
         [ style <|
             "overflow: hidden; "
