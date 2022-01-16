@@ -12,8 +12,8 @@ import List exposing (filter, head, map)
 import Maybe exposing (withDefault)
 import Platform.Cmd
 import String exposing (fromFloat, fromInt)
-import Svg as S exposing (Svg, g, rect, svg, text_)
-import Svg.Attributes as SA exposing (fill, height, preserveAspectRatio, stroke, viewBox, width, x, y)
+import Svg as S exposing (Svg, circle, g, rect, svg, text_)
+import Svg.Attributes as SA exposing (cx, cy, fill, height, preserveAspectRatio, r, stroke, style, viewBox, width, x, y)
 import Task
 import Time
 
@@ -294,63 +294,82 @@ coaVis countryName maybePopulation maybeAsylumDecisions =
 
 coaSvg : AsylumDecisions -> Html Msg
 coaSvg ad =
+    let
+        barElements =
+            [ barElement
+                ad.total
+                (withDefault 0 ad.closed)
+                0
+                "otherwise closed"
+                "#c6c6c6"
+            , barElement
+                ad.total
+                (withDefault 0 ad.other)
+                (withDefault 0 ad.closed)
+                "complimentary protection"
+                "#afafaf"
+            , barElement
+                ad.total
+                (withDefault 0 ad.recognized)
+                (withDefault 0 ad.closed + withDefault 0 ad.other)
+                "recognized"
+                "#8e8d8d"
+            , barElement
+                ad.total
+                (withDefault 0 ad.rejected)
+                (withDefault 0 ad.closed + withDefault 0 ad.other + withDefault 0 ad.recognized)
+                "rejected"
+                "#6d6d6d"
+            ]
+    in
     svg
         [ width "100"
         , height "100"
-        , viewBox "0 0 100 100"
-        , id "bar"
-        , preserveAspectRatio "none"
+        , style "width:100%"
         ]
-        [ barElement
-            ad.total
-            (withDefault 0 ad.closed)
-            0
-            "otherwise_closed"
-            "#c6c6c6"
-        , barElement
-            ad.total
-            (withDefault 0 ad.other)
-            (withDefault 0 ad.closed)
-            "complimentary_protection"
-            "#afafaf"
-        , barElement
-            ad.total
-            (withDefault 0 ad.recognized)
-            (withDefault 0 ad.closed + withDefault 0 ad.other)
-            "recognized"
-            "#8e8d8d"
-        , barElement
-            ad.total
-            (withDefault 0 ad.rejected)
-            (withDefault 0 ad.closed + withDefault 0 ad.other + withDefault 0 ad.recognized)
-            "rejected"
-            "#6d6d6d"
-        ]
-
-
-barElement : Int -> Int -> Int -> String -> String -> Svg Msg
-barElement total dividend position id color =
-    g []
-        [ rect
-            [ x <| fromFloat <| 100 * (toFloat position / toFloat total)
-            , width <| fromFloat <| 100 * (toFloat dividend / toFloat total)
-            , height "100"
-            , stroke "none"
-            , fill color
-            , SA.id id
+        ([ svg
+            [ viewBox "0 0 100 100"
+            , id "bar"
+            , preserveAspectRatio "none"
             ]
-            []
-        , svg
+           <|
+            map Tuple.first barElements
+         ]
+            ++ map Tuple.second barElements
+        )
+
+
+barElement : Int -> Int -> Int -> String -> String -> ( Svg Msg, Svg Msg )
+barElement total dividend position textContent color =
+    let
+        xPos =
+            fromFloat <| 100 * (toFloat position / toFloat total)
+
+        width =
+            fromFloat <| 100 * (toFloat dividend / toFloat total)
+    in
+    ( rect
+        [ x xPos
+        , SA.width width
+        , height "100"
+        , stroke "none"
+        , fill color
+        ]
+        []
+    , svg
+        [ viewBox "0 0 100 100"
+        , x (xPos ++ "%")
+        , SA.width (width ++ "%")
+        , preserveAspectRatio "xMinYMax meet"
+        ]
+        [ text_
             [ x "0"
-            , y "0"
-            , width "0.1"
-            , height "0.1"
-            , viewBox "0 0 0.1 0.1"
-            , preserveAspectRatio "xMidYMid"
+            , y "100"
+            , style "font-size:30px"
             ]
-            [ text_ [ x "0", width "0.05" ] [ S.text "test" ]
-            ]
+            [ S.text textContent ]
         ]
+    )
 
 
 {-| Granularity in which we calculate asylum decision count in relation to population of the COA
@@ -406,7 +425,8 @@ view model =
         case model of
             CountriesLoading ->
                 [ h1 [] [ text "Seeking Asylum" ]
-                , text "Loading countries..." ]
+                , text "Loading countries..."
+                ]
 
             CountriesLoadingFailed ->
                 [ text "An error occured while fetching the countries!" ]
@@ -414,7 +434,9 @@ view model =
             COALoading (COOSelect countries _) ->
                 [ div [ id "menu", class "base" ]
                     [ h1 [] [ text "Seeking Asylum" ]
-                    , cooSelect countries, text "loading..." ]
+                    , cooSelect countries
+                    , text "loading..."
+                    ]
                 ]
 
             COASelected (COOSelect countries selectedCOO) (COASelect availableCOAs selectedCOA selectedYear) ->
