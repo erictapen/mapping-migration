@@ -33,11 +33,12 @@ import Maybe exposing (withDefault)
 import Platform.Cmd
 import Set exposing (Set)
 import String exposing (fromFloat, fromInt)
-import Svg as S exposing (Svg, circle, g, rect, svg, text_)
+import Svg as S exposing (Svg, circle, g, path, rect, svg, symbol, text_, use)
 import Svg.Attributes as SA
     exposing
         ( cx
         , cy
+        , d
         , fill
         , height
         , preserveAspectRatio
@@ -49,6 +50,7 @@ import Svg.Attributes as SA
         , width
         , x
         , y
+        , transform
         )
 import Task
 import Time
@@ -427,26 +429,38 @@ coaSvg ad =
                 "rejected"
                 "#dddddd"
             ]
+
+        rectangle ( r, _, _ ) =
+            r
+
+        footsteps ( _, f, _ ) =
+            f
+
+        legend ( _, _, l ) =
+            l
     in
     div []
         [ svg
             [ width "100"
-            , height "100"
+            , height "15em"
             , style "width:100%"
             ]
-            [ svg
+            ([ footStep1
+             , svg
                 [ viewBox "0 0 100 100"
                 , id "bar"
                 , preserveAspectRatio "none"
                 ]
-              <|
-                map Tuple.first barElements
-            ]
-        , div [ style "position: relative; width: 100%; margin-bottom: 3em;" ] <| map Tuple.second barElements
+               <|
+                map rectangle barElements
+             ]
+                ++ map footsteps barElements
+            )
+        , div [ style "position: relative; width: 100%; margin-bottom: 3em;" ] <| map legend barElements
         ]
 
 
-barElement : Int -> Int -> Int -> String -> String -> ( Svg Msg, Html Msg )
+barElement : Int -> Int -> Int -> String -> String -> ( Svg Msg, Svg Msg, Html Msg )
 barElement total dividend position textContent color =
     let
         xPos =
@@ -455,22 +469,23 @@ barElement total dividend position textContent color =
         width =
             fromFloat <| 100 * (toFloat dividend / toFloat total)
     in
-    ( g []
-        [ rect
-            [ x xPos
-            , SA.width width
-            , height "100"
-            , stroke "none"
-            , fill color
-            ]
-            []
-        , svg
-            [ viewBox "0 0 100 100"
-            , x (xPos ++ "%")
-            , SA.width (width ++ "%")
-            , preserveAspectRatio "xMidYMax meet"
-            ]
-            []
+    ( rect
+        [ x xPos
+        , SA.width width
+        , height "100"
+        , stroke "none"
+        , fill color
+        ]
+        []
+    , svg
+        [ viewBox "0 0 100 100"
+        , x (xPos ++ "%")
+        , SA.width (width ++ "%")
+        , preserveAspectRatio "xMinYMin meet"
+        ]
+        [ use [ attribute "href" "#fs1", x "95%", y "95%" ] [] -- for some reason just using href results in a big fuckup
+        , use [ attribute "href" "#fs1", x "95%", y "95%" ] [] -- for some reason just using href results in a big fuckup
+        , use [ attribute "href" "#fs1", x "95%", y "95%" ] [] -- for some reason just using href results in a big fuckup
         ]
     , div
         [ style <|
@@ -490,6 +505,16 @@ barElement total dividend position textContent color =
         , a [ href "#" ] [ text "ⓘ" ]
         ]
     )
+
+
+footStep1 : Svg Msg
+footStep1 =
+    symbol [ id "fs1", transform "scale(0.3)" ]
+        [ path [ stroke "none", fill "black", d "M 1.784 -1.453 C 4.824 -1.543 7.254 -1.613 9.074 -1.663 C 12.914 -1.773 11.544 -19.863 5.724 -19.243 C 0.864 -18.733 -2.056 -1.333 1.784 -1.453 Z" ] []
+        , path [ stroke "none", fill "black", d "M 1.674 0.707 C 2.934 0.667 8.604 0.487 9.234 0.467 C 10.494 0.427 9.824 6.667 9.174 8.237 C 8.514 9.857 2.654 9.317 2.024 8.557 C 1.044 7.367 0.414 0.747 1.674 0.707 Z" ] []
+        , path [ stroke "none", fill "black", d "M -13.226 8.387 C -10.186 8.237 -7.756 8.127 -5.926 8.037 C -2.076 7.847 -4.786 -10.123 -10.576 -9.393 C -15.426 -8.793 -17.076 8.567 -13.226 8.387 Z" ] []
+        , path [ stroke "none", fill "black", d "M -13.276 10.677 C -12.016 10.617 -6.336 10.347 -5.706 10.317 C -4.446 10.257 -4.696 16.367 -5.226 17.917 C -5.776 19.517 -11.696 19.077 -12.376 18.347 C -13.456 17.187 -14.536 10.737 -13.276 10.677 Z" ] []
+        ]
 
 
 {-| Granularity in which we calculate asylum decision count in relation to population of the COA

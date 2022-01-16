@@ -25,6 +25,11 @@
           (python3.withPackages (ps: with ps; [
             pandas
           ]))
+          (inkscape-with-extensions.override {
+            inkscapeExtensions = with inkscape-extensions; [
+              applytransforms
+            ];
+          })
         ];
       };
 
