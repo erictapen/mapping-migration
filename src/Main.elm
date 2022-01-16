@@ -275,11 +275,23 @@ coaVis countryName maybePopulation maybeAsylumDecisions =
 
                             Ok population ->
                                 [ text <|
+                                    let
+                                        count =
+                                            ad.total * perCapitaUnit // population
+                                    in
                                     "Per "
                                         ++ perCapitaUnitString
-                                        ++ " inhabitants there were "
-                                        ++ fromInt (ad.total * perCapitaUnit // population)
-                                        ++ " decisions in total"
+                                        ++ (case count of
+                                                1 ->
+                                                    " inhabitants there was "
+                                                        ++ fromInt count
+                                                        ++ " decision in total"
+
+                                                _ ->
+                                                    " inhabitants there were "
+                                                        ++ fromInt count
+                                                        ++ " decisions in total"
+                                           )
                                 , coaSvg ad
                                 , br [] []
                                 ]
