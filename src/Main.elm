@@ -405,14 +405,16 @@ view model =
     , body =
         case model of
             CountriesLoading ->
-                [ text "Loading countries..." ]
+                [ h1 [] [ text "Seeking Asylum" ]
+                , text "Loading countries..." ]
 
             CountriesLoadingFailed ->
                 [ text "An error occured while fetching the countries!" ]
 
             COALoading (COOSelect countries _) ->
                 [ div [ id "menu", class "base" ]
-                    [ cooSelect countries, text "loading..." ]
+                    [ h1 [] [ text "Seeking Asylum" ]
+                    , cooSelect countries, text "loading..." ]
                 ]
 
             COASelected (COOSelect countries selectedCOO) (COASelect availableCOAs selectedCOA selectedYear) ->
