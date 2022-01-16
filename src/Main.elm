@@ -4,7 +4,20 @@ import Api exposing (..)
 import Browser
 import Data
 import Dict exposing (Dict)
-import Html exposing (Html, br, div, fieldset, h1, h2, input, legend, option, select, text)
+import Html
+    exposing
+        ( Html
+        , br
+        , div
+        , fieldset
+        , h1
+        , h2
+        , input
+        , legend
+        , option
+        , select
+        , text
+        )
 import Html.Attributes as HA exposing (class, id, type_, value)
 import Html.Events exposing (onInput)
 import Http exposing (get)
@@ -13,7 +26,22 @@ import Maybe exposing (withDefault)
 import Platform.Cmd
 import String exposing (fromFloat, fromInt)
 import Svg as S exposing (Svg, circle, g, rect, svg, text_)
-import Svg.Attributes as SA exposing (cx, cy, fill, height, preserveAspectRatio, r, stroke, style, viewBox, width, x, y)
+import Svg.Attributes as SA
+    exposing
+        ( cx
+        , cy
+        , fill
+        , height
+        , preserveAspectRatio
+        , r
+        , stroke
+        , style
+        , textAnchor
+        , viewBox
+        , width
+        , x
+        , y
+        )
 import Task
 import Time
 
@@ -372,12 +400,13 @@ barElement total dividend position textContent color =
         [ viewBox "0 0 100 100"
         , x (xPos ++ "%")
         , SA.width (width ++ "%")
-        , preserveAspectRatio "xMinYMax meet"
+        , preserveAspectRatio "xMidYMax meet"
         ]
         [ text_
-            [ x "0"
+            [ x "50%"
             , y "100"
             , style "font-size:30px"
+            , textAnchor "middle"
             ]
             [ S.text textContent ]
         ]
