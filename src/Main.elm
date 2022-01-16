@@ -12,7 +12,7 @@ import List exposing (filter, head, map)
 import Maybe exposing (withDefault)
 import Platform.Cmd
 import String exposing (fromFloat, fromInt)
-import Svg as S exposing (Svg, rect, svg, g, text_)
+import Svg as S exposing (Svg, g, rect, svg, text_)
 import Svg.Attributes as SA exposing (fill, height, preserveAspectRatio, stroke, viewBox, width, x, y)
 import Task
 import Time
@@ -295,9 +295,9 @@ coaVis countryName maybePopulation maybeAsylumDecisions =
 coaSvg : AsylumDecisions -> Html Msg
 coaSvg ad =
     svg
-        [ width "1"
-        , height "1"
-        , viewBox "0 0 1 1"
+        [ width "100"
+        , height "100"
+        , viewBox "0 0 100 100"
         , id "bar"
         , preserveAspectRatio "none"
         ]
@@ -332,9 +332,9 @@ barElement : Int -> Int -> Int -> String -> String -> Svg Msg
 barElement total dividend position id color =
     g []
         [ rect
-            [ x <| fromFloat <| toFloat position / toFloat total
-            , width <| fromFloat <| toFloat dividend / toFloat total
-            , height "1"
+            [ x <| fromFloat <| 100 * (toFloat position / toFloat total)
+            , width <| fromFloat <| 100 * (toFloat dividend / toFloat total)
+            , height "100"
             , stroke "none"
             , fill color
             , SA.id id
@@ -348,7 +348,7 @@ barElement total dividend position id color =
             , viewBox "0 0 0.1 0.1"
             , preserveAspectRatio "xMidYMid"
             ]
-            [ text_ [ x "0", width "0.05" ] [ S.text "test"]
+            [ text_ [ x "0", width "0.05" ] [ S.text "test" ]
             ]
         ]
 
