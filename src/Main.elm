@@ -362,24 +362,25 @@ coaSvg ad =
                 "#6d6d6d"
             ]
     in
-    svg
-        [ width "100"
-        , height "100"
-        , style "width:100%"
-        ]
-        ([ svg
-            [ viewBox "0 0 100 100"
-            , id "bar"
-            , preserveAspectRatio "none"
+    div []
+        [ svg
+            [ width "100"
+            , height "100"
+            , style "width:100%"
             ]
-           <|
-            map Tuple.first barElements
-         ]
-            ++ map Tuple.second barElements
-        )
+            [ svg
+                [ viewBox "0 0 100 100"
+                , id "bar"
+                , preserveAspectRatio "none"
+                ]
+              <|
+                map Tuple.first barElements
+            ]
+        , div [ style "position: relative; width: 100%; margin-bottom: 2em;" ] <| map Tuple.second barElements
+        ]
 
 
-barElement : Int -> Int -> Int -> String -> String -> ( Svg Msg, Svg Msg )
+barElement : Int -> Int -> Int -> String -> String -> ( Svg Msg, Html Msg )
 barElement total dividend position textContent color =
     let
         xPos =
@@ -396,20 +397,21 @@ barElement total dividend position textContent color =
         , fill color
         ]
         []
-    , svg
-        [ viewBox "0 0 100 100"
-        , x (xPos ++ "%")
-        , SA.width (width ++ "%")
-        , preserveAspectRatio "xMidYMax meet"
+    , div
+        [ style <|
+            "overflow: hidden; "
+                ++ "text-overflow: ellipsis; "
+                ++ "position: absolute; "
+                ++ "top: 80%; "
+                ++ "text-align: center; "
+                ++ "left: "
+                ++ xPos
+                ++ "%; "
+                ++ "width: "
+                ++ width
+                ++ "%; "
         ]
-        [ text_
-            [ x "50%"
-            , y "100"
-            , style "overflow: hidden; text-overflow: ellipsis;"
-            , textAnchor "middle"
-            ]
-            [ S.text <| (fromInt <| round <| 100 * (toFloat dividend / toFloat total)) ++ "% " ++ textContent ]
-        ]
+        [ S.text <| (fromInt <| round <| 100 * (toFloat dividend / toFloat total)) ++ "% " ++ textContent ]
     )
 
 
