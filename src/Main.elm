@@ -405,10 +405,10 @@ barElement total dividend position textContent color =
         [ text_
             [ x "50%"
             , y "100"
-            , style "font-size:30px"
+            , style "overflow: hidden; text-overflow: ellipsis;"
             , textAnchor "middle"
             ]
-            [ S.text textContent ]
+            [ S.text <| (fromInt <| round <| 100 * (toFloat dividend / toFloat total)) ++ "% " ++ textContent ]
         ]
     )
 
