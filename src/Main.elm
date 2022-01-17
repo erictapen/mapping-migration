@@ -467,26 +467,33 @@ barElement total dividend position textContent color =
             fromFloat <| 100 * (toFloat position / toFloat total)
 
         width =
-            fromFloat <| 100 * (toFloat dividend / toFloat total)
+            100 * (toFloat dividend / toFloat total)
     in
     ( rect
         [ x xPos
-        , SA.width width
+        , SA.width <| fromFloat width
         , height "100"
         , stroke "none"
         , fill color
         ]
         []
     , svg
-        [ viewBox <| xPos ++ " 0 " ++ width ++ " 100"
+        [ viewBox <| "0 0 "++ (fromFloat <| width * 4)  ++ " 100"
+        , x (xPos ++ "%")
+        , SA.width (fromFloat width ++ "%")
         , preserveAspectRatio "xMinYMin meet"
         ]
         [ use
             [ attribute "href" "#fs1"
+            , y "80%"
             ]
             []
-
-        -- for some reason just using href results in a big fuckup
+        , use
+            [ attribute "href" "#fs1"
+            , y "80%"
+            , x "20"
+            ]
+            []
         ]
     , div
         [ style <|
@@ -499,7 +506,7 @@ barElement total dividend position textContent color =
                 ++ xPos
                 ++ "%; "
                 ++ "width: "
-                ++ width
+                ++ fromFloat width
                 ++ "%; "
         ]
         [ S.text <| (fromInt <| round <| 100 * (toFloat dividend / toFloat total)) ++ "% " ++ textContent
@@ -510,7 +517,7 @@ barElement total dividend position textContent color =
 
 footprint1 : Svg Msg
 footprint1 =
-    symbol [ id "fs1" ]
+    symbol [ id "fs1", transform "scale(0.3)" ]
         [ path [ stroke "none", fill "black", d "M 19.3037 20.6488 C 22.3437 20.5588 24.7737 20.4888 26.5937 20.4388 C 30.4337 20.3288 29.0637 2.2388 23.2437 2.8588 C 18.3837 3.3688 15.4637 20.7688 19.3037 20.6488 Z" ] []
         , path [ stroke "none", fill "black", d "M 19.1937 22.8088 C 20.4537 22.7688 26.1237 22.5888 26.7537 22.5688 C 28.0137 22.5288 27.3437 28.7688 26.6937 30.3388 C 26.0337 31.9588 20.1737 31.4188 19.5437 30.6588 C 18.5637 29.4688 17.9337 22.8488 19.1937 22.8088 Z" ] []
         , path [ stroke "none", fill "black", d "M 4.2937 30.4888 C 7.3337 30.3388 9.7637 30.2288 11.5937 30.1388 C 15.4437 29.9488 12.7337 11.9788 6.9437 12.7088 C 2.0937 13.3088 0.4437 30.6688 4.2937 30.4888 Z" ] []
