@@ -405,7 +405,7 @@ coaSvg ad =
                 ad.total
                 (withDefault 0 ad.other)
                 (withDefault 0 ad.recognized)
-                "complimentary protection"
+                "complementary protection"
                 "#e6e6e6"
             , barElement
                 ad.total
