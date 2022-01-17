@@ -483,8 +483,8 @@ barElement dividend position textContent color total population =
         ]
       <|
         footprintDiagram
-            (initialSeed population)
-            (Simplex.permutationTableFromInt population)
+            (initialSeed <| population + position)
+            (Simplex.permutationTableFromInt <| population + position)
             False
             (dividend * perCapitaUnit // population)
             ( 5, 95 )
@@ -520,9 +520,9 @@ footprintDiagram seed permTable elevatedRow count ( xPos, yPerc ) =
 
         -- noise function we use to move the footsteps around
         noise =
-            Simplex.fractal2d { scale = 0.4, steps = 7, stepSize = 2.0, persistence = 2.0 } permTable
+            Simplex.fractal2d { scale = 0.5, steps = 7, stepSize = 2.0, persistence = 2.0 } permTable
 
-        noiseFactor =
+        noiseStrength =
             3.0
     in
     case count of
@@ -546,8 +546,8 @@ footprintDiagram seed permTable elevatedRow count ( xPos, yPerc ) =
             use
                 [ attribute "href"
                     (String.append "#fs" <| fromInt symbolIndex)
-                , y <| fromFloat <| yPos + noiseFactor * noise yPos xPos
-                , x <| fromFloat <| xPos + noiseFactor * noise xPos yPos
+                , y <| fromFloat <| yPos + noiseStrength * noise yPos (xPos + 1000)
+                , x <| fromFloat <| xPos + noiseStrength * noise xPos yPos
                 ]
                 []
                 :: (if yPerc > 5 then
