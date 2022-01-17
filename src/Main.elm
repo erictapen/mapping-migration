@@ -108,6 +108,7 @@ type COOSelect
 
 type COASelect
     = COASelect AvailableCOAs CountryCode (Maybe CountryCode) Year
+    | COAsNotAvailable
 
 
 type Msg
@@ -177,27 +178,37 @@ update msg model =
                                     coa 1
 
                                 year =
-                                    withDefault "unknownYear" <|
-                                        Maybe.andThen List.maximum <|
-                                            Maybe.map Set.toList <|
-                                                Maybe.map
-                                                    (Set.fromList
-                                                        >> Set.union
-                                                            (Set.fromList <|
-                                                                withDefault [] <|
-                                                                    Maybe.map Dict.keys <|
-                                                                        Dict.get (withDefault "" coa2) availableCOAs
-                                                            )
-                                                    )
-                                                <|
-                                                    Maybe.map Dict.keys <|
-                                                        Dict.get coa1 availableCOAs
+                                    Maybe.andThen List.maximum <|
+                                        Maybe.map Set.toList <|
+                                            Maybe.map
+                                                (Set.fromList
+                                                    >> Set.union
+                                                        (Set.fromList <|
+                                                            withDefault [] <|
+                                                                Maybe.map Dict.keys <|
+                                                                    Dict.get
+                                                                        (withDefault "" coa2)
+                                                                        availableCOAs
+                                                        )
+                                                )
+                                            <|
+                                                Maybe.map Dict.keys <|
+                                                    Dict.get coa1 availableCOAs
                             in
-                            ( COASelected
-                                (COOSelect countries coo)
-                                (COASelect availableCOAs coa1 coa2 year)
-                            , Cmd.none
-                            )
+                            case year of
+                                Just y ->
+                                    ( COASelected
+                                        (COOSelect countries coo)
+                                        (COASelect availableCOAs coa1 coa2 y)
+                                    , Cmd.none
+                                    )
+
+                                Nothing ->
+                                    ( COASelected
+                                        (COOSelect countries coo)
+                                        COAsNotAvailable
+                                    , Cmd.none
+                                    )
 
                         _ ->
                             noop
@@ -539,51 +550,69 @@ view model =
                     ]
                 ]
 
-            COASelected (COOSelect countries selectedCOO) (COASelect availableCOAs selectedCOA1 selectedCOA2 selectedYear) ->
-                [ div [ id "menu", class "base" ]
-                    [ h1 [] [ text "Seeking Asylum" ]
-                    , cooSelect countries
-                    , br [] []
-                    , coaSelect countries availableCOAs
-                    , div []
-                        [ let
-                            years countryCode =
-                                Set.fromList <|
-                                    withDefault [] <|
-                                        Maybe.map Dict.keys <|
-                                            Maybe.andThen (\cc -> Dict.get cc availableCOAs) countryCode
-                          in
-                          yearInput <| Set.toList <| Set.union (years <| Just selectedCOA1) (years selectedCOA2)
+            COASelected (COOSelect countries selectedCOO) coaS ->
+                case coaS of
+                    COAsNotAvailable ->
+                        [ div [ id "menu", class "base" ]
+                            [ h1 [] [ text "Seeking Asylum" ]
+                            , cooSelect countries
+                            , text <|
+                                String.append "Unfortunately there is no data available for " <|
+                                    .name <|
+                                        withDefault unknownCountry <|
+                                            Dict.get selectedCOO countries
+                            ]
                         ]
-                    , text selectedYear
-                    ]
-                , div [ id "vis", class "base" ]
-                    [ coaVis
-                        selectedCOA1
-                        (Dict.get selectedCOA1 countries)
-                        (coaPopulation countries selectedCOA1)
-                      <|
-                        Maybe.andThen (Dict.get selectedYear) <|
-                            Dict.get selectedCOA1 availableCOAs
-                    , case selectedCOA2 of
-                        Nothing ->
-                            text ""
 
-                        Just sCOA2 ->
-                            coaVis
-                                sCOA2
-                                (Dict.get sCOA2 countries)
-                                (coaPopulation countries sCOA2)
-                            <|
+                    COASelect availableCOAs selectedCOA1 selectedCOA2 selectedYear ->
+                        [ div [ id "menu", class "base" ]
+                            [ h1 [] [ text "Seeking Asylum" ]
+                            , cooSelect countries
+                            , br [] []
+                            , coaSelect countries availableCOAs
+                            , div []
+                                [ let
+                                    years countryCode =
+                                        Set.fromList <|
+                                            withDefault [] <|
+                                                Maybe.map Dict.keys <|
+                                                    Maybe.andThen
+                                                        (\cc -> Dict.get cc availableCOAs)
+                                                        countryCode
+                                  in
+                                  yearInput <|
+                                    Set.toList <|
+                                        Set.union (years <| Just selectedCOA1) (years selectedCOA2)
+                                ]
+                            , text selectedYear
+                            ]
+                        , div [ id "vis", class "base" ]
+                            [ coaVis
+                                selectedCOA1
+                                (Dict.get selectedCOA1 countries)
+                                (coaPopulation countries selectedCOA1)
+                              <|
                                 Maybe.andThen (Dict.get selectedYear) <|
-                                    Dict.get sCOA2 availableCOAs
-                    , br [] []
-                    , Html.pre []
-                        [ text <|
-                            "curl -H 'Accept: application/json' '"
-                                ++ asylumDecisionsPath selectedCOO
-                                ++ "'"
+                                    Dict.get selectedCOA1 availableCOAs
+                            , case selectedCOA2 of
+                                Nothing ->
+                                    text ""
+
+                                Just sCOA2 ->
+                                    coaVis
+                                        sCOA2
+                                        (Dict.get sCOA2 countries)
+                                        (coaPopulation countries sCOA2)
+                                    <|
+                                        Maybe.andThen (Dict.get selectedYear) <|
+                                            Dict.get sCOA2 availableCOAs
+                            , br [] []
+                            , Html.pre []
+                                [ text <|
+                                    "curl -H 'Accept: application/json' '"
+                                        ++ asylumDecisionsPath selectedCOO
+                                        ++ "'"
+                                ]
+                            ]
                         ]
-                    ]
-                ]
     }
