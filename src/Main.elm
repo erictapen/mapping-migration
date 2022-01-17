@@ -481,7 +481,11 @@ barElement dividend position textContent color total population =
         , preserveAspectRatio "xMinYMin meet"
         ]
       <|
-        footprintDiagram (initialSeed population) (dividend * perCapitaUnit // population) ( 0, 95 )
+        footprintDiagram
+            (initialSeed population)
+            False
+            (dividend * perCapitaUnit // population)
+            ( 5, 95 )
     , div
         [ style <|
             "overflow: hidden; "
@@ -502,11 +506,15 @@ barElement dividend position textContent color total population =
     )
 
 
-footprintDiagram : Seed -> Int -> ( Float, Float ) -> List (Svg Msg)
-footprintDiagram seed count ( xPos, yPerc ) =
+footprintDiagram : Seed -> Bool -> Int -> ( Float, Float ) -> List (Svg Msg)
+footprintDiagram seed elevatedRow count ( xPos, yPerc ) =
     let
-        yd =
-            5
+        -- base distance
+        dy =
+            6.5
+
+        dx =
+            sqrt 3 * 0.5 * dy
     in
     case count of
         0 ->
@@ -520,15 +528,23 @@ footprintDiagram seed count ( xPos, yPerc ) =
             use
                 [ attribute "href"
                     (String.append "#fs" <| fromInt symbolIndex)
-                , y <| fromFloat yPerc
+                , y <|
+                    fromFloat <|
+                        yPerc
+                            + (if elevatedRow then
+                                0.5 * dy
+
+                               else
+                                0
+                              )
                 , x <| fromFloat xPos
                 ]
                 []
                 :: (if yPerc > 5 then
-                        footprintDiagram nextSeed (count - 1) ( xPos, yPerc - yd )
+                        footprintDiagram nextSeed elevatedRow (count - 1) ( xPos, yPerc - dy )
 
                     else
-                        footprintDiagram nextSeed (count - 1) ( xPos + 5, 95 )
+                        footprintDiagram nextSeed (not elevatedRow) (count - 1) ( xPos + dx, 95 )
                    )
 
 
