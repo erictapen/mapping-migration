@@ -614,13 +614,6 @@ view model =
                                     <|
                                         Maybe.andThen (Dict.get selectedYear) <|
                                             Dict.get sCOA2 availableCOAs
-                            , br [] []
-                            , Html.pre []
-                                [ text <|
-                                    "curl -H 'Accept: application/json' '"
-                                        ++ asylumDecisionsPath selectedCOO
-                                        ++ "'"
-                                ]
                             ]
                         ]
     }
