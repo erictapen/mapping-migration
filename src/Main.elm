@@ -18,7 +18,7 @@ import Html
         , select
         , text
         )
-import Html.Attributes as HA exposing (class, id, type_, value)
+import Html.Attributes as HA exposing (class, id, title, type_, value)
 import Html.Events exposing (onInput)
 import Http exposing (get)
 import List exposing (filter, head, map)
@@ -247,7 +247,7 @@ subscriptions _ =
 
 countryOption : ( CountryCode, Country ) -> Html Msg
 countryOption ( code, { name } ) =
-    option [ value code ] [ text (name ++ " (" ++ code ++ ")") ]
+    option [ value code ] [ text name ]
 
 
 {-| We only want european countries in sorted order.
@@ -329,10 +329,17 @@ yearInput years =
             map yearOption years
 
 
-coaVis : String -> Result String Int -> Maybe AsylumDecisions -> Html Msg
-coaVis countryName maybePopulation maybeAsylumDecisions =
+coaVis : CountryCode -> Maybe Country -> Result String Int -> Maybe AsylumDecisions -> Html Msg
+coaVis countryCode country maybePopulation maybeAsylumDecisions =
     div []
-        ([ h2 [] [ text countryName ] ]
+        ([ h2
+            [ title <|
+                String.append ("UNHCR: " ++ countryCode) <|
+                    withDefault "" <|
+                        Maybe.map (.iso >> String.append ", ISO: ") country
+            ]
+            [ text <| withDefault "Unkown country name!" <| Maybe.map .name country ]
+         ]
             ++ (case maybeAsylumDecisions of
                     Nothing ->
                         [ text "No data for this year." ]
@@ -552,10 +559,8 @@ view model =
                     ]
                 , div [ id "vis", class "base" ]
                     [ coaVis
-                        (withDefault "Country Name not found!" <|
-                            Maybe.map .name <|
-                                Dict.get selectedCOA1 countries
-                        )
+                        selectedCOA1
+                        (Dict.get selectedCOA1 countries)
                         (coaPopulation countries selectedCOA1)
                       <|
                         Maybe.andThen (Dict.get selectedYear) <|
@@ -566,10 +571,8 @@ view model =
 
                         Just sCOA2 ->
                             coaVis
-                                (withDefault "Country Name not found!" <|
-                                    Maybe.map .name <|
-                                        Dict.get sCOA2 countries
-                                )
+                                sCOA2
+                                (Dict.get sCOA2 countries)
                                 (coaPopulation countries sCOA2)
                             <|
                                 Maybe.andThen (Dict.get selectedYear) <|
