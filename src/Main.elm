@@ -166,20 +166,16 @@ update msg model =
                     case model of
                         COALoading (COOSelect countries coo) ->
                             let
-                                coa n =
-                                    head <|
-                                        List.drop n <|
+                                coa1 =
+                                    withDefault unknownCountryCode <| head <|
                                             map Tuple.first <|
                                                 filteredAndSortedCOAs countries availableCOAs
 
-                                coa1 =
-                                    withDefault unknownCountryCode <| coa 0
-
                                 coa2 =
-                                    coa 1
+                                    Just coa1
 
                                 year =
-                                    Maybe.andThen List.maximum <|
+                                    Maybe.andThen List.minimum <|
                                         Maybe.map Set.toList <|
                                             Maybe.map
                                                 (Set.fromList
