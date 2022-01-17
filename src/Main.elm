@@ -407,25 +407,25 @@ coaSvg ad =
                 (withDefault 0 ad.recognized)
                 0
                 "recognized"
-                "#d8d8d8"
+                "#a8a8a8"
             , barElement
                 ad.total
                 (withDefault 0 ad.other)
                 (withDefault 0 ad.recognized)
                 "complementary protection"
-                "#e6e6e6"
+                "#b7b7b7"
             , barElement
                 ad.total
                 (withDefault 0 ad.closed)
                 (withDefault 0 ad.recognized + withDefault 0 ad.other)
                 "otherwise closed"
-                "#eeeeee"
+                "#cecece"
             , barElement
                 ad.total
                 (withDefault 0 ad.rejected)
                 (withDefault 0 ad.recognized + withDefault 0 ad.other + withDefault 0 ad.closed)
                 "rejected"
-                "#f5f5f5"
+                "#dddddd"
             ]
     in
     div []
