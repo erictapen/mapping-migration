@@ -393,10 +393,6 @@ coaVis countryCode country maybePopulation maybeAsylumDecisions =
                                 , br [] []
                                 ]
                                     ++ displayPersonsOrCases ad.personsOrCases
-                                    ++ displayInt "otherwise closed: " ad.closed population
-                                    ++ displayInt "complementary protection: " ad.other population
-                                    ++ displayInt "recognized: " ad.recognized population
-                                    ++ displayInt "rejected: " ad.rejected population
                )
         )
 
@@ -584,16 +580,6 @@ perCapitaUnit =
 
 perCapitaUnitString =
     "500,000"
-
-
-displayInt : String -> Maybe Int -> Int -> List (Html Msg)
-displayInt prefix maybeInt div =
-    case maybeInt of
-        Nothing ->
-            []
-
-        Just dr ->
-            [ text <| prefix ++ fromInt ((dr * perCapitaUnit) // div), br [] [] ]
 
 
 displayPersonsOrCases : PersonsOrCases -> List (Html Msg)
