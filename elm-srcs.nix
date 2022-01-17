@@ -25,6 +25,11 @@
         version = "1.0.5";
       };
 
+      "elm/random" = {
+        sha256 = "138n2455wdjwa657w6sjq18wx2r0k60ibpc4frhbqr50sncxrfdl";
+        version = "1.0.0";
+      };
+
       "elm/http" = {
         sha256 = "008bs76mnp48b4dw8qwjj4fyvzbxvlrl4xpa2qh1gg2kfwyw56v1";
         version = "2.0.0";
@@ -63,10 +68,5 @@
       "elm-explorations/test" = {
         sha256 = "1fsd7bajm7qa93r5pn3mdafqh3blpzya601jbs9l238p0hmvh576";
         version = "1.2.2";
-      };
-
-      "elm/random" = {
-        sha256 = "138n2455wdjwa657w6sjq18wx2r0k60ibpc4frhbqr50sncxrfdl";
-        version = "1.0.0";
       };
 }
