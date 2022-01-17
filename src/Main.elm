@@ -150,7 +150,9 @@ update msg model =
                 Ok countries ->
                     let
                         -- We temporarily filter Aruba, as it is a country without data coming right at the top.
-                        filteredCountries = Dict.filter (\k -> \_ -> k /= "ABW") countries
+                        filteredCountries =
+                            Dict.filter (\k -> \_ -> k /= "ABW") countries
+
                         coo =
                             withDefault unknownCountryCode <|
                                 head <|
@@ -712,7 +714,9 @@ menu html =
                 ++ " width: 24em;"
                 ++ " margin-right: 5em;"
         ]
-        ([ h1 [] [ text "Seeking Asylum" ] ]
+        ([ h1 [] [ text "Labeling Refugees" ]
+         , h2 [] [ text "How European States Decide on Asylum" ]
+         ]
             ++ html
             ++ [ p []
                     [ text "Scroll down for an "
