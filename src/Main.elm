@@ -621,35 +621,41 @@ view model =
     , body =
         case model of
             CountriesLoading ->
-                [ menu
-                    [ text "Loading countries..."
+                [ div []
+                    [ menu
+                        [ text "Loading countries..."
+                        ]
+                    , introduction
                     ]
-                , introduction
                 ]
 
             CountriesLoadingFailed ->
                 [ text "An error occured while fetching the countries!" ]
 
             COALoading (COOSelect countries _) ->
-                [ menu
-                    [ cooSelect countries
-                    , text "loading..."
+                [ div []
+                    [ menu
+                        [ cooSelect countries
+                        , text "loading..."
+                        ]
+                    , introduction
                     ]
-                , introduction
                 ]
 
             COASelected (COOSelect countries selectedCOO) coaS ->
                 case coaS of
                     COAsNotAvailable ->
-                        [ menu
-                            [ cooSelect countries
-                            , text <|
-                                String.append "Unfortunately there is no data available for " <|
-                                    .name <|
-                                        withDefault unknownCountry <|
-                                            Dict.get selectedCOO countries
+                        [ div []
+                            [ menu
+                                [ cooSelect countries
+                                , text <|
+                                    String.append "Unfortunately there is no data available for " <|
+                                        .name <|
+                                            withDefault unknownCountry <|
+                                                Dict.get selectedCOO countries
+                                ]
+                            , introduction
                             ]
-                        , introduction
                         ]
 
                     COASelect availableCOAs selectedCOA1 selectedCOA2 selectedYear ->
