@@ -388,7 +388,7 @@ coaVis countryCode country maybePopulation maybeAsylumDecisions =
                                                         ++ fromInt count
                                                         ++ " decisions in total"
                                            )
-                                , coaSvg ad
+                                , coaSvg population ad
                                 , br [] []
                                 ]
                                     ++ displayPersonsOrCases ad.personsOrCases
@@ -400,30 +400,26 @@ coaVis countryCode country maybePopulation maybeAsylumDecisions =
         )
 
 
-coaSvg : AsylumDecisions -> Html Msg
-coaSvg ad =
+coaSvg : Int -> AsylumDecisions -> Html Msg
+coaSvg population ad =
     let
-        barElements =
+        barElements = map (\f -> f ad.total population)
             [ barElement
-                ad.total
                 (withDefault 0 ad.recognized)
                 0
                 "recognized"
                 "#a8a8a8"
             , barElement
-                ad.total
                 (withDefault 0 ad.other)
                 (withDefault 0 ad.recognized)
                 "complementary protection"
                 "#b7b7b7"
             , barElement
-                ad.total
                 (withDefault 0 ad.closed)
                 (withDefault 0 ad.recognized + withDefault 0 ad.other)
                 "otherwise closed"
                 "#cecece"
             , barElement
-                ad.total
                 (withDefault 0 ad.rejected)
                 (withDefault 0 ad.recognized + withDefault 0 ad.other + withDefault 0 ad.closed)
                 "rejected"
@@ -460,8 +456,8 @@ coaSvg ad =
         ]
 
 
-barElement : Int -> Int -> Int -> String -> String -> ( Svg Msg, Svg Msg, Html Msg )
-barElement total dividend position textContent color =
+barElement : Int -> Int -> String -> String -> Int -> Int -> ( Svg Msg, Svg Msg, Html Msg )
+barElement dividend position textContent color total population =
     let
         xPos =
             fromFloat <| 100 * (toFloat position / toFloat total)
@@ -478,23 +474,13 @@ barElement total dividend position textContent color =
         ]
         []
     , svg
-        [ viewBox <| "0 0 "++ (fromFloat <| width * 4)  ++ " 100"
+        [ viewBox <| "0 0 " ++ (fromFloat <| width * 4) ++ " 100"
         , x (xPos ++ "%")
         , SA.width (fromFloat width ++ "%")
         , preserveAspectRatio "xMinYMin meet"
         ]
-        [ use
-            [ attribute "href" "#fs1"
-            , y "50%"
-            ]
-            []
-        , use
-            [ attribute "href" "#fs1"
-            , y "50%"
-            , x "80"
-            ]
-            []
-        ]
+      <|
+        footprintDiagram dividend ( 0, 95 )
     , div
         [ style <|
             "overflow: hidden; "
@@ -513,6 +499,26 @@ barElement total dividend position textContent color =
         , a [ href "#" ] [ text "ⓘ" ]
         ]
     )
+
+
+footprintDiagram : Int -> ( Float, Float ) -> List (Svg Msg)
+footprintDiagram count ( xPos, yPerc ) =
+    let
+        yd =
+            5
+    in
+    case count of
+        0 ->
+            []
+
+        _ ->
+            use
+                [ attribute "href" "#fs1"
+                , y <| fromFloat yPerc ++ "%"
+                , x <| fromFloat xPos
+                ]
+                []
+                :: footprintDiagram (count - 1) ( xPos, yPerc - yd )
 
 
 footprint1 : Svg Msg
