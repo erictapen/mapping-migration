@@ -33,6 +33,7 @@ import Maybe exposing (withDefault)
 import Platform.Cmd
 import Random exposing (Seed, initialSeed, int, step)
 import Set exposing (Set)
+import Simplex
 import String exposing (fromFloat, fromInt)
 import Svg as S exposing (Svg, circle, g, path, rect, svg, symbol, text_, use)
 import Svg.Attributes as SA
@@ -483,6 +484,7 @@ barElement dividend position textContent color total population =
       <|
         footprintDiagram
             (initialSeed population)
+            (Simplex.permutationTableFromInt population)
             False
             (dividend * perCapitaUnit // population)
             ( 5, 95 )
@@ -506,8 +508,8 @@ barElement dividend position textContent color total population =
     )
 
 
-footprintDiagram : Seed -> Bool -> Int -> ( Float, Float ) -> List (Svg Msg)
-footprintDiagram seed elevatedRow count ( xPos, yPerc ) =
+footprintDiagram : Seed -> Simplex.PermutationTable -> Bool -> Int -> ( Float, Float ) -> List (Svg Msg)
+footprintDiagram seed permTable elevatedRow count ( xPos, yPerc ) =
     let
         -- base distance
         dy =
@@ -515,6 +517,13 @@ footprintDiagram seed elevatedRow count ( xPos, yPerc ) =
 
         dx =
             sqrt 3 * 0.5 * dy
+
+        -- noise function we use to move the footsteps around
+        noise =
+            Simplex.fractal2d { scale = 0.4, steps = 7, stepSize = 2.0, persistence = 2.0 } permTable
+
+        noiseFactor =
+            3.0
     in
     case count of
         0 ->
@@ -524,27 +533,38 @@ footprintDiagram seed elevatedRow count ( xPos, yPerc ) =
             let
                 ( symbolIndex, nextSeed ) =
                     step (int 1 4) seed
+
+                yPos =
+                    yPerc
+                        + (if elevatedRow then
+                            0.5 * dy
+
+                           else
+                            0
+                          )
             in
             use
                 [ attribute "href"
                     (String.append "#fs" <| fromInt symbolIndex)
-                , y <|
-                    fromFloat <|
-                        yPerc
-                            + (if elevatedRow then
-                                0.5 * dy
-
-                               else
-                                0
-                              )
-                , x <| fromFloat xPos
+                , y <| fromFloat <| yPos + noiseFactor * noise yPos xPos
+                , x <| fromFloat <| xPos + noiseFactor * noise xPos yPos
                 ]
                 []
                 :: (if yPerc > 5 then
-                        footprintDiagram nextSeed elevatedRow (count - 1) ( xPos, yPerc - dy )
+                        footprintDiagram
+                            nextSeed
+                            permTable
+                            elevatedRow
+                            (count - 1)
+                            ( xPos, yPerc - dy )
 
                     else
-                        footprintDiagram nextSeed (not elevatedRow) (count - 1) ( xPos + dx, 95 )
+                        footprintDiagram
+                            nextSeed
+                            permTable
+                            (not elevatedRow)
+                            (count - 1)
+                            ( xPos + dx, 95 )
                    )
 
 

@@ -1,5 +1,10 @@
 {
 
+      "Herteby/simplex-noise" = {
+        sha256 = "0x8vnhd8hgq1hk2il968rjlckzv10qvbiqwsxccsjh95g771jqrq";
+        version = "1.2.2";
+      };
+
       "elm/json" = {
         sha256 = "0kjwrz195z84kwywaxhhlnpl3p251qlbm5iz6byd6jky2crmyqyh";
         version = "1.1.3";
@@ -53,6 +58,11 @@
       "elm/file" = {
         sha256 = "1rljcb41dl97myidyjih2yliyzddkr2m7n74x7gg46rcw4jl0ny8";
         version = "1.0.5";
+      };
+
+      "elm-community/random-extra" = {
+        sha256 = "1qi6n778vac6qrzb972imqkipd8vdhahaycyj5xw04gkvdydkabk";
+        version = "3.2.0";
       };
 
       "elm/url" = {
