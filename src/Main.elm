@@ -529,6 +529,17 @@ coaPopulation countries cc =
                 (Dict.get country.iso >> Maybe.andThen (Dict.get 2018)) Data.population
 
 
+menu : List (Html Msg) -> Html Msg
+menu html =
+    div
+        [ style <|
+            "float: left;"
+                ++ " width: 24em;"
+                ++ " margin-right: 5em;"
+        ]
+        ([ h1 [] [ text "Seeking Asylum" ] ] ++ html)
+
+
 view : Model -> Browser.Document Msg
 view model =
     { title = "Mapping migration"
@@ -543,9 +554,8 @@ view model =
                 [ text "An error occured while fetching the countries!" ]
 
             COALoading (COOSelect countries _) ->
-                [ div [ id "menu", class "base" ]
-                    [ h1 [] [ text "Seeking Asylum" ]
-                    , cooSelect countries
+                [ menu
+                    [ cooSelect countries
                     , text "loading..."
                     ]
                 ]
@@ -553,9 +563,8 @@ view model =
             COASelected (COOSelect countries selectedCOO) coaS ->
                 case coaS of
                     COAsNotAvailable ->
-                        [ div [ id "menu", class "base" ]
-                            [ h1 [] [ text "Seeking Asylum" ]
-                            , cooSelect countries
+                        [ menu
+                            [ cooSelect countries
                             , text <|
                                 String.append "Unfortunately there is no data available for " <|
                                     .name <|
@@ -565,9 +574,8 @@ view model =
                         ]
 
                     COASelect availableCOAs selectedCOA1 selectedCOA2 selectedYear ->
-                        [ div [ id "menu", class "base" ]
-                            [ h1 [] [ text "Seeking Asylum" ]
-                            , cooSelect countries
+                        [ menu
+                            [ cooSelect countries
                             , br [] []
                             , coaSelect countries availableCOAs
                             , div []
@@ -586,7 +594,7 @@ view model =
                                 ]
                             , text selectedYear
                             ]
-                        , div [ id "vis", class "base" ]
+                        , div [ style <| "float: left;" ++ " width: 60%;" ]
                             [ coaVis
                                 selectedCOA1
                                 (Dict.get selectedCOA1 countries)

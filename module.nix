@@ -53,10 +53,6 @@ in
               root = webapp;
               tryFiles = "$uri =404";
             };
-            "= /style.css" = {
-              root = webapp;
-              tryFiles = "$uri =404";
-            };
             "= /unhcr-api/population/v1/countries/" = {
               proxyPass = "https://api.unhcr.org/population/v1/countries/";
               inherit extraConfig;
