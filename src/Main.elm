@@ -540,7 +540,7 @@ coaPopulation countries cc =
 
 introduction : Html Msg
 introduction =
-    div []
+    div [ style "clear: both; padding-top: 5em;", id "introduction" ]
         [ h2 []
             [ text """
 Introduction // "How States Grant Asylum" // "Making Refugees"
@@ -604,7 +604,15 @@ menu html =
                 ++ " width: 24em;"
                 ++ " margin-right: 5em;"
         ]
-        [ h1 [] [ text "Seeking Asylum" ], div [] html, introduction ]
+        ([ h1 [] [ text "Seeking Asylum" ] ]
+            ++ html
+            ++ [ p []
+                    [ text "Scroll down for an "
+                    , a [ href "#introduction" ] [ text "introduction" ]
+                    , text "."
+                    ]
+               ]
+        )
 
 
 view : Model -> Browser.Document Msg
@@ -613,8 +621,10 @@ view model =
     , body =
         case model of
             CountriesLoading ->
-                [ h1 [] [ text "Seeking Asylum" ]
-                , text "Loading countries..."
+                [ menu
+                    [ text "Loading countries..."
+                    ]
+                , introduction
                 ]
 
             CountriesLoadingFailed ->
@@ -625,6 +635,7 @@ view model =
                     [ cooSelect countries
                     , text "loading..."
                     ]
+                , introduction
                 ]
 
             COASelected (COOSelect countries selectedCOO) coaS ->
@@ -638,49 +649,53 @@ view model =
                                         withDefault unknownCountry <|
                                             Dict.get selectedCOO countries
                             ]
+                        , introduction
                         ]
 
                     COASelect availableCOAs selectedCOA1 selectedCOA2 selectedYear ->
-                        [ menu
-                            [ cooSelect countries
-                            , br [] []
-                            , coaSelect countries availableCOAs
-                            , div []
-                                [ let
-                                    years countryCode =
-                                        Set.fromList <|
-                                            withDefault [] <|
-                                                Maybe.map Dict.keys <|
-                                                    Maybe.andThen
-                                                        (\cc -> Dict.get cc availableCOAs)
-                                                        countryCode
-                                  in
-                                  yearInput <|
-                                    Set.toList <|
-                                        Set.union (years <| Just selectedCOA1) (years selectedCOA2)
+                        [ div []
+                            [ menu
+                                [ cooSelect countries
+                                , br [] []
+                                , coaSelect countries availableCOAs
+                                , div []
+                                    [ let
+                                        years countryCode =
+                                            Set.fromList <|
+                                                withDefault [] <|
+                                                    Maybe.map Dict.keys <|
+                                                        Maybe.andThen
+                                                            (\cc -> Dict.get cc availableCOAs)
+                                                            countryCode
+                                      in
+                                      yearInput <|
+                                        Set.toList <|
+                                            Set.union (years <| Just selectedCOA1) (years selectedCOA2)
+                                    ]
+                                , text selectedYear
                                 ]
-                            , text selectedYear
-                            ]
-                        , div [ style <| "float: left;" ++ " width: 60%;" ]
-                            [ coaVis
-                                selectedCOA1
-                                (Dict.get selectedCOA1 countries)
-                                (coaPopulation countries selectedCOA1)
-                              <|
-                                Maybe.andThen (Dict.get selectedYear) <|
-                                    Dict.get selectedCOA1 availableCOAs
-                            , case selectedCOA2 of
-                                Nothing ->
-                                    text ""
+                            , div [ style <| "float: left;" ++ " width: 60%;" ]
+                                [ coaVis
+                                    selectedCOA1
+                                    (Dict.get selectedCOA1 countries)
+                                    (coaPopulation countries selectedCOA1)
+                                  <|
+                                    Maybe.andThen (Dict.get selectedYear) <|
+                                        Dict.get selectedCOA1 availableCOAs
+                                , case selectedCOA2 of
+                                    Nothing ->
+                                        text ""
 
-                                Just sCOA2 ->
-                                    coaVis
-                                        sCOA2
-                                        (Dict.get sCOA2 countries)
-                                        (coaPopulation countries sCOA2)
-                                    <|
-                                        Maybe.andThen (Dict.get selectedYear) <|
-                                            Dict.get sCOA2 availableCOAs
+                                    Just sCOA2 ->
+                                        coaVis
+                                            sCOA2
+                                            (Dict.get sCOA2 countries)
+                                            (coaPopulation countries sCOA2)
+                                        <|
+                                            Maybe.andThen (Dict.get selectedYear) <|
+                                                Dict.get sCOA2 availableCOAs
+                                ]
                             ]
+                        , introduction
                         ]
     }
