@@ -366,6 +366,8 @@ coaVis countryCode country maybePopulation maybeAsylumDecisions =
                                     "Per "
                                         ++ perCapitaUnitString
                                         ++ (case count of
+                                                0 ->
+                                                    " inhabitants there were less than 1 decisions in total"
                                                 1 ->
                                                     " inhabitants there was "
                                                         ++ fromInt count
