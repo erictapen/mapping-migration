@@ -7,6 +7,7 @@ import Dict exposing (Dict)
 import Html
     exposing
         ( Html
+        , a
         , br
         , div
         , fieldset
@@ -18,7 +19,7 @@ import Html
         , select
         , text
         )
-import Html.Attributes as HA exposing (class, id, title, type_, value)
+import Html.Attributes as HA exposing (class, href, id, title, type_, value)
 import Html.Events exposing (onInput)
 import Http exposing (get)
 import List exposing (filter, head, map)
@@ -479,7 +480,9 @@ barElement total dividend position textContent color =
                 ++ width
                 ++ "%; "
         ]
-        [ S.text <| (fromInt <| round <| 100 * (toFloat dividend / toFloat total)) ++ "% " ++ textContent ]
+        [ S.text <| (fromInt <| round <| 100 * (toFloat dividend / toFloat total)) ++ "% " ++ textContent
+        , a [ href "#" ] [ text "ⓘ" ]
+        ]
     )
 
 
