@@ -46,11 +46,11 @@ import Svg.Attributes as SA
         , stroke
         , style
         , textAnchor
+        , transform
         , viewBox
         , width
         , x
         , y
-        , transform
         )
 import Task
 import Time
@@ -433,7 +433,7 @@ coaSvg ad =
         rectangle ( r, _, _ ) =
             r
 
-        footsteps ( _, f, _ ) =
+        footprints ( _, f, _ ) =
             f
 
         legend ( _, _, l ) =
@@ -445,7 +445,7 @@ coaSvg ad =
             , height "15em"
             , style "width:100%"
             ]
-            ([ footStep1
+            ([ footprint1
              , svg
                 [ viewBox "0 0 100 100"
                 , id "bar"
@@ -454,7 +454,7 @@ coaSvg ad =
                <|
                 map rectangle barElements
              ]
-                ++ map footsteps barElements
+                ++ map footprints barElements
             )
         , div [ style "position: relative; width: 100%; margin-bottom: 3em;" ] <| map legend barElements
         ]
@@ -478,14 +478,15 @@ barElement total dividend position textContent color =
         ]
         []
     , svg
-        [ viewBox "0 0 100 100"
-        , x (xPos ++ "%")
-        , SA.width (width ++ "%")
+        [ viewBox <| xPos ++ " 0 " ++ width ++ " 100"
         , preserveAspectRatio "xMinYMin meet"
         ]
-        [ use [ attribute "href" "#fs1", x "95%", y "95%" ] [] -- for some reason just using href results in a big fuckup
-        , use [ attribute "href" "#fs1", x "95%", y "95%" ] [] -- for some reason just using href results in a big fuckup
-        , use [ attribute "href" "#fs1", x "95%", y "95%" ] [] -- for some reason just using href results in a big fuckup
+        [ use
+            [ attribute "href" "#fs1"
+            ]
+            []
+
+        -- for some reason just using href results in a big fuckup
         ]
     , div
         [ style <|
@@ -507,13 +508,13 @@ barElement total dividend position textContent color =
     )
 
 
-footStep1 : Svg Msg
-footStep1 =
-    symbol [ id "fs1", transform "scale(0.3)" ]
-        [ path [ stroke "none", fill "black", d "M 1.784 -1.453 C 4.824 -1.543 7.254 -1.613 9.074 -1.663 C 12.914 -1.773 11.544 -19.863 5.724 -19.243 C 0.864 -18.733 -2.056 -1.333 1.784 -1.453 Z" ] []
-        , path [ stroke "none", fill "black", d "M 1.674 0.707 C 2.934 0.667 8.604 0.487 9.234 0.467 C 10.494 0.427 9.824 6.667 9.174 8.237 C 8.514 9.857 2.654 9.317 2.024 8.557 C 1.044 7.367 0.414 0.747 1.674 0.707 Z" ] []
-        , path [ stroke "none", fill "black", d "M -13.226 8.387 C -10.186 8.237 -7.756 8.127 -5.926 8.037 C -2.076 7.847 -4.786 -10.123 -10.576 -9.393 C -15.426 -8.793 -17.076 8.567 -13.226 8.387 Z" ] []
-        , path [ stroke "none", fill "black", d "M -13.276 10.677 C -12.016 10.617 -6.336 10.347 -5.706 10.317 C -4.446 10.257 -4.696 16.367 -5.226 17.917 C -5.776 19.517 -11.696 19.077 -12.376 18.347 C -13.456 17.187 -14.536 10.737 -13.276 10.677 Z" ] []
+footprint1 : Svg Msg
+footprint1 =
+    symbol [ id "fs1" ]
+        [ path [ stroke "none", fill "black", d "M 19.3037 20.6488 C 22.3437 20.5588 24.7737 20.4888 26.5937 20.4388 C 30.4337 20.3288 29.0637 2.2388 23.2437 2.8588 C 18.3837 3.3688 15.4637 20.7688 19.3037 20.6488 Z" ] []
+        , path [ stroke "none", fill "black", d "M 19.1937 22.8088 C 20.4537 22.7688 26.1237 22.5888 26.7537 22.5688 C 28.0137 22.5288 27.3437 28.7688 26.6937 30.3388 C 26.0337 31.9588 20.1737 31.4188 19.5437 30.6588 C 18.5637 29.4688 17.9337 22.8488 19.1937 22.8088 Z" ] []
+        , path [ stroke "none", fill "black", d "M 4.2937 30.4888 C 7.3337 30.3388 9.7637 30.2288 11.5937 30.1388 C 15.4437 29.9488 12.7337 11.9788 6.9437 12.7088 C 2.0937 13.3088 0.4437 30.6688 4.2937 30.4888 Z" ] []
+        , path [ stroke "none", fill "black", d "M 4.2437 32.7788 C 5.5037 32.7188 11.1837 32.4488 11.8137 32.4188 C 13.0737 32.3588 12.8237 38.4688 12.2937 40.0188 C 11.7437 41.6188 5.8237 41.1788 5.1437 40.4488 C 4.0637 39.2888 2.9837 32.8388 4.2437 32.7788 Z" ] []
         ]
 
 
