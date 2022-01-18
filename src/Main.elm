@@ -540,7 +540,7 @@ footprintDiagram seed permTable elevatedRow count ( xPos, yPerc ) =
 
                 yPos =
                     yPerc
-                        + (if elevatedRow then
+                        - (if elevatedRow then
                             0.5 * dy
 
                            else
