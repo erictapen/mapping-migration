@@ -790,7 +790,7 @@ view model =
                                         Set.toList <|
                                             Set.union (years <| Just selectedCOA1) (years selectedCOA2)
                                     ]
-                                , text selectedYear
+                                , p [ style "font-size: 4em; margin-top: 0;" ] [ text selectedYear ]
                                 ]
                             , div [ style <| "float: left;" ++ " width: 60%;" ]
                                 [ coaVis
