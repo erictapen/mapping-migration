@@ -714,9 +714,7 @@ menu html =
                 ++ " width: 24em;"
                 ++ " margin-right: 5em;"
         ]
-        ([ h1 [] [ text "Labeling Refugees" ]
-         , h2 [] [ text "How European States Decide on Asylum" ]
-         ]
+        ([ h1 [] [ text appTitle ] ]
             ++ html
             ++ [ p []
                     [ text "Scroll down for an "
@@ -727,9 +725,13 @@ menu html =
         )
 
 
+appTitle =
+    "How European States Decide on Asylum"
+
+
 view : Model -> Browser.Document Msg
 view model =
-    { title = "Mapping migration"
+    { title = appTitle
     , body =
         case model of
             CountriesLoading ->
