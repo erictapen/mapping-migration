@@ -507,7 +507,7 @@ barElement dividend position textContent color total population =
                 ++ "%; "
         ]
         [ S.text <| (fromInt <| round <| 100 * (toFloat dividend / toFloat total)) ++ "% " ++ textContent
-        , a [ href "#" ] [ text "ⓘ" ]
+        , a [ href "#", title "coming soon" ] [ text "ⓘ" ]
         ]
     )
 
