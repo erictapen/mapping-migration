@@ -706,10 +706,12 @@ view model =
                             [ menu
                                 [ cooSelect countries
                                 , text <|
-                                    String.append "Unfortunately there is no data available for " <|
+                                    (String.append "Unfortunately there is no data available for " <|
                                         .name <|
                                             withDefault unknownCountry <|
                                                 Dict.get selectedCOO countries
+                                    )
+                                        ++ " yet."
                                 ]
                             , Introduction.introduction
                             ]
