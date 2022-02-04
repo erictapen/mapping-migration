@@ -613,6 +613,30 @@ footprint4 =
         ]
 
 
+{-| The legend that explains what one footprint symbolises
+-}
+footprintLegend : Html Msg
+footprintLegend =
+    div
+        [ style "padding-left: 1em;"
+        ]
+        [ svg
+            [ width "1em"
+            , height "1em"
+            , viewBox "0 0 5 5"
+            ]
+            [ footprint1
+            , use
+                [ attribute "href" "#fs1"
+                , y "0"
+                , x "0"
+                ]
+                []
+            ]
+        , text <| "1 decision per " ++ perCapitaUnitString ++ " inhabitants"
+        ]
+
+
 {-| Granularity in which we calculate asylum decision count in relation to population of the COA
 -}
 perCapitaUnit =
@@ -723,6 +747,7 @@ view model =
                                 [ cooSelect countries
                                 , br [] []
                                 , coaSelect countries availableCOAs
+                                , footprintLegend
                                 , div []
                                     [ let
                                         years countryCode =
