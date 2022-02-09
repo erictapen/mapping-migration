@@ -4,7 +4,6 @@ module Api exposing
     , COA
     , Country
     , CountryCode
-    , PersonsOrCases(..)
     , Year
     , asylumDecisionsDecoder
     , asylumDecisionsPath
@@ -163,7 +162,6 @@ type alias AsylumDecisionsJson =
     , decisionsRejected : Maybe Int
     , decisionsClosed : Maybe Int
     , decisionsTotal : Int
-    , personsOrCases : PersonsOrCases
     }
 
 
@@ -183,7 +181,6 @@ asylumDecisionsDecoder =
                     |> optional "dec_rejected" (maybe ambigousNumber) Nothing
                     |> optional "dec_closed" (maybe ambigousNumber) Nothing
                     |> required "dec_total" ambigousNumber
-                    |> required "dec_pc" personsOrCases
                 )
 
 
@@ -203,36 +200,12 @@ type alias Year =
     String
 
 
-type PersonsOrCases
-    = Persons
-    | Cases
-    | Mixed
-
-
-personsOrCases : JD.Decoder PersonsOrCases
-personsOrCases =
-    JD.andThen
-        (\str ->
-            case str of
-                "P" ->
-                    JD.succeed Persons
-
-                "C" ->
-                    JD.succeed Cases
-
-                unknownType ->
-                    JD.fail <| "Unknown dec_pc " ++ unknownType
-        )
-        JD.string
-
-
 type alias AsylumDecisions =
     { recognized : Maybe Int
     , other : Maybe Int
     , rejected : Maybe Int
     , closed : Maybe Int
     , total : Int
-    , personsOrCases : PersonsOrCases
     }
 
 
@@ -243,12 +216,6 @@ mergeAsylumDecisions origin addition =
     , rejected = maybeAdd origin.rejected addition.rejected
     , closed = maybeAdd origin.closed addition.closed
     , total = origin.total + addition.total
-    , personsOrCases =
-        if origin.personsOrCases == addition.personsOrCases then
-            origin.personsOrCases
-
-        else
-            Mixed
     }
 
 
@@ -308,7 +275,6 @@ buildAvailableCOAs obj old =
             , rejected = obj.decisionsRejected
             , closed = obj.decisionsClosed
             , total = obj.decisionsTotal
-            , personsOrCases = obj.personsOrCases
             }
 
         updateYear value =

@@ -383,12 +383,10 @@ coaVis countryCode country maybePopulation maybeAsylumDecisions =
                                         ++ perCapitaUnitString
                                         ++ (case count of
                                                 0 ->
-                                                    " inhabitants there were less than 1 decisions in total"
+                                                    " inhabitants there were less than 1 decision in total"
 
                                                 1 ->
-                                                    " inhabitants there was "
-                                                        ++ fromInt count
-                                                        ++ " decision in total"
+                                                    " inhabitants there was 1 decision in total"
 
                                                 _ ->
                                                     " inhabitants there were "
@@ -398,7 +396,6 @@ coaVis countryCode country maybePopulation maybeAsylumDecisions =
                                 , coaSvg population ad
                                 , br [] []
                                 ]
-                                    ++ displayPersonsOrCases ad.personsOrCases
                )
         )
 
@@ -634,6 +631,7 @@ footprintLegend =
                 []
             ]
         , text <| "1 decision per " ++ perCapitaUnitString ++ " inhabitants"
+        , a [ href "#", title "coming soon" ] [ text "ⓘ" ]
         ]
 
 
@@ -645,21 +643,6 @@ perCapitaUnit =
 
 perCapitaUnitString =
     "500,000"
-
-
-displayPersonsOrCases : PersonsOrCases -> List (Html Msg)
-displayPersonsOrCases pOrC =
-    [ case pOrC of
-        Persons ->
-            text "This data is based on Person counts."
-
-        Cases ->
-            text "This data is based on Cases counts."
-
-        Mixed ->
-            text "This data is based on both Cases and Person counts!"
-    , br [] []
-    ]
 
 
 coaPopulation : Dict CountryCode Country -> CountryCode -> Result String Int
