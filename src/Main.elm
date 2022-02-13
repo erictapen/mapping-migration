@@ -87,22 +87,14 @@ init _ url key =
 
 -}
 type Model
-    = CountriesLoading
-    | CountriesLoadingFailed
-    | COALoading COOSelect
-    | COASelected COOSelect COASelect AnimationComponent
-
+    = CountriesLoadingFailed
+    | Model (Maybe (Dict CountryCode Country)) CountryCode (Maybe COASelect)
 
 type alias AnimationComponent =
     Float
 
-
-type COOSelect
-    = COOSelect (Dict CountryCode Country) CountryCode Select.State
-
-
 type COASelect
-    = COASelect AvailableCOAs CountryCode Select.State CountryCode Select.State Year
+    = COASelect AvailableCOAs CountryCode CountryCode Year
     | COAsNotAvailable
 
 
