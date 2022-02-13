@@ -340,7 +340,9 @@ coaVis countryCode country maybePopulation maybeAsylumDecisions =
          ]
             ++ (case maybeAsylumDecisions of
                     Nothing ->
-                        [ text "No data for this year." ]
+                        [ text "No data for this year."
+                        , div [ style "height: 15em;" ] []
+                        ]
 
                     Just ad ->
                         case maybePopulation of
@@ -368,7 +370,6 @@ coaVis countryCode country maybePopulation maybeAsylumDecisions =
                                                         ++ " decisions in total"
                                            )
                                 , coaSvg population ad
-                                , br [] []
                                 ]
                )
         )
@@ -410,11 +411,11 @@ coaSvg population ad =
         legend ( _, _, l ) =
             l
     in
-    div []
+    div [ style "height: 15em;" ]
         [ svg
             [ width "100"
-            , height "15em"
-            , style "width:100%"
+            , height "100%"
+            , style "width: 100%"
             ]
             ([ footprint1
              , footprint2
