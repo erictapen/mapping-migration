@@ -48,5 +48,6 @@ in mkDerivation {
   src = ./.;
   targets = ["Main"];
   srcdir = "./src";
+  outputJavaScript = false;
 }
 

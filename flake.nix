@@ -21,6 +21,7 @@
           elm
           elm-format
           elm-test
+          elm-json
           elm2nix
           (python3.withPackages (ps: with ps; [
             pandas
