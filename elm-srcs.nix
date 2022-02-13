@@ -25,6 +25,16 @@
         version = "1.0.2";
       };
 
+      "rtfeldman/elm-css" = {
+        sha256 = "1437v58qzr7ba7i7xjgxczdyb8irkkacmdpqqpxiq79zwdx3ywaa";
+        version = "17.0.5";
+      };
+
+      "Confidenceman02/elm-select" = {
+        sha256 = "0spnnywa9lyssn6a5i33vhnddh51ajdgybcy4sbikf5f4h60q9jk";
+        version = "3.2.2";
+      };
+
       "elm/core" = {
         sha256 = "19w0iisdd66ywjayyga4kv2p1v9rxzqjaxhckp8ni6n8i0fb2dvf";
         version = "1.0.5";
@@ -65,9 +75,29 @@
         version = "3.2.0";
       };
 
+      "robinheghan/murmur3" = {
+        sha256 = "15asmgr2zqh7rkywrg5647rpdqkpzxk02v5qc6ndj60jza3gsmjk";
+        version = "1.0.0";
+      };
+
+      "rtfeldman/elm-hex" = {
+        sha256 = "1y0aa16asvwdqmgbskh5iba6psp43lkcjjw9mgzj3gsrg33lp00d";
+        version = "1.0.0";
+      };
+
       "elm/url" = {
         sha256 = "0av8x5syid40sgpl5vd7pry2rq0q4pga28b4yykn9gd9v12rs3l4";
         version = "1.0.0";
+      };
+
+      "elm-community/list-extra" = {
+        sha256 = "043iwpdwyrfb1jndxh7kf7xlkgq1v6pjczv1r1b19p2wky6nmy8z";
+        version = "8.5.2";
+      };
+
+      "dzuk-mutant/elm-html-styled-aria" = {
+        sha256 = "1gwk45zspfkdgxzj27sgnilirydj5kzbmdhrphfcpf1p1s1kighr";
+        version = "1.0.1";
       };
 
       "elm/virtual-dom" = {
