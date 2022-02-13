@@ -73,32 +73,6 @@ init _ =
     ( CountriesLoading, fetchCountries GotCountries )
 
 
-{-| Some wrapper type we use to express that some stuff can:
-
-  - Not loaded yet
-  - Be in the process of loading
-  - Loaded, that wraps a Maybe. Nothing signifies an error!
-
--}
-type Loadable a
-    = NotLoaded
-    | Loading
-    | Loaded (Maybe a)
-
-
-unwrapLoadable : Loadable a -> Maybe a
-unwrapLoadable loadable =
-    case loadable of
-        NotLoaded ->
-            Nothing
-
-        Loading ->
-            Nothing
-
-        Loaded maybe ->
-            maybe
-
-
 {-|
 
   - `CountriesLoading`: The origin state of the application, that is only used for initialization.
