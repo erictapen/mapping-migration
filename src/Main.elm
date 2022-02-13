@@ -637,7 +637,8 @@ menu html =
         [ style <|
             "float: left;"
                 ++ " width: 24em;"
-                ++ " margin-right: 5em;"
+                ++ " margin-left: 3em;"
+                ++ " margin-right: 2em;"
         ]
         ([ h1 [] [ text appTitle ] ]
             ++ html
@@ -722,7 +723,12 @@ view model =
                                     ]
                                 , p [ style "font-size: 4em; margin-top: 0;" ] [ text selectedYear ]
                                 ]
-                            , div [ style <| "float: left;" ++ " width: 60%;" ]
+                            , div
+                                [ style <|
+                                    "float: left;"
+                                        ++ " width: 60%;"
+                                        ++ " margin-left: 3em;"
+                                ]
                                 [ coaVis
                                     selectedYear
                                     selectedCOA1
