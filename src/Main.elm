@@ -327,8 +327,8 @@ yearInput years =
             map yearOption years
 
 
-coaVis : CountryCode -> Maybe Country -> Result String Int -> Maybe AsylumDecisions -> Html Msg
-coaVis countryCode country maybePopulation maybeAsylumDecisions =
+coaVis : Year -> CountryCode -> Maybe Country -> Result String Int -> Maybe AsylumDecisions -> Html Msg
+coaVis year countryCode country maybePopulation maybeAsylumDecisions =
     div [ style "margin-bottom: 4em;" ]
         ([ h2
             [ title <|
@@ -340,7 +340,7 @@ coaVis countryCode country maybePopulation maybeAsylumDecisions =
          ]
             ++ (case maybeAsylumDecisions of
                     Nothing ->
-                        [ text "No data for this year."
+                        [ text <| "No data for " ++ year ++ "."
                         , div [ style "height: 15em;" ] []
                         ]
 
@@ -724,6 +724,7 @@ view model =
                                 ]
                             , div [ style <| "float: left;" ++ " width: 60%;" ]
                                 [ coaVis
+                                    selectedYear
                                     selectedCOA1
                                     (Dict.get selectedCOA1 countries)
                                     (coaPopulation countries selectedCOA1)
@@ -736,6 +737,7 @@ view model =
 
                                     Just sCOA2 ->
                                         coaVis
+                                            selectedYear
                                             sCOA2
                                             (Dict.get sCOA2 countries)
                                             (coaPopulation countries sCOA2)
