@@ -329,7 +329,7 @@ yearInput years =
 
 coaVis : CountryCode -> Maybe Country -> Result String Int -> Maybe AsylumDecisions -> Html Msg
 coaVis countryCode country maybePopulation maybeAsylumDecisions =
-    div []
+    div [ style "margin-bottom: 4em;" ]
         ([ h2
             [ title <|
                 String.append ("UNHCR: " ++ countryCode) <|
