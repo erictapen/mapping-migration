@@ -424,18 +424,18 @@ coaVis year countryCode country maybePopulation maybeAsylumDecisions =
             ]
             [ text <| withDefault "Unkown country name!" <| Maybe.map .name country ]
          ]
-            ++ (case maybeAsylumDecisions of
-                    Nothing ->
-                        [ text <| "No data for " ++ year ++ "."
-                        , div [ style "height: 15em;" ] []
-                        ]
+            ++ (case maybePopulation of
+                    Err e ->
+                        [ text e ]
 
-                    Just ad ->
-                        case maybePopulation of
-                            Err e ->
-                                [ text e ]
+                    Ok population ->
+                        case maybeAsylumDecisions of
+                            Nothing ->
+                                [ text <| "No data for " ++ year ++ "."
+                                , div [ style "height: 15em;" ] []
+                                ]
 
-                            Ok population ->
+                            Just ad ->
                                 [ text <|
                                     let
                                         count =
@@ -713,7 +713,7 @@ coaPopulation countries cc =
             Err <| "Country " ++ cc ++ "not available."
 
         Just country ->
-            Result.fromMaybe ("No population data for " ++ country.iso ++ ".") <|
+            Result.fromMaybe ("No population data for available.") <|
                 (Dict.get country.iso >> Maybe.andThen (Dict.get 2018)) Data.population
 
 
