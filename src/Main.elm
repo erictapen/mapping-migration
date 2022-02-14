@@ -686,7 +686,10 @@ footprint4 =
 footprintLegend : Html Msg
 footprintLegend =
     div
-        [ style "padding-left: 1em;"
+        [ style <|
+            "padding-left: 1em;"
+                ++ " margin-top: 2em;"
+                ++ " margin-bottom: 2em"
         ]
         [ svg
             [ width "1em"
