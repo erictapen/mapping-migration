@@ -705,7 +705,10 @@ footprintLegend =
                 []
             ]
         , text <| "1 decision per " ++ perCapitaUnitString ++ " inhabitants"
-        , a [ href "#", title "coming soon" ] [ text "ⓘ" ]
+        , a [ href "#", title "coming soon" ]
+            [ text "ⓘ"
+            , div [ style "width: 100px; background-color: black; position: absolute; visibility: hidden;" ] [ text "coming soon" ]
+            ]
         ]
 
 
