@@ -431,7 +431,7 @@ coaVis year countryCode country maybePopulation maybeAsylumDecisions =
                     Ok population ->
                         case maybeAsylumDecisions of
                             Nothing ->
-                                [ text <| "No data for " ++ year ++ "."
+                                [ text "No UNHCR data available."
                                 , div [ style "height: 15em;" ] []
                                 ]
 
@@ -713,7 +713,7 @@ coaPopulation countries cc =
             Err <| "Country " ++ cc ++ "not available."
 
         Just country ->
-            Result.fromMaybe ("No population data for available.") <|
+            Result.fromMaybe "No population data for available." <|
                 (Dict.get country.iso >> Maybe.andThen (Dict.get 2018)) Data.population
 
 
