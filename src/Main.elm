@@ -340,24 +340,17 @@ filteredAndSortedCOAs countries coas =
 countrySelectElement :
     String
     -> (Select.Msg CountryCode -> Msg)
-    -> Dict CountryCode Country
-    -> CountryCode
+    -> List ( CountryCode, Country )
+    -> Maybe (Select.MenuItem CountryCode)
     -> Select.State
     -> Html Msg
-countrySelectElement identifier msgConstructor countries selectedCountry selectState =
-    let
-        selectedMenuItem =
-            Maybe.map
-                ((\c -> ( selectedCountry, c )) >> menuItem)
-            <|
-                Dict.get selectedCountry countries
-    in
+countrySelectElement identifier msgConstructor countries selectedItem selectState =
     toUnstyled <|
         Html.Styled.map msgConstructor <|
             Select.view
-                (Select.single selectedMenuItem
+                (Select.single selectedItem
                     |> Select.state selectState
-                    |> (Select.menuItems <| map menuItem <| Dict.toList countries)
+                    |> (Select.menuItems <| map menuItem countries)
                     |> Select.placeholder identifier
                 )
                 (Select.selectIdentifier identifier)
@@ -369,8 +362,11 @@ menuItem ( cc, country ) =
 
 
 cooSelect : Dict CountryCode Country -> CountryCode -> Select.State -> Html Msg
-cooSelect countries =
-    countrySelectElement "selectCOO" ChangeCoo countries
+cooSelect countries selectedCountry =
+    countrySelectElement "selectCOO"
+        ChangeCoo
+        (Dict.toList countries)
+        (Maybe.map (\c -> menuItem ( selectedCountry, c )) <| Dict.get selectedCountry countries)
 
 
 coaSelect :
@@ -386,9 +382,23 @@ coaSelect countries coas selectedCOA1 selectedCOA1State selectedCOA2 selectedCOA
         text "no data available."
 
     else
+        let
+            selectedItem cc =
+                Maybe.map (\c -> menuItem ( cc, c )) <| Dict.get cc countries
+        in
         div []
-            [ countrySelectElement "selectCOA1" ChangeCoa1 countries selectedCOA1 selectedCOA1State
-            , countrySelectElement "selectCOA2" ChangeCoa2 countries selectedCOA2 selectedCOA2State
+            [ countrySelectElement
+                "selectCOA1"
+                ChangeCoa1
+                (filteredAndSortedCOAs countries coas)
+                (selectedItem selectedCOA1)
+                selectedCOA1State
+            , countrySelectElement
+                "selectCOA2"
+                ChangeCoa2
+                (filteredAndSortedCOAs countries coas)
+                (selectedItem selectedCOA2)
+                selectedCOA2State
             ]
 
 
