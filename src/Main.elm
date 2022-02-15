@@ -686,7 +686,14 @@ coaSvg animationState population ad =
              ]
                 ++ map footprints barElements
             )
-        , div [ style "position: relative; width: 100%; margin-bottom: 3em;" ] <| map legend barElements
+        , div
+            [ style <| "position: relative;"
+                ++ " width: 100%;"
+                ++ " margin-bottom: 3em;"
+                ++ " top: -30em;"
+            ]
+          <|
+            map legend barElements
         ]
 
 
