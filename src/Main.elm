@@ -2,6 +2,7 @@ module Main exposing (main)
 
 import Api exposing (..)
 import Browser
+import Browser.Events
 import Data
 import Dict exposing (Dict)
 import Html
@@ -86,7 +87,10 @@ type Model
     = CountriesLoading
     | CountriesLoadingFailed
     | COALoading COOSelect
-    | COASelected COOSelect COASelect
+    | COASelected COOSelect COASelect AnimationComponent
+
+
+type alias AnimationComponent = Float
 
 
 type COOSelect
@@ -108,6 +112,8 @@ type Msg
     | ChangeYear Year
 
 
+initialAnimationState = 400
+
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     let
@@ -115,8 +121,9 @@ update msg model =
             ( model, Cmd.none )
     in
     case msg of
-        Tick _ ->
-            ( model, Cmd.none )
+        Tick _ -> case model of
+                COASelected cooS coaS animationState -> ( COASelected cooS coaS (if animationState > 0 then animationState - 10 else 0), Cmd.none)
+                _ -> ( model, Cmd.none )
 
         GotCountries countriesResult ->
             case countriesResult of
@@ -139,7 +146,7 @@ update msg model =
 
         ChangeCoo selectedCooMsg ->
             case model of
-                COASelected (COOSelect countries selectedCoo cooSelectState) coaS ->
+                COASelected (COOSelect countries selectedCoo cooSelectState) coaS animationState ->
                     let
                         ( maybeAction, updatedSelectState, cmds ) =
                             Select.update selectedCooMsg cooSelectState
@@ -161,7 +168,7 @@ update msg model =
                         )
 
                     else
-                        ( COASelected (COOSelect countries selectedCoo updatedSelectState) coaS
+                        ( COASelected (COOSelect countries selectedCoo updatedSelectState) coaS animationState
                         , Cmd.map ChangeCoo cmds
                         )
 
@@ -209,6 +216,7 @@ update msg model =
                                     ( COASelected
                                         (COOSelect countries coo cooSelectState)
                                         (COASelect availableCOAs coa1 Select.initState coa2 Select.initState y)
+                                        initialAnimationState
                                     , Cmd.none
                                     )
 
@@ -216,6 +224,7 @@ update msg model =
                                     ( COASelected
                                         (COOSelect countries coo cooSelectState)
                                         COAsNotAvailable
+                                        initialAnimationState
                                     , Cmd.none
                                     )
 
@@ -224,7 +233,7 @@ update msg model =
 
         ChangeCoa1 selectedCoa1Msg ->
             case model of
-                COASelected cooS (COASelect availableCOAs selectedCoa1 coaSelectState1 selectedCoa2 coaSelectState2 year) ->
+                COASelected cooS (COASelect availableCOAs selectedCoa1 coaSelectState1 selectedCoa2 coaSelectState2 year) animationState ->
                     let
                         ( maybeAction, updatedSelectState, cmds ) =
                             Select.update selectedCoa1Msg coaSelectState1
@@ -246,6 +255,7 @@ update msg model =
                             coaSelectState2
                             year
                         )
+                        animationState
                     , Cmd.map ChangeCoa1 cmds
                     )
 
@@ -254,7 +264,7 @@ update msg model =
 
         ChangeCoa2 selectedCoa2Msg ->
             case model of
-                COASelected cooS (COASelect availableCOAs selectedCoa1 coaSelectState1 selectedCoa2 coaSelectState2 year) ->
+                COASelected cooS (COASelect availableCOAs selectedCoa1 coaSelectState1 selectedCoa2 coaSelectState2 year) animationState ->
                     let
                         ( maybeAction, updatedSelectState, cmds ) =
                             Select.update selectedCoa2Msg coaSelectState2
@@ -276,6 +286,7 @@ update msg model =
                             updatedSelectState
                             year
                         )
+                        animationState
                     , Cmd.map ChangeCoa2 cmds
                     )
 
@@ -284,7 +295,7 @@ update msg model =
 
         ChangeYear year ->
             case model of
-                COASelected cooS (COASelect availableCOAs selectedCoa1 coaSelectState1 selectedCoa2 coaSelectState2 _) ->
+                COASelected cooS (COASelect availableCOAs selectedCoa1 coaSelectState1 selectedCoa2 coaSelectState2 _) _ ->
                     ( COASelected cooS
                         (COASelect
                             availableCOAs
@@ -294,6 +305,7 @@ update msg model =
                             coaSelectState2
                             year
                         )
+                        initialAnimationState
                     , Cmd.none
                     )
 
@@ -303,7 +315,7 @@ update msg model =
 
 subscriptions : Model -> Sub Msg
 subscriptions _ =
-    Sub.none
+    Time.every 60 Tick
 
 
 countryOption : ( CountryCode, Country ) -> Html Msg
@@ -465,8 +477,8 @@ footprint4 =
 
 {-| SVG containing footprints for one decisison category
 -}
-footprintDiagram : Seed -> Simplex.PermutationTable -> Bool -> Int -> ( Float, Float ) -> List (Svg Msg)
-footprintDiagram seed permTable elevatedRow count ( xPos, yPerc ) =
+footprintDiagram : AnimationComponent -> Seed -> Simplex.PermutationTable -> Bool -> Int -> ( Float, Float ) -> List (Svg Msg)
+footprintDiagram animationState seed permTable elevatedRow count ( xPos, yPerc ) =
     let
         -- base distance
         dy =
@@ -504,11 +516,12 @@ footprintDiagram seed permTable elevatedRow count ( xPos, yPerc ) =
                 [ attribute "href"
                     (String.append "#fs" <| fromInt symbolIndex)
                 , y <| fromFloat <| yPos + noiseStrength * noise yPos (xPos + 1000)
-                , x <| fromFloat <| xPos + noiseStrength * noise xPos yPos
+                , x <| fromFloat <| animationState + xPos + noiseStrength * noise xPos yPos
                 ]
                 []
                 :: (if yPerc > 5 then
                         footprintDiagram
+                            animationState
                             nextSeed
                             permTable
                             elevatedRow
@@ -517,6 +530,7 @@ footprintDiagram seed permTable elevatedRow count ( xPos, yPerc ) =
 
                     else
                         footprintDiagram
+                            animationState
                             nextSeed
                             permTable
                             (not elevatedRow)
@@ -532,8 +546,8 @@ footprintDiagram seed permTable elevatedRow count ( xPos, yPerc ) =
   - HTML that describes the category
 
 -}
-barElement : Int -> Int -> String -> String -> Int -> Int -> ( Svg Msg, Svg Msg, Html Msg )
-barElement dividend position textContent color total population =
+barElement : AnimationComponent -> Int -> Int -> String -> String -> Int -> Int -> ( Svg Msg, Svg Msg, Html Msg )
+barElement animationState dividend position textContent color total population =
     let
         xPos =
             100 * (toFloat position / toFloat total)
@@ -563,6 +577,7 @@ barElement dividend position textContent color total population =
             ]
          ]
             ++ footprintDiagram
+                animationState
                 (initialSeed <| population + position)
                 (Simplex.permutationTableFromInt <| population + position)
                 False
@@ -591,27 +606,31 @@ barElement dividend position textContent color total population =
 
 {-| The SVG component of a COA chart
 -}
-coaSvg : Int -> AsylumDecisions -> Html Msg
-coaSvg population ad =
+coaSvg : AnimationComponent -> Int -> AsylumDecisions -> Html Msg
+coaSvg animationState population ad =
     let
         barElements =
             map (\f -> f ad.total population)
                 [ barElement
+                    animationState
                     (withDefault 0 ad.recognized)
                     0
                     "recognized"
                     "#a8a8a8"
                 , barElement
+                    animationState
                     (withDefault 0 ad.other)
                     (withDefault 0 ad.recognized)
                     "complementary protection"
                     "#b7b7b7"
                 , barElement
+                    animationState
                     (withDefault 0 ad.closed)
                     (withDefault 0 ad.recognized + withDefault 0 ad.other)
                     "otherwise closed"
                     "#cecece"
                 , barElement
+                    animationState
                     (withDefault 0 ad.rejected)
                     (withDefault 0 ad.recognized + withDefault 0 ad.other + withDefault 0 ad.closed)
                     "rejected"
@@ -653,8 +672,8 @@ coaSvg population ad =
 
 {-| A complete chart for one COA.
 -}
-coaVis : Year -> CountryCode -> Maybe Country -> Result String Int -> Maybe AsylumDecisions -> Html Msg
-coaVis year countryCode country maybePopulation maybeAsylumDecisions =
+coaVis : AnimationComponent -> Year -> CountryCode -> Maybe Country -> Result String Int -> Maybe AsylumDecisions -> Html Msg
+coaVis animationState year countryCode country maybePopulation maybeAsylumDecisions =
     div [ style "margin-bottom: 4em;" ]
         ([ h2
             [ title <|
@@ -695,7 +714,7 @@ coaVis year countryCode country maybePopulation maybeAsylumDecisions =
                                                         ++ fromInt count
                                                         ++ " decisions in total"
                                            )
-                                , coaSvg population ad
+                                , coaSvg animationState population ad
                                 ]
                )
         )
@@ -804,7 +823,7 @@ view model =
                     ]
                 ]
 
-            COASelected (COOSelect countries selectedCOO cooSelectState) coaS ->
+            COASelected (COOSelect countries selectedCOO cooSelectState) coaS animationState ->
                 case coaS of
                     COAsNotAvailable ->
                         [ div []
@@ -850,6 +869,7 @@ view model =
                                         ++ " margin-left: 3em;"
                                 ]
                                 [ coaVis
+                                    animationState
                                     selectedYear
                                     selectedCOA1
                                     (Dict.get selectedCOA1 countries)
@@ -858,6 +878,7 @@ view model =
                                     Maybe.andThen (Dict.get selectedYear) <|
                                         Dict.get selectedCOA1 availableCOAs
                                 , coaVis
+                                    animationState
                                     selectedYear
                                     selectedCOA2
                                     (Dict.get selectedCOA2 countries)
