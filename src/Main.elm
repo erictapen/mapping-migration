@@ -509,16 +509,16 @@ coaSvg population ad =
     in
     div [ style "height: 15em;" ]
         [ svg
-            [ width "100"
-            , height "100%"
-            , style "width: 100%"
+            [ width "200"
+            , height "300%"
+            , style "width: 200%; top: -15em; position: relative;"
             ]
             ([ footprint1
              , footprint2
              , footprint3
              , footprint4
              , svg
-                [ viewBox "0 0 100 100"
+                [ viewBox "0 -100 200 300"
                 , id "bar"
                 , preserveAspectRatio "none"
                 ]
@@ -535,13 +535,16 @@ barElement : Int -> Int -> String -> String -> Int -> Int -> ( Svg Msg, Svg Msg,
 barElement dividend position textContent color total population =
     let
         xPos =
-            fromFloat <| 100 * (toFloat position / toFloat total)
+            100 * (toFloat position / toFloat total)
 
         width =
             100 * (toFloat dividend / toFloat total)
+
+        footprintCount =
+            dividend * perCapitaUnit // population
     in
     ( rect
-        [ x xPos
+        [ x <| fromFloat xPos
         , SA.width <| fromFloat width
         , height "100"
         , stroke "none"
@@ -549,18 +552,22 @@ barElement dividend position textContent color total population =
         ]
         []
     , svg
-        [ viewBox <| "0 0 " ++ (fromFloat <| width * 4) ++ " 100"
-        , x (xPos ++ "%")
+        [ viewBox <| "0 -100 " ++ (fromFloat <| width * 4) ++ " 300"
+        , x (fromFloat (xPos/2) ++ "%")
         , SA.width (fromFloat width ++ "%")
         , preserveAspectRatio "xMinYMin meet"
         ]
-      <|
-        footprintDiagram
-            (initialSeed <| population + position)
-            (Simplex.permutationTableFromInt <| population + position)
-            False
-            (dividend * perCapitaUnit // population)
-            ( 5, 95 )
+        ([ S.title []
+            [ text <| fromInt footprintCount ++ " decisions/" ++ perCapitaUnitString ++ " inhabitants"
+            ]
+         ]
+            ++ footprintDiagram
+                (initialSeed <| population + position)
+                (Simplex.permutationTableFromInt <| population + position)
+                False
+                footprintCount
+                ( 5, 95 )
+        )
     , div
         [ style <|
             "overflow: hidden; "
@@ -569,7 +576,7 @@ barElement dividend position textContent color total population =
                 ++ "top: 80%; "
                 ++ "text-align: center; "
                 ++ "left: "
-                ++ xPos
+                ++ fromFloat xPos
                 ++ "%; "
                 ++ "width: "
                 ++ fromFloat width
