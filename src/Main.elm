@@ -90,7 +90,8 @@ type Model
     | COASelected COOSelect COASelect AnimationComponent
 
 
-type alias AnimationComponent = Float
+type alias AnimationComponent =
+    Float
 
 
 type COOSelect
@@ -112,7 +113,9 @@ type Msg
     | ChangeYear Year
 
 
-initialAnimationState = 400
+initialAnimationState =
+    400
+
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
@@ -121,9 +124,22 @@ update msg model =
             ( model, Cmd.none )
     in
     case msg of
-        Tick _ -> case model of
-                COASelected cooS coaS animationState -> ( COASelected cooS coaS (if animationState > 0 then animationState - 10 else 0), Cmd.none)
-                _ -> ( model, Cmd.none )
+        Tick _ ->
+            case model of
+                COASelected cooS coaS animationState ->
+                    ( COASelected cooS
+                        coaS
+                        (if animationState > 0 then
+                            animationState - 10
+
+                         else
+                            0
+                        )
+                    , Cmd.none
+                    )
+
+                _ ->
+                    ( model, Cmd.none )
 
         GotCountries countriesResult ->
             case countriesResult of
