@@ -546,8 +546,8 @@ footprintDiagram animationState seed permTable elevatedRow count ( xPos, yPerc )
   - HTML that describes the category
 
 -}
-barElement : AnimationComponent -> Int -> Int -> String -> String -> Int -> Int -> ( Svg Msg, Svg Msg, Html Msg )
-barElement animationState dividend position textContent color total population =
+barElement : AnimationComponent -> Int -> Int -> String -> String -> String -> Int -> Int -> ( Svg Msg, Svg Msg, Html Msg )
+barElement animationState dividend position textContent explanation color total population =
     let
         xPos =
             100 * (toFloat position / toFloat total)
@@ -599,7 +599,7 @@ barElement animationState dividend position textContent color total population =
                 ++ "%; "
         ]
         [ S.text <| (fromInt <| round <| 100 * (toFloat dividend / toFloat total)) ++ "% " ++ textContent
-        , a [ href "#", title "coming soon" ] [ text "ⓘ" ]
+        , a [ href "#", title explanation ] [ text "ⓘ" ]
         ]
     )
 
@@ -616,24 +616,28 @@ coaSvg animationState population ad =
                     (withDefault 0 ad.recognized)
                     0
                     "recognized"
+                    "explanation for recognized decision category"
                     "#a8a8a8"
                 , barElement
                     animationState
                     (withDefault 0 ad.other)
                     (withDefault 0 ad.recognized)
                     "complementary protection"
+                    "explanation for complementary protection decision category"
                     "#b7b7b7"
                 , barElement
                     animationState
                     (withDefault 0 ad.closed)
                     (withDefault 0 ad.recognized + withDefault 0 ad.other)
                     "otherwise closed"
+                    "explanation for otherwise closed decision category"
                     "#cecece"
                 , barElement
                     animationState
                     (withDefault 0 ad.rejected)
                     (withDefault 0 ad.recognized + withDefault 0 ad.other + withDefault 0 ad.closed)
                     "rejected"
+                    "explanation for rejected decision category"
                     "#dddddd"
                 ]
 
@@ -744,7 +748,7 @@ footprintLegend =
                 []
             ]
         , text <| "1 decision per " ++ perCapitaUnitString ++ " inhabitants"
-        , a [ href "#", title "coming soon" ]
+        , a [ href "#", title "explanation for footprints" ]
             [ text "ⓘ"
             , div [ style "width: 100px; background-color: black; position: absolute; visibility: hidden;" ] [ text "coming soon" ]
             ]
