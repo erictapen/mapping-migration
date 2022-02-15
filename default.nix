@@ -1,5 +1,6 @@
 { nixpkgs ? <nixpkgs>
 , config ? {}
+, revision
 }:
 
 with (import nixpkgs config);
@@ -29,7 +30,11 @@ let
       installPhase = let
         elmfile = module: "${srcdir}/${builtins.replaceStrings ["."] ["/"] module}.elm";
         extension = if outputJavaScript then "js" else "html";
+        revision_url = "https://github.com/erictapen/mapping-migration/" + (if revision == "dirty" then "" else "commit/${revision}");
       in ''
+        sed -i 's|GIT_REV|${revision}|g' src/Introduction.elm
+        sed -i 's|GITHUB_URL|${revision_url}|g' src/Introduction.elm
+
         mkdir -p $out/share/doc
         ${lib.concatStrings (map (module: ''
           echo "compiling ${elmfile module}"

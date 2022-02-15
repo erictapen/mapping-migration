@@ -60,4 +60,6 @@ In some cases, large groups of people fleeing at the same time from similar circ
                     ]
                 ]
             ]
+        , div [ style "text-align" "right", style "font-size" "small" ]
+            [ text "Source code: ", a [ href "GITHUB_URL" ] [ text "GIT_REV" ] ]
         ]
