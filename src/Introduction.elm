@@ -67,11 +67,29 @@ The data used in the vizualization was collected by the UNHCR, latest data is fr
         , h4 [] [ text "References" ]
         , p [] [ text """
 Bundesamt für Migration und Flüchtlinge (2021): Subsidiärer Schutz. Accessed February 15th, 2022 under https://www.bamf.de/DE/Themen/AsylFluechtlingsschutz/AblaufAsylverfahrens/Schutzformen/SubisidiaerSchutz/subisidiaerschutz-node.html.
+"""
+			, br [] []
+			, text """
 Expert Group on Refugee and Internally Displaced Persons Statistics (2018): International Recommendations on Refugee Statistics, published by European Union and the United Nations, Luxembourg. Accessed January 10th, 2022 under https://unstats.un.org/unsd/demographic-social/Standards-and-Methods/files/Principles_and_Recommendations/International-Migration/2018_1746_EN_08-E.pdf.
+"""
+			, br [] []
+			, text """
 Hanewinkel, Vera (2021): Flucht und Asyl in Deutschland. Accessed February 15th, 2022 under https://www.bpb.de/themen/migration-integration/laenderprofile/deutschland/344086/flucht-und-asyl-in-deutschland/.
+"""
+			, br [] []
+			, text """
 Malkki, Liisa (1992): National Geographic: The Rooting of Peoples and the Territorialization of National Identity among Scholars and Refugees. Cultural Anthropology 7(1), 24-44.
+"""
+			, br [] []
+			, text """
 UNHCR (2021): What is a refugee? Accessed January 11th, 2022 under https://www.unhcr.org/what-is-a-refugee.html.
+"""
+			, br [] []
+			, text """
 UNHCR (2022): Persons who are forcibly displaced, stateless and others of concern to UNHCR. Accessed January 10th, 2022 under https://www.unhcr.org/refugee-statistics/methodology/definition/.
+"""
+			, br [] []
+			, text """
 Zetter, Roger (2007): More Labels, Fewer Refugees: Remaking the Refugee Label in an Era of Globalization. Journal of Refugee Studies 20(2), 172-192.
 """ ]
         , hr [] []
