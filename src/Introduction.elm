@@ -49,8 +49,16 @@ Our webapp enables the user to select a country of origin and two European count
 """ ]
         , h4 [] [ text "About the project" ]
         , p [] [ text """
-This project is part of the course "Mapping Cities -  Making Cities" by Prof. Dr. Marian Dörk at University of Applied Sciences Potsdam in Winter semster 2021/2022. More information about the course and its other projects here: https://uclab.fh-potsdam.de/mapping/.
+This project is part of the course "Mapping Cities -  Making Cities" by Prof. Dr. Marian Dörk at University of Applied Sciences Potsdam in Winter semester 2021/2022. More information about the course and its other projects here: https://uclab.fh-potsdam.de/mapping/.
  The project was finished in February 2022.
+""" ]
+        , h4 [] [ text "Team" ]
+        , p [] [ text """
+Frieda Grimm, MA Urbane Zukunft, MA Architektur, Concept, Design
+Katharina Schürmann, MA Urbane Zukunft, Concept, Data Exploration, Texts
+Kerstin Humm, BA Kommunikationsdesign, Concept, Programming
+Kübra Sari, MA Urbane Zukunft, Concept, Data Exploration, Texts
+Séraphime Reznikoff, MA Urbane Zukunft, Concept, Data Exploration, Texts
 """ ]
         , hr [] []
         , ol []
