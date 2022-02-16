@@ -1,6 +1,6 @@
 module Introduction exposing (..)
 
-import Html exposing (Html, a, br, div, h1, h2, h3, hr, li, ol, p, sup, text)
+import Html exposing (Html, a, br, div, h1, h2, h3, h4, hr, li, ol, p, sup, text)
 import Html.Attributes exposing (attribute, href, id, style)
 
 
@@ -47,6 +47,7 @@ Through our web application, we want to make decisions on asylum in Europe, thei
         , p [] [ text """
 Our webapp enables the user to select a country of origin and two European countries of asylum. It then visualizes the decisions made on asylum applications in these countries of asylum in the chosen year. To contextualize these numbers and offer the opportunity for comparison between and within countries, two simple visual components are used: A bar chart shows the share of each decision category in a given country. A slider provides the possibility to explore each year from 2000-2021 individually, but also to observe temporal evolutions and changes. When stopped for a few seconds in one year, an animation of footprints entering the country bars starts. These footprints set the total number of decisions per year per country of asylum in relation to the number of inhabitants of that country: One footprint represents one decision per 500,000 inhabitants. At the same time, they serve to remind the user that it is human beings over whom asylum decisions are made.
 """ ]
+        , h4 [] [ text "About the project" ]
         , p [] [ text """
 This project is part of the course "Mapping Cities -  Making Cities" by Prof. Dr. Marian Dörk at University of Applied Sciences Potsdam in Winter semster 2021/2022. More information about the course and its other projects here: https://uclab.fh-potsdam.de/mapping/.
  The project was finished in February 2022.
