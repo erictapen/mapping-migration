@@ -632,28 +632,28 @@ coaSvg animationState population ad =
                     (withDefault 0 ad.recognized)
                     0
                     "recognized"
-                    "explanation for recognized decision category"
+                    "Asylum claims that have been recognized in the chosen period of time. The applicants are now recognized refugees under UNHCR´s mandate."
                     "#a8a8a8"
                 , barElement
                     animationState
                     (withDefault 0 ad.other)
                     (withDefault 0 ad.recognized)
                     "complementary protection"
-                    "explanation for complementary protection decision category"
+                    "Country-specific forms of complementary or subsidiary protection for people that do not fall under other definitions of refugee, but still are in need of protection. What is included in these kinds of protection can widely differ, from protection from deportation to the full rights a refugee status entails. In the EU asylum system, a "third country national or stateless person" can be granted subsidiary protection if they do not qualify as a refugee but on return to their country of origin are in danger of "serious harm" (Expert Group on Refugee and Internally Displaced Persons Statistics 2018, 23). In Germany, major differences between a refugee status and subsidiary protection are: with subsidiary protection, family reunification is restricted. Moreover, a residence permit is issued only for one year and can be prolonged for two years at a time whereas with a refugee status, a residence permit directly is issued for three years with the chance of extension (Bundesamt für Migration und Flüchtlinge 2021; Hanewinkel 2021)."
                     "#b7b7b7"
                 , barElement
                     animationState
                     (withDefault 0 ad.closed)
                     (withDefault 0 ad.recognized + withDefault 0 ad.other)
                     "otherwise closed"
-                    "explanation for otherwise closed decision category"
+                    "Asylum applications closed without a substantive decision (thus, neither recognized nor rejected). Reasons for that include e.g. inadmissibility, withdrawal, abandonment, death, Dublin II  procedure (Europe only), etc. (Personal correspondence with UNHCR member, 2022)."
                     "#cecece"
                 , barElement
                     animationState
                     (withDefault 0 ad.rejected)
                     (withDefault 0 ad.recognized + withDefault 0 ad.other + withDefault 0 ad.closed)
                     "rejected"
-                    "explanation for rejected decision category"
+                    "Asylum claims that have been rejected in the chosen period of time."
                     "#dddddd"
                 ]
 
