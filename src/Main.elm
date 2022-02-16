@@ -771,9 +771,9 @@ footprintLegend =
                 []
             ]
         , text <| "1 decision per " ++ perCapitaUnitString ++ " inhabitants"
-        , a [ href "#", title "explanation for footprints" ]
+        , a [ href "#", title "One decision does not equal one person!" ]
             [ text "ⓘ"
-            , div [ style "width: 100px; background-color: black; position: absolute; visibility: hidden;" ] [ text "coming soon" ]
+            , div [ style "width: 100px; background-color: black; position: absolute; visibility: hidden;" ] [ text "It is important to note that one decision does not equal one person. This is due to two major reasons: First, there are two ways of counting decisions in the data set: Persons and cases. Cases can include several people (e.g. a family), but it is not possible to see how many. In the web app, these two ways of counting are summed up. Second, in one year the same person may receive decisions over more than one application if they reapplied after being rejected. For these reasons, it is not possible to read an absolute number of persons who received a decision out of the webapp, just an approximation. (Personal correspondence with UNHCR member, 2022)" ]
             ]
         ]
 
