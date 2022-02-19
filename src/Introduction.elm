@@ -65,7 +65,8 @@ Séraphime Reznikoff, MA Urbane Zukunft, Concept, Data Exploration, Texts
 The data used in the vizualization was collected by the UNHCR, latest data is from mid-2021. It is accessed via the Refugee Statistics API.
 """ ]
         , h4 [] [ text "References" ]
-        , p [] [ text """
+        , p []
+            [ text """
 Bundesamt für Migration und Flüchtlinge (2021): Subsidiärer Schutz. Accessed February 15th, 2022 under https://www.bamf.de/DE/Themen/AsylFluechtlingsschutz/AblaufAsylverfahrens/Schutzformen/SubisidiaerSchutz/subisidiaerschutz-node.html.
 """
             , br [] []
@@ -91,7 +92,8 @@ UNHCR (2022): Persons who are forcibly displaced, stateless and others of concer
             , br [] []
             , text """
 Zetter, Roger (2007): More Labels, Fewer Refugees: Remaking the Refugee Label in an Era of Globalization. Journal of Refugee Studies 20(2), 172-192.
-""" ]
+"""
+            ]
         , hr [] []
         , ol []
             [ p []

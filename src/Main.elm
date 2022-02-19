@@ -585,7 +585,7 @@ barElement animationState dividend position textContent explanation color total 
     , svg
         [ viewBox <| "0 -100 " ++ (fromFloat <| width * 4) ++ " 300"
         , x (fromFloat (xPos / 2) ++ "%")
-        , SA.width (fromFloat width ++ "%")
+        , SA.width (fromFloat (100 - xPos) ++ "%")
         , preserveAspectRatio "xMinYMin meet"
         ]
         ([ S.title []
@@ -689,10 +689,11 @@ Country-specific forms of complementary or subsidiary protection for people that
                 ++ map footprints barElements
             )
         , div
-            [ style <| "position: relative;"
-                ++ " width: 100%;"
-                ++ " margin-bottom: 3em;"
-                ++ " top: -30em;"
+            [ style <|
+                "position: relative;"
+                    ++ " width: 100%;"
+                    ++ " margin-bottom: 3em;"
+                    ++ " top: -30em;"
             ]
           <|
             map legend barElements
