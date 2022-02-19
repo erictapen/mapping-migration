@@ -3,8 +3,8 @@ module Main exposing (main)
 import Api exposing (..)
 import Browser
 import Browser.Events
+import Browser.Navigation
 import Data
-import Url exposing (Url)
 import Dict exposing (Dict)
 import Html
     exposing
@@ -60,6 +60,7 @@ import Svg.Attributes as SA
         )
 import Task
 import Time
+import Url exposing (Url)
 
 
 main =
@@ -75,27 +76,46 @@ main =
 
 init : () -> Url -> Browser.Navigation.Key -> ( Model, Cmd Msg )
 init _ url key =
-    ( CountriesLoading, fetchCountries GotCountries )
+    ( Ok
+        { countries = Nothing
+        , coo = unknownCountryCode
+        , cooSelectState = Select.initState
+        , coa1 = unknownCountryCode
+        , coa2 = unknownCountryCode
+        , coaSelect = Nothing
+        }
+    , fetchCountries GotCountries
+    )
 
 
-{-|
+type alias Model =
+    Result ApplicationError ApplicationState
 
-  - `CountriesLoading`: The origin state of the application, that is only used for initialization.
-  - `CountriesLoadingFailed`: Error on /countries
-  - `COALoading`: COA data is being requested
-  - `COASelected`: COA data is loaded and displayed
 
--}
-type Model
+type ApplicationError
     = CountriesLoadingFailed
-    | Model (Maybe (Dict CountryCode Country)) CountryCode (Maybe COASelect)
+    | AsylumDecisionsLoadingFailed
 
-type alias AnimationComponent =
-    Float
 
-type COASelect
-    = COASelect AvailableCOAs CountryCode CountryCode Year
-    | COAsNotAvailable
+{-| About coaSelect: The outer Maybe is for the case if it isn't loaded yet. The inner Result is for no available data
+-}
+type alias ApplicationState =
+    { countries : Maybe (Dict CountryCode Country)
+    , coo : CountryCode
+    , cooSelectState : Select.State
+    , coa1 : CountryCode
+    , coa2 : CountryCode
+    , coaSelect : Maybe (Result String COASelect)
+    }
+
+
+type alias COASelect =
+    { availableCOAs : AvailableCOAs
+    , coa1SelectState : Select.State
+    , coa2SelectState : Select.State
+    , year : Year
+    , animationState : Float
+    }
 
 
 type Msg
@@ -106,6 +126,7 @@ type Msg
     | ChangeCoa1 (Select.Msg CountryCode)
     | ChangeCoa2 (Select.Msg CountryCode)
     | ChangeYear Year
+    | NoOp
 
 
 initialAnimationState =
@@ -118,50 +139,61 @@ update msg model =
         noop =
             ( model, Cmd.none )
     in
-    case msg of
-        UpdateAnimation delta ->
-            case model of
-                COASelected cooS coaS animationState ->
-                    ( COASelected cooS
-                        coaS
-                        (if animationState > 0 then
-                            max 0 (animationState - (delta / 10))
+    case model of
+        Err _ ->
+            noop
 
-                         else
-                            0
-                        )
-                    , Cmd.none
-                    )
+        Ok state ->
+            case msg of
+                UpdateAnimation delta ->
+                    case state.coaSelect of
+                        Just (Ok coaS) ->
+                            ( Ok
+                                { state
+                                    | coaSelect =
+                                        Just
+                                            (Ok
+                                                { coaS
+                                                    | animationState =
+                                                        if coaS.animationState > 0 then
+                                                            max 0 (coaS.animationState - (delta / 10))
 
-                _ ->
-                    ( model, Cmd.none )
-        NoOp -> noop
+                                                        else
+                                                            0
+                                                }
+                                            )
+                                }
+                            , Cmd.none
+                            )
 
-        GotCountries countriesResult ->
-            case countriesResult of
-                Err _ ->
-                    ( CountriesLoadingFailed, Cmd.none )
+                        _ ->
+                            noop
 
-                Ok countries ->
-                    let
-                        -- We temporarily filter Aruba, as it is a country without data coming right at the top.
-                        filteredCountries =
-                            Dict.filter (\k -> \_ -> k /= "ABW") countries
+                GotCountries countriesResult ->
+                    case countriesResult of
+                        Err _ ->
+                            ( Err CountriesLoadingFailed, Cmd.none )
 
-                        coo =
-                            withDefault unknownCountryCode <|
-                                head <|
-                                    List.sortWith compareCountryCode <|
-                                        Dict.keys filteredCountries
-                    in
-                    ( COALoading (COOSelect filteredCountries coo Select.initState), fetchAsylumDecisions GotAsylumDecisions coo )
+                        Ok countries ->
+                            let
+                                -- We temporarily filter Aruba, as it is a country without data coming right at the top.
+                                filteredCountries =
+                                    Dict.filter (\k -> \_ -> k /= "ABW") countries
 
-        ChangeCoo selectedCooMsg ->
-            case model of
-                COASelected (COOSelect countries selectedCoo cooSelectState) coaS animationState ->
+                                coo =
+                                    withDefault unknownCountryCode <|
+                                        head <|
+                                            List.sortWith compareCountryCode <|
+                                                Dict.keys filteredCountries
+                            in
+                            ( Ok { state | countries = Just filteredCountries, coo = coo }
+                            , fetchAsylumDecisions GotAsylumDecisions coo
+                            )
+
+                ChangeCoo selectedCooMsg ->
                     let
                         ( maybeAction, updatedSelectState, cmds ) =
-                            Select.update selectedCooMsg cooSelectState
+                            Select.update selectedCooMsg state.cooSelectState
 
                         updatedCoo =
                             case maybeAction of
@@ -169,38 +201,40 @@ update msg model =
                                     c
 
                                 _ ->
-                                    selectedCoo
+                                    state.coo
                     in
-                    if updatedCoo /= selectedCoo then
-                        ( COALoading (COOSelect countries updatedCoo updatedSelectState)
+                    if state.coo /= updatedCoo then
+                        ( Ok
+                            { state
+                                | cooSelectState = updatedSelectState
+                                , coo = updatedCoo
+                                , coaSelect = Nothing
+                            }
                         , Cmd.batch
-                            [ fetchAsylumDecisions GotAsylumDecisions selectedCoo
+                            [ fetchAsylumDecisions GotAsylumDecisions updatedCoo
                             , Cmd.map ChangeCoo cmds
                             ]
                         )
 
                     else
-                        ( COASelected (COOSelect countries selectedCoo updatedSelectState) coaS animationState
+                        ( Ok { state | cooSelectState = updatedSelectState }
                         , Cmd.map ChangeCoo cmds
                         )
 
-                _ ->
-                    noop
+                GotAsylumDecisions asylumDecisionsResult ->
+                    case asylumDecisionsResult of
+                        Err _ ->
+                            ( Err AsylumDecisionsLoadingFailed, Cmd.none )
 
-        GotAsylumDecisions asylumDecisionsResult ->
-            case asylumDecisionsResult of
-                Err _ ->
-                    ( CountriesLoadingFailed, Cmd.none )
-
-                Ok availableCOAs ->
-                    case model of
-                        COALoading (COOSelect countries coo cooSelectState) ->
+                        Ok availableCOAs ->
                             let
                                 coa1 =
                                     withDefault unknownCountryCode <|
                                         head <|
                                             map Tuple.first <|
-                                                filteredAndSortedCOAs countries availableCOAs
+                                                filteredAndSortedCOAs
+                                                    (Maybe.withDefault Dict.empty state.countries)
+                                                    availableCOAs
 
                                 coa2 =
                                     coa1
@@ -223,105 +257,98 @@ update msg model =
                                                 Maybe.map Dict.keys <|
                                                     Dict.get coa1 availableCOAs
                             in
-                            case year of
-                                Just y ->
-                                    ( COASelected
-                                        (COOSelect countries coo cooSelectState)
-                                        (COASelect availableCOAs coa1 Select.initState coa2 Select.initState y)
-                                        initialAnimationState
-                                    , Cmd.none
-                                    )
+                            ( Ok
+                                { state
+                                    | coaSelect =
+                                        Just <|
+                                            Result.map
+                                                (\y ->
+                                                    { availableCOAs = availableCOAs
+                                                    , coa1SelectState = Select.initState
+                                                    , coa2SelectState = Select.initState
+                                                    , year = y
+                                                    , animationState = initialAnimationState
+                                                    }
+                                                )
+                                            <|
+                                                Result.fromMaybe "There is no data" year
+                                }
+                            , Cmd.none
+                            )
 
-                                Nothing ->
-                                    ( COASelected
-                                        (COOSelect countries coo cooSelectState)
-                                        COAsNotAvailable
-                                        initialAnimationState
-                                    , Cmd.none
-                                    )
+                ChangeCoa1 selectedCoa1Msg ->
+                    case state.coaSelect of
+                        Just (Ok coaS) ->
+                            let
+                                ( maybeAction, updatedSelectState, cmds ) =
+                                    Select.update selectedCoa1Msg coaS.coa1SelectState
+
+                                updatedCoa1 =
+                                    case maybeAction of
+                                        Just (Select.Select c) ->
+                                            c
+
+                                        _ ->
+                                            state.coa1
+                            in
+                            ( Ok
+                                { state
+                                    | coa1 = updatedCoa1
+                                    , coaSelect = Just (Ok { coaS | coa1SelectState = updatedSelectState })
+                                }
+                            , Cmd.map ChangeCoa1 cmds
+                            )
 
                         _ ->
                             noop
 
-        ChangeCoa1 selectedCoa1Msg ->
-            case model of
-                COASelected cooS (COASelect availableCOAs selectedCoa1 coaSelectState1 selectedCoa2 coaSelectState2 year) animationState ->
-                    let
-                        ( maybeAction, updatedSelectState, cmds ) =
-                            Select.update selectedCoa1Msg coaSelectState1
+                ChangeCoa2 selectedCoa2Msg ->
+                    case state.coaSelect of
+                        Just (Ok coaS) ->
+                            let
+                                ( maybeAction, updatedSelectState, cmds ) =
+                                    Select.update selectedCoa2Msg coaS.coa2SelectState
 
-                        updatedCoa1 =
-                            case maybeAction of
-                                Just (Select.Select c) ->
-                                    c
+                                updatedCoa2 =
+                                    case maybeAction of
+                                        Just (Select.Select c) ->
+                                            c
 
-                                _ ->
-                                    selectedCoa1
-                    in
-                    ( COASelected cooS
-                        (COASelect
-                            availableCOAs
-                            updatedCoa1
-                            updatedSelectState
-                            selectedCoa2
-                            coaSelectState2
-                            year
-                        )
-                        animationState
-                    , Cmd.map ChangeCoa1 cmds
-                    )
+                                        _ ->
+                                            state.coa2
+                            in
+                            ( Ok
+                                { state
+                                    | coa2 = updatedCoa2
+                                    , coaSelect = Just (Ok { coaS | coa2SelectState = updatedSelectState })
+                                }
+                            , Cmd.map ChangeCoa1 cmds
+                            )
 
-                _ ->
-                    noop
+                        _ ->
+                            noop
 
-        ChangeCoa2 selectedCoa2Msg ->
-            case model of
-                COASelected cooS (COASelect availableCOAs selectedCoa1 coaSelectState1 selectedCoa2 coaSelectState2 year) animationState ->
-                    let
-                        ( maybeAction, updatedSelectState, cmds ) =
-                            Select.update selectedCoa2Msg coaSelectState2
+                ChangeYear year ->
+                    case state.coaSelect of
+                        Just (Ok coaS) ->
+                            ( Ok
+                                { state
+                                    | coaSelect =
+                                        Just
+                                            (Ok
+                                                { coaS
+                                                    | year = year
+                                                    , animationState = initialAnimationState
+                                                }
+                                            )
+                                }
+                            , Cmd.none
+                            )
 
-                        updatedCoa2 =
-                            case maybeAction of
-                                Just (Select.Select c) ->
-                                    c
+                        _ ->
+                            noop
 
-                                _ ->
-                                    selectedCoa2
-                    in
-                    ( COASelected cooS
-                        (COASelect
-                            availableCOAs
-                            selectedCoa1
-                            coaSelectState1
-                            updatedCoa2
-                            updatedSelectState
-                            year
-                        )
-                        animationState
-                    , Cmd.map ChangeCoa2 cmds
-                    )
-
-                _ ->
-                    noop
-
-        ChangeYear year ->
-            case model of
-                COASelected cooS (COASelect availableCOAs selectedCoa1 coaSelectState1 selectedCoa2 coaSelectState2 _) _ ->
-                    ( COASelected cooS
-                        (COASelect
-                            availableCOAs
-                            selectedCoa1
-                            coaSelectState1
-                            selectedCoa2
-                            coaSelectState2
-                            year
-                        )
-                        initialAnimationState
-                    , Cmd.none
-                    )
-
-                _ ->
+                NoOp ->
                     noop
 
 
@@ -489,7 +516,7 @@ footprint4 =
 
 {-| SVG containing footprints for one decisison category
 -}
-footprintDiagram : AnimationComponent -> Seed -> Simplex.PermutationTable -> Bool -> Int -> ( Float, Float ) -> List (Svg Msg)
+footprintDiagram : Float -> Seed -> Simplex.PermutationTable -> Bool -> Int -> ( Float, Float ) -> List (Svg Msg)
 footprintDiagram animationState seed permTable elevatedRow count ( xPos, yPerc ) =
     let
         -- base distance
@@ -558,7 +585,7 @@ footprintDiagram animationState seed permTable elevatedRow count ( xPos, yPerc )
   - HTML that describes the category
 
 -}
-barElement : AnimationComponent -> Int -> Int -> String -> String -> String -> Int -> Int -> ( Svg Msg, Svg Msg, Html Msg )
+barElement : Float -> Int -> Int -> String -> String -> String -> Int -> Int -> ( Svg Msg, Svg Msg, Html Msg )
 barElement animationState dividend position textContent explanation color total population =
     let
         xPos =
@@ -614,7 +641,7 @@ barElement animationState dividend position textContent explanation color total 
 
 {-| The SVG component of a COA chart
 -}
-coaSvg : AnimationComponent -> Int -> AsylumDecisions -> Html Msg
+coaSvg : Float -> Int -> AsylumDecisions -> Html Msg
 coaSvg animationState population ad =
     let
         barElements =
@@ -694,7 +721,7 @@ Country-specific forms of complementary or subsidiary protection for people that
 
 {-| A complete chart for one COA.
 -}
-coaVis : AnimationComponent -> Year -> CountryCode -> Maybe Country -> Result String Int -> Maybe AsylumDecisions -> Html Msg
+coaVis : Float -> Year -> CountryCode -> Maybe Country -> Result String Int -> Maybe AsylumDecisions -> Html Msg
 coaVis animationState year countryCode country maybePopulation maybeAsylumDecisions =
     div [ style "margin-bottom: 4em;" ]
         ([ h2
@@ -787,7 +814,7 @@ coaPopulation : Dict CountryCode Country -> CountryCode -> Result String Int
 coaPopulation countries cc =
     case Dict.get cc countries of
         Nothing ->
-            Err <| "Country " ++ cc ++ "not available."
+            Err <| "Country " ++ cc ++ " not available."
 
         Just country ->
             Result.fromMaybe "No population data for available." <|
@@ -823,93 +850,102 @@ view model =
     { title = appTitle
     , body =
         case model of
-            CountriesLoading ->
-                [ div []
-                    [ menu
-                        [ text "Loading countries..."
-                        ]
-                    , Introduction.introduction
-                    ]
-                ]
-
-            CountriesLoadingFailed ->
+            Err CountriesLoadingFailed ->
                 [ text "An error occured while fetching the countries!" ]
 
-            COALoading (COOSelect countries selectedCOO cooSelectState) ->
+            Err AsylumDecisionsLoadingFailed ->
+                [ text "An error occured while fetching the asylum decisions!" ]
+
+            Ok state ->
                 [ div []
-                    [ menu
-                        [ cooSelect countries selectedCOO cooSelectState
-                        , text "loading..."
-                        ]
-                    , Introduction.introduction
-                    ]
-                ]
-
-            COASelected (COOSelect countries selectedCOO cooSelectState) coaS animationState ->
-                case coaS of
-                    COAsNotAvailable ->
-                        [ div []
-                            [ menu
-                                [ cooSelect countries selectedCOO cooSelectState
-                                , text <|
-                                    (String.append "Unfortunately there is no data available for " <|
-                                        .name <|
-                                            withDefault unknownCountry <|
-                                                Dict.get selectedCOO countries
-                                    )
-                                        ++ " yet."
+                    ([ menu
+                        (case state.countries of
+                            Nothing ->
+                                [ text "Loading countries..."
                                 ]
-                            , Introduction.introduction
-                            ]
-                        ]
 
-                    COASelect availableCOAs selectedCOA1 coaSelectState1 selectedCOA2 coaSelectState2 selectedYear ->
-                        [ div []
-                            [ menu
-                                [ cooSelect countries selectedCOO cooSelectState
-                                , br [] []
-                                , coaSelect countries availableCOAs selectedCOA1 coaSelectState1 selectedCOA2 coaSelectState2
-                                , footprintLegend
-                                , div []
-                                    [ let
-                                        years countryCode =
-                                            Set.fromList <|
-                                                withDefault [] <|
-                                                    Maybe.map Dict.keys <|
-                                                        Dict.get countryCode availableCOAs
-                                      in
-                                      yearInput <|
-                                        Set.toList <|
-                                            Set.union (years selectedCOA1) (years selectedCOA2)
+                            Just countries ->
+                                [ cooSelect
+                                    countries
+                                    state.coo
+                                    state.cooSelectState
+                                ]
+                                    ++ (case state.coaSelect of
+                                            Nothing ->
+                                                [ text "loading..." ]
+
+                                            Just coaSResult ->
+                                                case coaSResult of
+                                                    Err _ ->
+                                                        [ text <|
+                                                            (String.append "Unfortunately there is no data available for " <|
+                                                                .name <|
+                                                                    withDefault unknownCountry <|
+                                                                        Dict.get state.coo countries
+                                                            )
+                                                                ++ " yet."
+                                                        ]
+
+                                                    Ok coaS ->
+                                                        [ br [] []
+                                                        , coaSelect
+                                                            countries
+                                                            coaS.availableCOAs
+                                                            state.coa1
+                                                            coaS.coa1SelectState
+                                                            state.coa2
+                                                            coaS.coa2SelectState
+                                                        , footprintLegend
+                                                        , div []
+                                                            [ let
+                                                                years countryCode =
+                                                                    Set.fromList <|
+                                                                        withDefault [] <|
+                                                                            Maybe.map Dict.keys <|
+                                                                                Dict.get countryCode coaS.availableCOAs
+                                                              in
+                                                              yearInput <|
+                                                                Set.toList <|
+                                                                    Set.union (years state.coa1) (years state.coa2)
+                                                            ]
+                                                        , p [ style "font-size: 4em; margin-top: 0;" ] [ text coaS.year ]
+                                                        ]
+                                       )
+                        )
+                     ]
+                        ++ (case ( state.countries, state.coaSelect ) of
+                                ( Just countries, Just (Ok coaS) ) ->
+                                    [ div
+                                        [ style <|
+                                            "float: left;"
+                                                ++ " width: 60%;"
+                                                ++ " margin-left: 3em;"
+                                        ]
+                                        [ coaVis
+                                            coaS.animationState
+                                            coaS.year
+                                            state.coa1
+                                            (Dict.get state.coa1 countries)
+                                            (coaPopulation countries state.coa1)
+                                          <|
+                                            Maybe.andThen (Dict.get coaS.year) <|
+                                                Dict.get state.coa1 coaS.availableCOAs
+                                        , coaVis
+                                            coaS.animationState
+                                            coaS.year
+                                            state.coa2
+                                            (Dict.get state.coa2 countries)
+                                            (coaPopulation countries state.coa2)
+                                          <|
+                                            Maybe.andThen (Dict.get coaS.year) <|
+                                                Dict.get state.coa2 coaS.availableCOAs
+                                        ]
                                     ]
-                                , p [ style "font-size: 4em; margin-top: 0;" ] [ text selectedYear ]
-                                ]
-                            , div
-                                [ style <|
-                                    "float: left;"
-                                        ++ " width: 60%;"
-                                        ++ " margin-left: 3em;"
-                                ]
-                                [ coaVis
-                                    animationState
-                                    selectedYear
-                                    selectedCOA1
-                                    (Dict.get selectedCOA1 countries)
-                                    (coaPopulation countries selectedCOA1)
-                                  <|
-                                    Maybe.andThen (Dict.get selectedYear) <|
-                                        Dict.get selectedCOA1 availableCOAs
-                                , coaVis
-                                    animationState
-                                    selectedYear
-                                    selectedCOA2
-                                    (Dict.get selectedCOA2 countries)
-                                    (coaPopulation countries selectedCOA2)
-                                  <|
-                                    Maybe.andThen (Dict.get selectedYear) <|
-                                        Dict.get selectedCOA2 availableCOAs
-                                ]
-                            ]
-                        , Introduction.introduction
-                        ]
+
+                                _ ->
+                                    []
+                           )
+                    )
+                , Introduction.introduction
+                ]
     }
