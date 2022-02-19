@@ -607,12 +607,8 @@ barElement animationState dividend position textContent explanation color total 
                 ++ "position: absolute; "
                 ++ "top: 80%; "
                 ++ "text-align: center; "
-                ++ "left: "
-                ++ fromFloat xPos
-                ++ "%; "
-                ++ "width: "
-                ++ fromFloat width
-                ++ "%; "
+                ++ ("left: " ++ fromFloat xPos ++ "%; ")
+                ++ ("width: " ++ fromFloat width ++ "%; ")
         ]
         [ S.text <| (fromInt <| round <| 100 * (toFloat dividend / toFloat total)) ++ "% " ++ textContent
         , a [ href "#", title explanation ] [ text "ⓘ" ]
