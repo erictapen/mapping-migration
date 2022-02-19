@@ -104,7 +104,7 @@ type COASelect
 
 
 type Msg
-    = Tick Time.Posix
+    = UpdateAnimation Float
     | GotCountries (Result Http.Error (Dict CountryCode Country))
     | ChangeCoo (Select.Msg CountryCode)
     | GotAsylumDecisions (Result Http.Error AvailableCOAs)
@@ -124,13 +124,13 @@ update msg model =
             ( model, Cmd.none )
     in
     case msg of
-        Tick _ ->
+        UpdateAnimation delta ->
             case model of
                 COASelected cooS coaS animationState ->
                     ( COASelected cooS
                         coaS
                         (if animationState > 0 then
-                            animationState - 10
+                            max 0 (animationState - (delta / 10))
 
                          else
                             0
@@ -331,7 +331,7 @@ update msg model =
 
 subscriptions : Model -> Sub Msg
 subscriptions _ =
-    Time.every 60 Tick
+    Browser.Events.onAnimationFrameDelta UpdateAnimation
 
 
 countryOption : ( CountryCode, Country ) -> Html Msg
