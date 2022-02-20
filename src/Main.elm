@@ -132,6 +132,15 @@ type Msg
 initialAnimationState =
     400
 
+{-| Extract current COO/COA1/COA2 combination from state
+-}
+currentUrl : ApplicationState ->  String
+currentUrl {coo, coa1, coa2 } = coo ++ "/" ++ coa1 ++ "/" ++ coa2
+
+{-| Parse COO/COA1/COA2 url and update state accordingly
+-}
+parseUrl : Url -> ApplicationState -> ApplicationState
+parseUrl _ state = state
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
