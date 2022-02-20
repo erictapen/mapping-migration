@@ -125,7 +125,7 @@ type alias COASelect =
     , coa1SelectState : Select.State
     , coa2SelectState : Select.State
     , year : Year
-    , animationState : Float
+    , animationState : Maybe Float
     }
 
 
@@ -185,11 +185,15 @@ update msg model =
                                             (Ok
                                                 { coaS
                                                     | animationState =
-                                                        if coaS.animationState > 0 then
-                                                            max 0 (coaS.animationState - (delta / 10))
+                                                        Maybe.andThen
+                                                            (\aS ->
+                                                                if aS > 0 then
+                                                                    Just <| aS - delta
 
-                                                        else
-                                                            0
+                                                                else
+                                                                    Nothing
+                                                            )
+                                                            coaS.animationState
                                                 }
                                             )
                                 }
@@ -301,7 +305,7 @@ update msg model =
                                                     , coa1SelectState = Select.initState
                                                     , coa2SelectState = Select.initState
                                                     , year = y
-                                                    , animationState = initialAnimationState
+                                                    , animationState = Just initialAnimationState
                                                     }
                                                 )
                                             <|
@@ -394,7 +398,9 @@ update msg model =
                                             (Ok
                                                 { coaS
                                                     | year = year
-                                                    , animationState = initialAnimationState
+
+                                                    -- We don't want to start a new animation on year change, to not interrupt flow.
+                                                    , animationState = Nothing
                                                 }
                                             )
                                 }
@@ -430,8 +436,23 @@ update msg model =
 
 
 subscriptions : Model -> Sub Msg
-subscriptions _ =
-    Browser.Events.onAnimationFrameDelta UpdateAnimation
+subscriptions model =
+    case model of
+        Err _ ->
+            Sub.none
+
+        Ok state ->
+            case state.coaSelect of
+                Just (Ok coaS) ->
+                    case coaS.animationState of
+                        Nothing ->
+                            Sub.none
+
+                        Just _ ->
+                            Browser.Events.onAnimationFrameDelta UpdateAnimation
+
+                _ ->
+                    Sub.none
 
 
 countryOption : ( CountryCode, Country ) -> Html Msg
@@ -999,7 +1020,7 @@ view model =
                                                 ++ " margin-left: 3em;"
                                         ]
                                         [ coaVis
-                                            coaS.animationState
+                                            (withDefault 0 coaS.animationState)
                                             coaS.year
                                             state.coa1
                                             (Dict.get state.coa1 countries)
@@ -1008,7 +1029,7 @@ view model =
                                             Maybe.andThen (Dict.get coaS.year) <|
                                                 Dict.get state.coa1 coaS.availableCOAs
                                         , coaVis
-                                            coaS.animationState
+                                            (withDefault 0 coaS.animationState)
                                             coaS.year
                                             state.coa2
                                             (Dict.get state.coa2 countries)
