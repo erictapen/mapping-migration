@@ -3,7 +3,7 @@ module Main exposing (main)
 import Api exposing (..)
 import Browser
 import Browser.Events
-import Browser.Navigation
+import Browser.Navigation exposing (pushUrl)
 import Data
 import Dict exposing (Dict)
 import Html
@@ -61,6 +61,7 @@ import Svg.Attributes as SA
 import Task
 import Time
 import Url exposing (Url)
+import Url.Parser exposing ((</>), string)
 
 
 main =
@@ -76,16 +77,25 @@ main =
 
 init : () -> Url -> Browser.Navigation.Key -> ( Model, Cmd Msg )
 init _ url key =
+    let
+        ( coo, coa1, coa2 ) =
+            withDefault defaultUrlTriple <| Url.Parser.parse urlTriple url
+    in
     ( Ok
         { countries = Nothing
-        , coo = unknownCountryCode
+        , coo = coo
         , cooSelectState = Select.initState
-        , coa1 = unknownCountryCode
-        , coa2 = unknownCountryCode
+        , coa1 = coa1
+        , coa2 = coa2
         , coaSelect = Nothing
+        , navigationKey = key
         }
     , fetchCountries GotCountries
     )
+
+
+defaultUrlTriple =
+    ( "AFG", "ALB", "ALB" )
 
 
 type alias Model =
@@ -100,7 +110,8 @@ type ApplicationError
 {-| About coaSelect: The outer Maybe is for the case if it isn't loaded yet. The inner Result is for no available data
 -}
 type alias ApplicationState =
-    { countries : Maybe (Dict CountryCode Country)
+    { navigationKey : Browser.Navigation.Key
+    , countries : Maybe (Dict CountryCode Country)
     , coo : CountryCode
     , cooSelectState : Select.State
     , coa1 : CountryCode
@@ -132,15 +143,25 @@ type Msg
 initialAnimationState =
     400
 
+
 {-| Extract current COO/COA1/COA2 combination from state
 -}
-currentUrl : ApplicationState ->  String
-currentUrl {coo, coa1, coa2 } = coo ++ "/" ++ coa1 ++ "/" ++ coa2
+currentUrl : ApplicationState -> String
+currentUrl { coo, coa1, coa2 } =
+    "/" ++ coo ++ "/" ++ coa1 ++ "/" ++ coa2
+
 
 {-| Parse COO/COA1/COA2 url and update state accordingly
 -}
 parseUrl : Url -> ApplicationState -> ApplicationState
-parseUrl _ state = state
+parseUrl _ state =
+    state
+
+
+urlTriple : Url.Parser.Parser (( String, String, String ) -> a) a
+urlTriple =
+    Url.Parser.map (\coo -> \coa1 -> \coa2 -> ( coo, coa1, coa2 )) <| string </> string </> string
+
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
@@ -213,15 +234,19 @@ update msg model =
                                     state.coo
                     in
                     if state.coo /= updatedCoo then
-                        ( Ok
-                            { state
-                                | cooSelectState = updatedSelectState
-                                , coo = updatedCoo
-                                , coaSelect = Nothing
-                            }
+                        let
+                            newState =
+                                { state
+                                    | cooSelectState = updatedSelectState
+                                    , coo = updatedCoo
+                                    , coaSelect = Nothing
+                                }
+                        in
+                        ( Ok newState
                         , Cmd.batch
                             [ fetchAsylumDecisions GotAsylumDecisions updatedCoo
                             , Cmd.map ChangeCoo cmds
+                            , pushUrl newState.navigationKey <| currentUrl newState
                             ]
                         )
 
@@ -299,13 +324,24 @@ update msg model =
 
                                         _ ->
                                             state.coa1
+
+                                newState =
+                                    { state
+                                        | coa1 = updatedCoa1
+                                        , coaSelect =
+                                            Just
+                                                (Ok
+                                                    { coaS
+                                                        | coa1SelectState = updatedSelectState
+                                                    }
+                                                )
+                                    }
                             in
-                            ( Ok
-                                { state
-                                    | coa1 = updatedCoa1
-                                    , coaSelect = Just (Ok { coaS | coa1SelectState = updatedSelectState })
-                                }
-                            , Cmd.map ChangeCoa1 cmds
+                            ( Ok newState
+                            , Cmd.batch
+                                [ Cmd.map ChangeCoa1 cmds
+                                , pushUrl newState.navigationKey <| currentUrl newState
+                                ]
                             )
 
                         _ ->
@@ -325,13 +361,24 @@ update msg model =
 
                                         _ ->
                                             state.coa2
+
+                                newState =
+                                    { state
+                                        | coa2 = updatedCoa2
+                                        , coaSelect =
+                                            Just
+                                                (Ok
+                                                    { coaS
+                                                        | coa2SelectState = updatedSelectState
+                                                    }
+                                                )
+                                    }
                             in
-                            ( Ok
-                                { state
-                                    | coa2 = updatedCoa2
-                                    , coaSelect = Just (Ok { coaS | coa2SelectState = updatedSelectState })
-                                }
-                            , Cmd.map ChangeCoa1 cmds
+                            ( Ok newState
+                            , Cmd.batch
+                                [ Cmd.map ChangeCoa1 cmds
+                                , pushUrl newState.navigationKey <| currentUrl newState
+                                ]
                             )
 
                         _ ->
