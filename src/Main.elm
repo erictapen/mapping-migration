@@ -70,8 +70,8 @@ main =
         , view = view
         , update = update
         , subscriptions = subscriptions
-        , onUrlRequest = always NoOp
-        , onUrlChange = always NoOp
+        , onUrlRequest = UrlChange
+        , onUrlChange = UrlChange << Browser.Internal
         }
 
 
@@ -137,7 +137,7 @@ type Msg
     | ChangeCoa1 (Select.Msg CountryCode)
     | ChangeCoa2 (Select.Msg CountryCode)
     | ChangeYear Year
-    | NoOp
+    | UrlChange Browser.UrlRequest
 
 
 initialAnimationState =
@@ -404,8 +404,29 @@ update msg model =
                         _ ->
                             noop
 
-                NoOp ->
-                    noop
+                UrlChange urlRequest ->
+                    case urlRequest of
+                        Browser.External _ ->
+                            noop
+
+                        Browser.Internal url ->
+                            case state.coaSelect of
+                                Just coaS ->
+                                    let
+                                        ( coo, coa1, coa2 ) =
+                                            withDefault defaultUrlTriple <| Url.Parser.parse urlTriple url
+
+                                        newState =
+                                            { state | coo = coo, coa1 = coa1, coa2 = coa2 }
+                                    in
+                                    ( Ok newState
+                                    , Cmd.batch
+                                        [ pushUrl newState.navigationKey <| currentUrl newState
+                                        ]
+                                    )
+
+                                _ ->
+                                    noop
 
 
 subscriptions : Model -> Sub Msg
