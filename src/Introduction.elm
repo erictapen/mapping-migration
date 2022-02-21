@@ -51,7 +51,7 @@ Our webapp enables the user to select a country of origin and two European count
         , p [] [ text """
 This project is part of the course "Mapping Cities -  Making Cities" by Prof. Dr. Marian Dörk at University of Applied Sciences Potsdam in Winter semester 2021/2022. More information about the course and its other projects here:
 """
-             , a [text "https://uclab.fh-potsdam.de/mapping/"]
+             , a [href "https://uclab.fh-potsdam.de/mapping/"][text "Mapping Cities - Making Cities"]
              , text """
  .The project was finished in February 2022.
 """ ]
