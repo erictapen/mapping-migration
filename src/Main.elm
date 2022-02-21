@@ -94,6 +94,8 @@ init _ url key =
     )
 
 
+{-| This is the COO/COA1/COA2 combination, that is displayed on first page load, if nothing else is specified in the URL.
+-}
 defaultUrlTriple =
     ( "AFG", "ALB", "ALB" )
 
@@ -144,20 +146,15 @@ initialAnimationState =
     400
 
 
-{-| Extract current COO/COA1/COA2 combination from state
+{-| Extract current COO/COA1/COA2 combination as URL from state.
 -}
 currentUrl : ApplicationState -> String
 currentUrl { coo, coa1, coa2 } =
     "/" ++ coo ++ "/" ++ coa1 ++ "/" ++ coa2
 
 
-{-| Parse COO/COA1/COA2 url and update state accordingly
+{-| Parse COA/COA1/COA2 triple from an URL.
 -}
-parseUrl : Url -> ApplicationState -> ApplicationState
-parseUrl _ state =
-    state
-
-
 urlTriple : Url.Parser.Parser (( String, String, String ) -> a) a
 urlTriple =
     Url.Parser.map (\coo -> \coa1 -> \coa2 -> ( coo, coa1, coa2 )) <| string </> string </> string
@@ -435,6 +432,9 @@ update msg model =
                                     noop
 
 
+{-| Elm subcriptions that we want to subcribe to during runtime. We only need
+time spent since last animation draw IF there is actually an animation running.
+-}
 subscriptions : Model -> Sub Msg
 subscriptions model =
     case model of
@@ -453,11 +453,6 @@ subscriptions model =
 
                 _ ->
                     Sub.none
-
-
-countryOption : ( CountryCode, Country ) -> Html Msg
-countryOption ( code, { name } ) =
-    option [ value code ] [ text name ]
 
 
 {-| We only want european countries in sorted order.
@@ -486,6 +481,8 @@ filteredAndSortedCOAs countries coas =
             Dict.keys coas
 
 
+{-| Helper function for a country select
+-}
 countrySelectElement :
     String
     -> (Select.Msg CountryCode -> Msg)
@@ -505,11 +502,15 @@ countrySelectElement identifier msgConstructor countries selectedItem selectStat
                 (Select.selectIdentifier identifier)
 
 
+{-| One item that is selectable in a cooSelect/coaSelect
+-}
 menuItem : ( CountryCode, Country ) -> Select.MenuItem CountryCode
 menuItem ( cc, country ) =
     { item = cc, label = country.name }
 
 
+{-| Select element for a country of origin.
+-}
 cooSelect : Dict CountryCode Country -> CountryCode -> Select.State -> Html Msg
 cooSelect countries selectedCountry =
     countrySelectElement "selectCOO"
@@ -518,6 +519,8 @@ cooSelect countries selectedCountry =
         (Maybe.map (\c -> menuItem ( selectedCountry, c )) <| Dict.get selectedCountry countries)
 
 
+{-| Select element for a country of asylum.
+-}
 coaSelect :
     Dict CountryCode Country
     -> AvailableCOAs
@@ -556,6 +559,8 @@ yearOption year =
     option [ value year ] [ text year ]
 
 
+{-| The HTML input element that makes the year selectable
+-}
 yearInput : Html Msg
 yearInput =
     input
@@ -674,7 +679,7 @@ footprintDiagram animationState seed permTable elevatedRow count ( xPos, yPerc )
                    )
 
 
-{-| Produces different elements for each decision category:
+{-| Produces three different elements for each decision category:
 
   - SVG consisting of the rectangle
   - SVG consisting of footprints
@@ -917,6 +922,8 @@ coaPopulation countries cc =
                 (Dict.get country.iso >> Maybe.andThen (Dict.get 2018)) Data.population
 
 
+{-| The complete menu bar to the left
+-}
 menu : List (Html Msg) -> Html Msg
 menu html =
     div
