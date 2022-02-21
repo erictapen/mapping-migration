@@ -207,17 +207,13 @@ update msg model =
 
                         Ok countries ->
                             let
-                                -- We temporarily filter Aruba, as it is a country without data coming right at the top.
-                                filteredCountries =
-                                    Dict.filter (\k -> \_ -> k /= "ABW") countries
-
                                 coo =
                                     withDefault unknownCountryCode <|
                                         head <|
                                             List.sortWith compareCountryCode <|
-                                                Dict.keys filteredCountries
+                                                Dict.keys countries
                             in
-                            ( Ok { state | countries = Just filteredCountries, coo = coo }
+                            ( Ok { state | countries = Just countries, coo = coo }
                             , fetchAsylumDecisions GotAsylumDecisions coo
                             )
 
