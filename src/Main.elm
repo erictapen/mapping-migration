@@ -252,6 +252,11 @@ update msg model =
 
                         Ok availableCOAs ->
                             let
+                                fasCOAs =
+                                    filteredAndSortedCOAs
+                                        (Maybe.withDefault Dict.empty state.countries)
+                                        availableCOAs
+
                                 coa1 =
                                     if Dict.member state.coa1 availableCOAs then
                                         state.coa1
@@ -260,9 +265,7 @@ update msg model =
                                         withDefault unknownCountryCode <|
                                             head <|
                                                 map Tuple.first <|
-                                                    filteredAndSortedCOAs
-                                                        (Maybe.withDefault Dict.empty state.countries)
-                                                        availableCOAs
+                                                    fasCOAs
 
                                 coa2 =
                                     if Dict.member state.coa2 availableCOAs then
@@ -273,23 +276,25 @@ update msg model =
                                             Maybe.andThen List.head <|
                                                 List.tail <|
                                                     map Tuple.first <|
-                                                        filteredAndSortedCOAs
-                                                            (Maybe.withDefault Dict.empty state.countries)
-                                                            availableCOAs
+                                                        fasCOAs
 
                                 newState =
                                     { state
                                         | coa1 = coa1
                                         , coa2 = coa2
                                         , coaSelect =
-                                            Just <|
-                                                Ok
-                                                    { availableCOAs = availableCOAs
-                                                    , coa1SelectState = Select.initState
-                                                    , coa2SelectState = Select.initState
-                                                    , year = "2000"
-                                                    , animationState = Just initialAnimationState
-                                                    }
+                                            if List.isEmpty fasCOAs then
+                                                Just <| Err "empty data"
+
+                                            else
+                                                Just <|
+                                                    Ok
+                                                        { availableCOAs = availableCOAs
+                                                        , coa1SelectState = Select.initState
+                                                        , coa2SelectState = Select.initState
+                                                        , year = "2000"
+                                                        , animationState = Just initialAnimationState
+                                                        }
                                     }
                             in
                             ( Ok newState
