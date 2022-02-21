@@ -104,7 +104,7 @@ type COASelect
 
 
 type Msg
-    = Tick Time.Posix
+    = UpdateAnimation Float
     | GotCountries (Result Http.Error (Dict CountryCode Country))
     | ChangeCoo (Select.Msg CountryCode)
     | GotAsylumDecisions (Result Http.Error AvailableCOAs)
@@ -124,13 +124,13 @@ update msg model =
             ( model, Cmd.none )
     in
     case msg of
-        Tick _ ->
+        UpdateAnimation delta ->
             case model of
                 COASelected cooS coaS animationState ->
                     ( COASelected cooS
                         coaS
                         (if animationState > 0 then
-                            animationState - 10
+                            max 0 (animationState - (delta / 10))
 
                          else
                             0
@@ -331,7 +331,7 @@ update msg model =
 
 subscriptions : Model -> Sub Msg
 subscriptions _ =
-    Time.every 60 Tick
+    Browser.Events.onAnimationFrameDelta UpdateAnimation
 
 
 countryOption : ( CountryCode, Country ) -> Html Msg
@@ -585,7 +585,7 @@ barElement animationState dividend position textContent explanation color total 
     , svg
         [ viewBox <| "0 -100 " ++ (fromFloat <| width * 4) ++ " 300"
         , x (fromFloat (xPos / 2) ++ "%")
-        , SA.width (fromFloat width ++ "%")
+        , SA.width (fromFloat (100 - xPos) ++ "%")
         , preserveAspectRatio "xMinYMin meet"
         ]
         ([ S.title []
@@ -607,12 +607,8 @@ barElement animationState dividend position textContent explanation color total 
                 ++ "position: absolute; "
                 ++ "top: 80%; "
                 ++ "text-align: center; "
-                ++ "left: "
-                ++ fromFloat xPos
-                ++ "%; "
-                ++ "width: "
-                ++ fromFloat width
-                ++ "%; "
+                ++ ("left: " ++ fromFloat xPos ++ "%; ")
+                ++ ("width: " ++ fromFloat width ++ "%; ")
         ]
         [ S.text <| (fromInt <| round <| 100 * (toFloat dividend / toFloat total)) ++ "% " ++ textContent
         , a [ href "#", title explanation ] [ text "ⓘ" ]
@@ -689,10 +685,11 @@ Country-specific forms of complementary or subsidiary protection for people that
                 ++ map footprints barElements
             )
         , div
-            [ style <| "position: relative;"
-                ++ " width: 100%;"
-                ++ " margin-bottom: 3em;"
-                ++ " top: -30em;"
+            [ style <|
+                "position: relative;"
+                    ++ " width: 100%;"
+                    ++ " margin-bottom: 3em;"
+                    ++ " top: -30em;"
             ]
           <|
             map legend barElements
