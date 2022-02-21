@@ -82,7 +82,8 @@ The main source of data is the UNHCR Refugee Population Statistics Database, lat
              , a [href "https://api.unhcr.org/docs/refugee-statistics.html"][text "Refugee Statistics API."]
              , text """
 For broader information on what is possible with it, see this 
-             , a [href "https://www.unhcr.org/refugee-statistics/download/"][text "Refugee Data Finder."]] 
+             , a [href "https://www.unhcr.org/refugee-statistics/download/"][text "Refugee Data Finder."]
+""" ] 
              
         , h4 [] [ text "References" ]
         , p []
