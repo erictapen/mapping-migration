@@ -53,7 +53,7 @@ This project is part of the course "Mapping Cities -  Making Cities" by Prof. Dr
  The project was finished in February 2022.
 """ ]
         , h4 [] [ text "Team" ]
-        , ul [] [li [][ text """
+        , p [] ul [] [li [][ text """
 Frieda Grimm, MA Urbane Zukunft, MA Architektur, Concept, Design
 """
             , li [] text """
@@ -115,4 +115,4 @@ In some cases, large groups of people fleeing at the same time from similar circ
             ]
         , div [ style "text-align" "right", style "font-size" "small" ]
             [ text "Source code: ", a [ href "GITHUB_URL" ] [ text "GIT_REV" ] ]
-        ]]
+        ]
