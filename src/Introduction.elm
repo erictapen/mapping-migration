@@ -48,15 +48,18 @@ Through our web application, we want to make decisions on asylum in Europe, thei
 Our webapp enables the user to select a country of origin and two European countries of asylum. It then visualizes the decisions made on asylum applications in these countries of asylum in the chosen year. To contextualize these numbers and offer the opportunity for comparison between and within countries, two simple visual components are used: A bar chart shows the share of each decision category in a given country. A slider provides the possibility to explore each year from 2000-2021 individually, but also to observe temporal evolutions and changes. When stopped for a few seconds in one year, an animation of footprints entering the country bars starts. These footprints set the total number of decisions per year per country of asylum in relation to the number of inhabitants of that country: One footprint represents one decision per 500,000 inhabitants. At the same time, they serve to remind the user that it is human beings over whom asylum decisions are made.
 """ ]
         , h4 [] [ text "About the project" ]
-        , p [] [ text """
+        , p []
+            [ text """
 This project is part of the course "Mapping Cities -  Making Cities" by Prof. Dr. Marian Dörk at University of Applied Sciences Potsdam in Winter semester 2021/2022. More information about the course and its other projects here:
 """
-             , a [href "https://uclab.fh-potsdam.de/mapping/"][text "Mapping Cities - Making Cities."]
-             , text """
+            , a [ href "https://uclab.fh-potsdam.de/mapping/" ] [ text "Mapping Cities - Making Cities." ]
+            , text """
 The project was finished in February 2022.
-""" ]
+"""
+            ]
         , h4 [] [ text "Team" ]
-        , p [] [ text """
+        , p []
+            [ text """
 Frieda Grimm, MA Urbane Zukunft, MA Architektur, Concept, Design
 """
             , br [] []
@@ -74,24 +77,26 @@ Kübra Sari, MA Urbane Zukunft, Concept, Data Exploration, Texts
             , br [] []
             , text """
 Séraphime Reznikoff, MA Urbane Zukunft, Concept, Data Exploration, Texts
-""" ]
+"""
+            ]
         , h4 [] [ text "Sources of data" ]
-        , p [] [ text """
+        , p []
+            [ text """
 The main source of data is the UNHCR Refugee Population Statistics Database, latest data is from mid-2021. It is accessed via the Refugee Statistics API. Here you find the documentation of the API: 
 """
-             , a [href "https://api.unhcr.org/docs/refugee-statistics.html"][text "Refugee Statistics API."]
-             , text """
+            , a [ href "https://api.unhcr.org/docs/refugee-statistics.html" ] [ text "Refugee Statistics API." ]
+            , text """
 For broader information on what is possible with it, see this 
 """
-             , a [href "https://www.unhcr.org/refugee-statistics/download/"][text "Refugee Data Finder."]
-             , text """
+            , a [ href "https://www.unhcr.org/refugee-statistics/download/" ] [ text "Refugee Data Finder." ]
+            , text """
 Please take into account these
 """
-             , a [href "https://www.unhcr.org/terms-and-conditions-data.html"][text "terms of use for datasets"]
-             , text """
+            , a [ href "https://www.unhcr.org/terms-and-conditions-data.html" ] [ text "terms of use for datasets" ]
+            , text """
 if using the data. 
-""" ] 
-             
+"""
+            ]
         , h4 [] [ text "References" ]
         , p []
             [ text """
