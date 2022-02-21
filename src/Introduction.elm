@@ -95,8 +95,7 @@ Please take into account these
             , a [ href "https://www.unhcr.org/terms-and-conditions-data.html" ] [ text "terms of use for datasets" ]
             , text """
 if using the data. 
-"""
-            ]
+""" ]
         , h4 [] [ text "References" ]
         , p []
             [ text """
