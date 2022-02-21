@@ -82,11 +82,11 @@ Séraphime Reznikoff, MA Urbane Zukunft, Concept, Data Exploration, Texts
         , h4 [] [ text "Sources of data" ]
         , p []
             [ text """
-The main source of data is the UNHCR Refugee Population Statistics Database, latest data is from mid-2021. It is accessed via the Refugee Statistics API. Here you find the documentation of the API: 
+Refugee Statistics: UNHCR Refugee Population Statistics Database (latest data from mid-2021) Documentation of the API: 
 """
             , a [ href "https://api.unhcr.org/docs/refugee-statistics.html" ] [ text "Refugee Statistics API." ]
             , text """
-For broader information on what is possible with it, see this 
+Broader information: 
 """
             , a [ href "https://www.unhcr.org/refugee-statistics/download/" ] [ text "Refugee Data Finder." ]
             , text """
@@ -95,6 +95,14 @@ Please take into account these
             , a [ href "https://www.unhcr.org/terms-and-conditions-data.html" ] [ text "terms of use for datasets" ]
             , text """
 if using the data. 
+""" 
+           , br [] []
+           , text """
+Inhabitant numbers: 
+"""
+            , a [href "https://github.com/datasets/population"] [text "https://github.com/datasets/population"] 
+            , text """
+(latest update April 2020)
 """ ]
         , h4 [] [ text "References" ]
         , p []
