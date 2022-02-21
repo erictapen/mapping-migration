@@ -31,7 +31,7 @@ import Html.Events exposing (onInput)
 import Html.Styled exposing (toUnstyled)
 import Http exposing (get)
 import Introduction
-import List exposing (filter, head, map)
+import List exposing (filter, head, map, range)
 import Maybe exposing (withDefault)
 import Platform.Cmd
 import Random exposing (Seed, initialSeed, int, step)
@@ -556,20 +556,18 @@ yearOption year =
     option [ value year ] [ text year ]
 
 
-yearInput : List Year -> Html Msg
-yearInput years =
-    if List.length years <= 1 then
-        text ""
-
-    else
-        input
-            [ type_ "range"
-            , onInput ChangeYear
-            , HA.min <| withDefault "0" <| List.minimum years
-            , HA.max <| withDefault "0" <| List.maximum years
-            ]
-        <|
-            map yearOption years
+yearInput : Html Msg
+yearInput =
+    input
+        [ type_ "range"
+        , onInput ChangeYear
+        , HA.min "2000"
+        , HA.max "2021"
+        ]
+    <|
+        map yearOption <|
+            map fromInt <|
+                range 2000 2021
 
 
 footprint1 : Svg Msg
@@ -994,18 +992,7 @@ view model =
                                                             state.coa2
                                                             coaS.coa2SelectState
                                                         , footprintLegend
-                                                        , div []
-                                                            [ let
-                                                                years countryCode =
-                                                                    Set.fromList <|
-                                                                        withDefault [] <|
-                                                                            Maybe.map Dict.keys <|
-                                                                                Dict.get countryCode coaS.availableCOAs
-                                                              in
-                                                              yearInput <|
-                                                                Set.toList <|
-                                                                    Set.union (years state.coa1) (years state.coa2)
-                                                            ]
+                                                        , div [] [ yearInput ]
                                                         , p [ style "font-size: 4em; margin-top: 0;" ] [ text coaS.year ]
                                                         ]
                                        )
