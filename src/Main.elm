@@ -3,7 +3,7 @@ module Main exposing (main)
 import Api exposing (..)
 import Browser
 import Browser.Events
-import Browser.Navigation exposing (pushUrl)
+import Browser.Navigation exposing (pushUrl, replaceUrl)
 import Data
 import Dict exposing (Dict)
 import Html
@@ -250,7 +250,7 @@ update msg model =
                         , Cmd.batch
                             [ fetchAsylumDecisions GotAsylumDecisions updatedCoo
                             , Cmd.map ChangeCoo cmds
-                            , pushUrl newState.navigationKey <| currentUrl newState
+                            , replaceUrl newState.navigationKey <| currentUrl newState
                             ]
                         )
 
@@ -267,51 +267,47 @@ update msg model =
                         Ok availableCOAs ->
                             let
                                 coa1 =
-                                    withDefault unknownCountryCode <|
-                                        head <|
-                                            map Tuple.first <|
-                                                filteredAndSortedCOAs
-                                                    (Maybe.withDefault Dict.empty state.countries)
-                                                    availableCOAs
+                                    if Dict.member state.coa1 availableCOAs then
+                                        state.coa1
+
+                                    else
+                                        withDefault unknownCountryCode <|
+                                            head <|
+                                                map Tuple.first <|
+                                                    filteredAndSortedCOAs
+                                                        (Maybe.withDefault Dict.empty state.countries)
+                                                        availableCOAs
 
                                 coa2 =
-                                    coa1
+                                    if Dict.member state.coa2 availableCOAs then
+                                        state.coa2
 
-                                year =
-                                    Maybe.andThen List.minimum <|
-                                        Maybe.map Set.toList <|
-                                            Maybe.map
-                                                (Set.fromList
-                                                    >> Set.union
-                                                        (Set.fromList <|
-                                                            withDefault [] <|
-                                                                Maybe.map Dict.keys <|
-                                                                    Dict.get
-                                                                        coa2
-                                                                        availableCOAs
-                                                        )
-                                                )
-                                            <|
-                                                Maybe.map Dict.keys <|
-                                                    Dict.get coa1 availableCOAs
-                            in
-                            ( Ok
-                                { state
-                                    | coaSelect =
-                                        Just <|
-                                            Result.map
-                                                (\y ->
+                                    else
+                                        withDefault coa1 <|
+                                            Maybe.andThen List.head <|
+                                                List.tail <|
+                                                    map Tuple.first <|
+                                                        filteredAndSortedCOAs
+                                                            (Maybe.withDefault Dict.empty state.countries)
+                                                            availableCOAs
+
+                                newState =
+                                    { state
+                                        | coa1 = coa1
+                                        , coa2 = coa2
+                                        , coaSelect =
+                                            Just <|
+                                                Ok
                                                     { availableCOAs = availableCOAs
                                                     , coa1SelectState = Select.initState
                                                     , coa2SelectState = Select.initState
-                                                    , year = y
+                                                    , year = "2000"
                                                     , animationState = Just initialAnimationState
                                                     }
-                                                )
-                                            <|
-                                                Result.fromMaybe "There is no data" year
-                                }
-                            , Cmd.none
+                                    }
+                            in
+                            ( Ok newState
+                            , pushUrl newState.navigationKey <| currentUrl newState
                             )
 
                 ChangeCoa1 selectedCoa1Msg ->
@@ -425,11 +421,15 @@ update msg model =
                                         newState =
                                             { state | coo = coo, coa1 = coa1, coa2 = coa2 }
                                     in
-                                    ( Ok newState
-                                    , Cmd.batch
-                                        [ pushUrl newState.navigationKey <| currentUrl newState
-                                        ]
-                                    )
+                                    if ( state.coo, state.coa1, state.coa2 ) == ( coo, coa1, coa2 ) then
+                                        noop
+
+                                    else
+                                        ( Ok newState
+                                        , Cmd.batch
+                                            [ pushUrl newState.navigationKey <| currentUrl newState
+                                            ]
+                                        )
 
                                 _ ->
                                     noop
