@@ -67,7 +67,7 @@ Kübra Sari, MA Urbane Zukunft, Concept, Data Exploration, Texts
 """
             , li [] text """
 Séraphime Reznikoff, MA Urbane Zukunft, Concept, Data Exploration, Texts
-""" ]
+""" ]]
         , h4 [] [ text "Source" ]
         , p [] [ text """
 The data used in the vizualization was collected by the UNHCR, latest data is from mid-2021. It is accessed via the Refugee Statistics API.
