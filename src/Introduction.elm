@@ -82,7 +82,7 @@ Séraphime Reznikoff, MA Urbane Zukunft, Concept, Data Exploration, Texts
         , h4 [] [ text "Sources of data" ]
         , p []
             [ text """
-Refugee Statistics: UNHCR Refugee Population Statistics Database (latest data from mid-2021) Documentation of the API: 
+Refugee Statistics: UNHCR Refugee Population Statistics Database (latest data from mid-2021). Documentation of the API: 
 """
             , a [ href "https://api.unhcr.org/docs/refugee-statistics.html" ] [ text "Refugee Statistics API." ]
             , text """
