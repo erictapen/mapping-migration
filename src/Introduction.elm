@@ -53,21 +53,25 @@ This project is part of the course "Mapping Cities -  Making Cities" by Prof. Dr
  The project was finished in February 2022.
 """ ]
         , h4 [] [ text "Team" ]
-        , p [] ul [] [li [][ text """
+        , p [] [ text """
 Frieda Grimm, MA Urbane Zukunft, MA Architektur, Concept, Design
 """
-            , li [] text """
+            , br [] []
+            , text """
 Katharina Schürmann, MA Urbane Zukunft, Concept, Data Exploration, Texts
 """
-            , li [] text """
+            , br [] []
+            , text """
 Kerstin Humm, BA Kommunikationsdesign, Concept, Programming
 """
-            , li [] text """
+            , br [] []
+            , text """
 Kübra Sari, MA Urbane Zukunft, Concept, Data Exploration, Texts
 """
-            , li [] text """
+            , br [] []
+            , text """
 Séraphime Reznikoff, MA Urbane Zukunft, Concept, Data Exploration, Texts
-""" ]]
+""" ]
         , h4 [] [ text "Source" ]
         , p [] [ text """
 The data used in the vizualization was collected by the UNHCR, latest data is from mid-2021. It is accessed via the Refugee Statistics API.
