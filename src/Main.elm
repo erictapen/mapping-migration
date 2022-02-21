@@ -206,15 +206,8 @@ update msg model =
                             ( Err CountriesLoadingFailed, Cmd.none )
 
                         Ok countries ->
-                            let
-                                coo =
-                                    withDefault unknownCountryCode <|
-                                        head <|
-                                            List.sortWith compareCountryCode <|
-                                                Dict.keys countries
-                            in
-                            ( Ok { state | countries = Just countries, coo = coo }
-                            , fetchAsylumDecisions GotAsylumDecisions coo
+                            ( Ok { state | countries = Just countries }
+                            , fetchAsylumDecisions GotAsylumDecisions state.coo
                             )
 
                 ChangeCoo selectedCooMsg ->
