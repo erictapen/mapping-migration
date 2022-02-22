@@ -127,8 +127,41 @@ type alias COASelect =
     , coa1SelectState : Select.State
     , coa2SelectState : Select.State
     , year : Year
-    , animationState : Maybe Float
+    , animationState : AnimationState
     }
+
+
+{-|
+
+  - Wait: Wait a few seconds before anything starts
+  - FootstepsMoving: Move the footsteps from right to left
+  - BlendIn: Blend in the persons/inhabitants sentence
+  - Finished: The animation has stopped, we can cancel the subscription to animation frames
+
+-}
+type AnimationState
+    = Wait Float
+    | FootstepsMoving Float
+    | BlendIn Float
+    | Finished
+
+
+{-| Initial state for AnimationState
+-}
+initWait =
+    Wait 3000
+
+
+{-| Initial state for AnimationState
+-}
+initFootstepsMoving =
+    FootstepsMoving 3000
+
+
+{-| Initial state for AnimationState
+-}
+initBlendIn =
+    BlendIn 3000
 
 
 type Msg
@@ -140,10 +173,6 @@ type Msg
     | ChangeCoa2 (Select.Msg CountryCode)
     | ChangeYear Year
     | UrlChange Browser.UrlRequest
-
-
-initialAnimationState =
-    400
 
 
 {-| Extract current COO/COA1/COA2 combination as URL from state.
@@ -181,16 +210,7 @@ update msg model =
                                         Just
                                             (Ok
                                                 { coaS
-                                                    | animationState =
-                                                        Maybe.andThen
-                                                            (\aS ->
-                                                                if aS > 0 then
-                                                                    Just <| aS - delta
-
-                                                                else
-                                                                    Nothing
-                                                            )
-                                                            coaS.animationState
+                                                    | animationState = updateAnimationState delta coaS.animationState
                                                 }
                                             )
                                 }
@@ -293,7 +313,7 @@ update msg model =
                                                         , coa1SelectState = Select.initState
                                                         , coa2SelectState = Select.initState
                                                         , year = "2000"
-                                                        , animationState = Just initialAnimationState
+                                                        , animationState = initWait
                                                         }
                                     }
                             in
@@ -387,7 +407,7 @@ update msg model =
                                                     | year = year
 
                                                     -- We don't want to start a new animation on year change, to not interrupt flow.
-                                                    , animationState = Nothing
+                                                    , animationState = Finished
                                                 }
                                             )
                                 }
@@ -426,6 +446,34 @@ update msg model =
                                     noop
 
 
+updateAnimationState : Float -> AnimationState -> AnimationState
+updateAnimationState delta aS =
+    case aS of
+        Wait t ->
+            if t - delta <= 0 then
+                initFootstepsMoving
+
+            else
+                Wait <| t - delta
+
+        FootstepsMoving t ->
+            if t - delta <= 0 then
+                initBlendIn
+
+            else
+                FootstepsMoving <| t - delta
+
+        BlendIn t ->
+            if t - delta <= 0 then
+                Finished
+
+            else
+                BlendIn <| t - delta
+
+        Finished ->
+            Finished
+
+
 {-| Elm subcriptions that we want to subcribe to during runtime. We only need
 time spent since last animation draw IF there is actually an animation running.
 -}
@@ -439,10 +487,10 @@ subscriptions model =
             case state.coaSelect of
                 Just (Ok coaS) ->
                     case coaS.animationState of
-                        Nothing ->
+                        Finished ->
                             Sub.none
 
-                        Just _ ->
+                        _ ->
                             Browser.Events.onAnimationFrameDelta UpdateAnimation
 
                 _ ->
@@ -611,7 +659,7 @@ footprint4 =
 
 {-| SVG containing footprints for one decisison category
 -}
-footprintDiagram : Float -> Seed -> Simplex.PermutationTable -> Bool -> Int -> ( Float, Float ) -> List (Svg Msg)
+footprintDiagram : AnimationState -> Seed -> Simplex.PermutationTable -> Bool -> Int -> ( Float, Float ) -> List (Svg Msg)
 footprintDiagram animationState seed permTable elevatedRow count ( xPos, yPerc ) =
     let
         -- base distance
@@ -621,15 +669,18 @@ footprintDiagram animationState seed permTable elevatedRow count ( xPos, yPerc )
         dx =
             sqrt 3 * 0.5 * dy
 
-        -- noise function we use to move the footsteps around
-        noise =
-            Simplex.fractal2d { scale = 0.5, steps = 7, stepSize = 2.0, persistence = 2.0 } permTable
-
         noiseStrength =
             3.0
+
+        -- noise function we use to move the footsteps around
+        noise x y =
+            (*) noiseStrength <| Simplex.fractal2d { scale = 0.5, steps = 7, stepSize = 2.0, persistence = 2.0 } permTable x y
     in
-    case count of
-        0 ->
+    case ( animationState, count ) of
+        ( Wait _, _ ) ->
+            []
+
+        ( _, 0 ) ->
             []
 
         _ ->
@@ -645,12 +696,25 @@ footprintDiagram animationState seed permTable elevatedRow count ( xPos, yPerc )
                            else
                             0
                           )
+
+                -- noise component, that causes the footsteps to be placed irregularly
+                ( noiseX, noiseY ) =
+                    ( noise xPos yPos, noise yPos (xPos + 1000) )
+
+                -- animationComponent that is dependent on the state of the animation
+                ( animX, animY ) =
+                    case animationState of
+                        FootstepsMoving t ->
+                            ( t / 5, (yPos - 50) * (t / 3000) * 1.5 )
+
+                        _ ->
+                            ( 0, 0 )
             in
             use
                 [ attribute "href"
                     (String.append "#fs" <| fromInt symbolIndex)
-                , y <| fromFloat <| yPos + noiseStrength * noise yPos (xPos + 1000)
-                , x <| fromFloat <| animationState + xPos + noiseStrength * noise xPos yPos
+                , x <| fromFloat <| xPos + noiseX + animX
+                , y <| fromFloat <| yPos + noiseY + animY
                 ]
                 []
                 :: (if yPerc > 5 then
@@ -680,7 +744,7 @@ footprintDiagram animationState seed permTable elevatedRow count ( xPos, yPerc )
   - HTML that describes the category
 
 -}
-barElement : Float -> Int -> Int -> String -> String -> String -> Int -> Int -> ( Svg Msg, Svg Msg, Html Msg )
+barElement : AnimationState -> Int -> Int -> String -> String -> String -> Int -> Int -> ( Svg Msg, Svg Msg, Html Msg )
 barElement animationState dividend position textContent explanation color total population =
     let
         xPos =
@@ -736,7 +800,7 @@ barElement animationState dividend position textContent explanation color total 
 
 {-| The SVG component of a COA chart
 -}
-coaSvg : Float -> Int -> AsylumDecisions -> Html Msg
+coaSvg : AnimationState -> Int -> AsylumDecisions -> Html Msg
 coaSvg animationState population ad =
     let
         barElements =
@@ -816,7 +880,7 @@ Country-specific forms of complementary or subsidiary protection for people that
 
 {-| A complete chart for one COA.
 -}
-coaVis : Float -> Year -> CountryCode -> Maybe Country -> Result String Int -> Maybe AsylumDecisions -> Html Msg
+coaVis : AnimationState -> Year -> CountryCode -> Maybe Country -> Result String Int -> Maybe AsylumDecisions -> Html Msg
 coaVis animationState year countryCode country maybePopulation maybeAsylumDecisions =
     div [ style "margin-bottom: 4em;" ]
         ([ h2
@@ -1008,7 +1072,7 @@ view model =
                                                 ++ " margin-left: 3em;"
                                         ]
                                         [ coaVis
-                                            (withDefault 0 coaS.animationState)
+                                            coaS.animationState
                                             coaS.year
                                             state.coa1
                                             (Dict.get state.coa1 countries)
@@ -1017,7 +1081,7 @@ view model =
                                             Maybe.andThen (Dict.get coaS.year) <|
                                                 Dict.get state.coa1 coaS.availableCOAs
                                         , coaVis
-                                            (withDefault 0 coaS.animationState)
+                                            coaS.animationState
                                             coaS.year
                                             state.coa2
                                             (Dict.get state.coa2 countries)
