@@ -6,7 +6,7 @@ import Html.Attributes exposing (attribute, href, id, style)
 
 introduction : Html a
 introduction =
-    div [ style "clear" "both", style "padding-top" "5em", id "introduction" ]
+    div [ style "clear" "both", style "padding-top" "5em", id "introduction", style "margin-left: 3em;"]
         [ h2 []
             [ text "Background"
             ]
