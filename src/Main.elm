@@ -350,7 +350,12 @@ update msg model =
                                                         | coa1SelectState = updatedSelectState
                                                         , animationStates =
                                                             Tuple.mapFirst
-                                                                (always initWait)
+                                                                (if state.coa1 /= updatedCoa1 then
+                                                                    always initWait
+
+                                                                 else
+                                                                    identity
+                                                                )
                                                                 coaS.animationStates
                                                     }
                                                 )
@@ -391,7 +396,12 @@ update msg model =
                                                         | coa2SelectState = updatedSelectState
                                                         , animationStates =
                                                             Tuple.mapSecond
-                                                                (always initWait)
+                                                                (if state.coa2 /= updatedCoa2 then
+                                                                    always initWait
+
+                                                                 else
+                                                                    identity
+                                                                )
                                                                 coaS.animationStates
                                                     }
                                                 )
