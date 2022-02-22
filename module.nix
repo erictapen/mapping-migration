@@ -41,17 +41,36 @@ in
             '';
           in
           {
-            "/" = {
+            "= /Main.min.js" = {
               root = webapp;
-              tryFiles = "/Main.html =404";
+              tryFiles = "/Main.min.js =404";
+              priority = 999;
+            };
+            "= /Main.js" = {
+              root = webapp;
+              tryFiles = "/Main.js =404";
+              priority = 999;
+            };
+            "= /style.css" = {
+              root = webapp;
+              tryFiles = "/style.css =404";
+              priority = 999;
             };
             "= /unhcr-api/population/v1/countries/" = {
               proxyPass = "https://api.unhcr.org/population/v1/countries/";
               inherit extraConfig;
+              priority = 999;
             };
             "/unhcr-api/population/v1/asylum-decisions/" = {
               proxyPass = "https://api.unhcr.org/population/v1/asylum-decisions/";
               inherit extraConfig;
+              priority = 999;
+            };
+            # catch all for everything else
+            "/" = {
+              root = webapp;
+              tryFiles = "/index.html =404";
+              priority = 1000;
             };
           };
         enableACME = true;

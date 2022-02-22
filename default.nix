@@ -45,6 +45,8 @@ let
                 | uglifyjs --mangle --output $out/${module}.min.${extension}
           ''}
         '') targets)}
+        cp ${./assets}/index.html $out/
+        cp ${./assets}/style.css $out/
       '';
     };
 in mkDerivation {
@@ -53,6 +55,6 @@ in mkDerivation {
   src = ./.;
   targets = ["Main"];
   srcdir = "./src";
-  outputJavaScript = false;
+  outputJavaScript = true;
 }
 
