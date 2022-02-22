@@ -1,7 +1,7 @@
 module Introduction exposing (..)
 
 import Html exposing (Html, a, br, div, h1, h2, h3, h4, hr, li, ol, p, sup, text)
-import Html.Attributes exposing (attribute, href, id, style)
+import Html.Attributes exposing (attribute, href, id, style, ul)
 
 
 introduction : Html a
@@ -58,27 +58,21 @@ The project was finished in February 2022.
 """
             ]
         , h4 [] [ text "Team" ]
-        , p []
-            [ text """
+        , ul [] [li [][ text """
 Frieda Grimm, MA Urbane Zukunft, MA Architektur, Concept, Design
 """
-            , br [] []
-            , text """
+            , li [] text """
 Katharina Schürmann, MA Urbane Zukunft, Concept, Data Exploration, Texts
 """
-            , br [] []
-            , text """
+            , li [] text """
 Kerstin Humm, BA Kommunikationsdesign, Concept, Programming
 """
-            , br [] []
-            , text """
+            , li [] text """
 Kübra Sari, MA Urbane Zukunft, Concept, Data Exploration, Texts
 """
-            , br [] []
-            , text """
+            , li [] text """
 Séraphime Reznikoff, MA Urbane Zukunft, Concept, Data Exploration, Texts
-"""
-            ]
+""" ]]
         , h4 [] [ text "Sources of data" ]
         , p []
             [ text """
