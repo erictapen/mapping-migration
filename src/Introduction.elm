@@ -58,7 +58,8 @@ The project was finished in February 2022.
 """
             ]
         , h4 [] [ text "Team" ]
-        , ul [] [li [][ text """
+        , ul []
+            [ li [] [ text """
 Frieda Grimm, MA Urbane Zukunft, MA Architektur, Concept, Design
 """ ]
             , li [] [ text """
@@ -72,7 +73,8 @@ Kübra Sari, MA Urbane Zukunft, Concept, Data Exploration, Texts
 """ ]
             , li [] [ text """
 Séraphime Reznikoff, MA Urbane Zukunft, Concept, Data Exploration, Texts
-""" ]]
+""" ]
+            ]
         , h4 [] [ text "Sources of data" ]
         , p []
             [ text """
@@ -89,15 +91,16 @@ Please take into account these
             , a [ href "https://www.unhcr.org/terms-and-conditions-data.html" ] [ text "terms of use for datasets" ]
             , text """
 if using the data. 
-""" 
-           , br [] []
-           , text """
+"""
+            , br [] []
+            , text """
 Inhabitant numbers: 
 """
-            , a [href "https://github.com/datasets/population"] [text "https://github.com/datasets/population"] 
+            , a [ href "https://github.com/datasets/population" ] [ text "https://github.com/datasets/population" ]
             , text """
 (latest update April 2020)
-""" ]
+"""
+            ]
         , h4 [] [ text "References" ]
         , p []
             [ text """
