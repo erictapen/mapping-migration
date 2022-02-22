@@ -705,7 +705,7 @@ footprintDiagram animationState seed permTable elevatedRow count ( xPos, yPerc )
                 ( animX, animY ) =
                     case animationState of
                         FootstepsMoving t ->
-                            ( t / 5, (yPos - 50) * (t / 3000) * 1.5 )
+                            ( t / 5, (yPos - 50) * (sin ((t / 3000) * pi * 0.5)) * 1.5 )
 
                         _ ->
                             ( 0, 0 )
