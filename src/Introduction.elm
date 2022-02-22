@@ -60,17 +60,17 @@ The project was finished in February 2022.
         , h4 [] [ text "Team" ]
         , ul [] [li [][ text """
 Frieda Grimm, MA Urbane Zukunft, MA Architektur, Concept, Design
-"""
-            , li [] text """
+""" ]
+            , li [] [ text """
 Katharina Schürmann, MA Urbane Zukunft, Concept, Data Exploration, Texts
-"""
-            , li [] text """
+""" ]
+            , li [] [ text """
 Kerstin Humm, BA Kommunikationsdesign, Concept, Programming
-"""
-            , li [] text """
+""" ]
+            , li [] [ text """
 Kübra Sari, MA Urbane Zukunft, Concept, Data Exploration, Texts
-"""
-            , li [] text """
+""" ]
+            , li [] [ text """
 Séraphime Reznikoff, MA Urbane Zukunft, Concept, Data Exploration, Texts
 """ ]]
         , h4 [] [ text "Sources of data" ]
