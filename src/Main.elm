@@ -127,7 +127,7 @@ type alias COASelect =
     , coa1SelectState : Select.State
     , coa2SelectState : Select.State
     , year : Year
-    , animationState : AnimationState
+    , animationStates : ( AnimationState, AnimationState )
     }
 
 
@@ -210,7 +210,11 @@ update msg model =
                                         Just
                                             (Ok
                                                 { coaS
-                                                    | animationState = updateAnimationState delta coaS.animationState
+                                                    | animationStates =
+                                                        Tuple.mapBoth
+                                                            (updateAnimationState delta)
+                                                            (updateAnimationState delta)
+                                                            coaS.animationStates
                                                 }
                                             )
                                 }
@@ -313,7 +317,7 @@ update msg model =
                                                         , coa1SelectState = Select.initState
                                                         , coa2SelectState = Select.initState
                                                         , year = "2000"
-                                                        , animationState = initWait
+                                                        , animationStates = ( initWait, initWait )
                                                         }
                                     }
                             in
@@ -344,6 +348,10 @@ update msg model =
                                                 (Ok
                                                     { coaS
                                                         | coa1SelectState = updatedSelectState
+                                                        , animationStates =
+                                                            Tuple.mapFirst
+                                                                (always initWait)
+                                                                coaS.animationStates
                                                     }
                                                 )
                                     }
@@ -381,6 +389,10 @@ update msg model =
                                                 (Ok
                                                     { coaS
                                                         | coa2SelectState = updatedSelectState
+                                                        , animationStates =
+                                                            Tuple.mapSecond
+                                                                (always initWait)
+                                                                coaS.animationStates
                                                     }
                                                 )
                                     }
@@ -405,9 +417,7 @@ update msg model =
                                             (Ok
                                                 { coaS
                                                     | year = year
-
-                                                    -- We don't want to start a new animation on year change, to not interrupt flow.
-                                                    , animationState = Finished
+                                                    , animationStates = ( initWait, initWait )
                                                 }
                                             )
                                 }
@@ -486,8 +496,8 @@ subscriptions model =
         Ok state ->
             case state.coaSelect of
                 Just (Ok coaS) ->
-                    case coaS.animationState of
-                        Finished ->
+                    case coaS.animationStates of
+                        ( Finished, Finished ) ->
                             Sub.none
 
                         _ ->
@@ -705,7 +715,7 @@ footprintDiagram animationState seed permTable elevatedRow count ( xPos, yPerc )
                 ( animX, animY ) =
                     case animationState of
                         FootstepsMoving t ->
-                            ( t / 5, (yPos - 50) * (sin ((t / 3000) * pi * 0.5)) * 1.5 )
+                            ( t / 5, (yPos - 50) * sin ((t / 3000) * pi * 0.5) * 1.5 )
 
                         _ ->
                             ( 0, 0 )
@@ -1072,7 +1082,7 @@ view model =
                                                 ++ " margin-left: 3em;"
                                         ]
                                         [ coaVis
-                                            coaS.animationState
+                                            (Tuple.first coaS.animationStates)
                                             coaS.year
                                             state.coa1
                                             (Dict.get state.coa1 countries)
@@ -1081,7 +1091,7 @@ view model =
                                             Maybe.andThen (Dict.get coaS.year) <|
                                                 Dict.get state.coa1 coaS.availableCOAs
                                         , coaVis
-                                            coaS.animationState
+                                            (Tuple.second coaS.animationStates)
                                             coaS.year
                                             state.coa2
                                             (Dict.get state.coa2 countries)
