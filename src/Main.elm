@@ -882,7 +882,7 @@ Country-specific forms of complementary or subsidiary protection for people that
 -}
 coaVis : AnimationState -> Year -> CountryCode -> Maybe Country -> Result String Int -> Maybe AsylumDecisions -> Html Msg
 coaVis animationState year countryCode country maybePopulation maybeAsylumDecisions =
-    div [ style "margin-bottom: 4em;" ]
+    div [ style <| "margin-bottom: 4em; " ++ "text-align: center; " ]
         ([ h2
             [ title <|
                 String.append ("UNHCR: " ++ countryCode) <|
@@ -899,7 +899,7 @@ coaVis animationState year countryCode country maybePopulation maybeAsylumDecisi
                         case maybeAsylumDecisions of
                             Nothing ->
                                 [ text "No UNHCR data available."
-                                , div [ style "height: 15em;" ] []
+                                , div [ style "height: 15em; " ] []
                                 ]
 
                             Just ad ->
