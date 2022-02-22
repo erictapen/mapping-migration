@@ -135,14 +135,12 @@ type alias COASelect =
 
   - Wait: Wait a few seconds before anything starts
   - FootstepsMoving: Move the footsteps from right to left
-  - BlendIn: Blend in the persons/inhabitants sentence
   - Finished: The animation has stopped, we can cancel the subscription to animation frames
 
 -}
 type AnimationState
     = Wait Float
     | FootstepsMoving Float
-    | BlendIn Float
     | Finished
 
 
@@ -156,12 +154,6 @@ initWait =
 -}
 initFootstepsMoving =
     FootstepsMoving 3000
-
-
-{-| Initial state for AnimationState
--}
-initBlendIn =
-    BlendIn 3000
 
 
 type Msg
@@ -478,17 +470,10 @@ updateAnimationState delta aS =
 
         FootstepsMoving t ->
             if t - delta <= 0 then
-                initBlendIn
-
-            else
-                FootstepsMoving <| t - delta
-
-        BlendIn t ->
-            if t - delta <= 0 then
                 Finished
 
             else
-                BlendIn <| t - delta
+                FootstepsMoving <| t - delta
 
         Finished ->
             Finished
@@ -923,25 +908,34 @@ coaVis animationState year countryCode country maybePopulation maybeAsylumDecisi
                                 ]
 
                             Just ad ->
-                                [ text <|
-                                    let
-                                        count =
-                                            ad.total * perCapitaUnit // population
-                                    in
-                                    "Per "
-                                        ++ perCapitaUnitString
-                                        ++ (case count of
-                                                0 ->
-                                                    " inhabitants there were less than 1 decision in total"
+                                [ div
+                                    [ style <|
+                                        if animationState == Finished then
+                                            "animation-name: blendin; animation-duration: 3s"
 
-                                                1 ->
-                                                    " inhabitants there was 1 decision in total"
+                                        else
+                                            "opacity: 0;"
+                                    ]
+                                    [ text <|
+                                        let
+                                            count =
+                                                ad.total * perCapitaUnit // population
+                                        in
+                                        "Per "
+                                            ++ perCapitaUnitString
+                                            ++ (case count of
+                                                    0 ->
+                                                        " inhabitants there were less than 1 decision in total"
 
-                                                _ ->
-                                                    " inhabitants there were "
-                                                        ++ fromInt count
-                                                        ++ " decisions in total"
-                                           )
+                                                    1 ->
+                                                        " inhabitants there was 1 decision in total"
+
+                                                    _ ->
+                                                        " inhabitants there were "
+                                                            ++ fromInt count
+                                                            ++ " decisions in total"
+                                               )
+                                    ]
                                 , coaSvg animationState population ad
                                 ]
                )
