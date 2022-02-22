@@ -97,7 +97,7 @@ init _ url key =
 {-| This is the COO/COA1/COA2 combination, that is displayed on first page load, if nothing else is specified in the URL.
 -}
 defaultUrlTriple =
-    ( "AFG", "ALB", "ALB" )
+    ( "LKA", "FRA", "GBR" )
 
 
 type alias Model =
