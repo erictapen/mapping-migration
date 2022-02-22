@@ -47,6 +47,7 @@ let
         '') targets)}
         cp ${./assets}/index.html $out/
         cp ${./assets}/style.css $out/
+        ${imagemagick}/bin/magick convert assets/favicon-32.png assets/favicon-16.png $out/favicon.ico
       '';
     };
 in mkDerivation {

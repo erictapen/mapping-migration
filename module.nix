@@ -56,6 +56,11 @@ in
               tryFiles = "/style.css =404";
               priority = 999;
             };
+            "= /favicon.ico" = {
+              root = webapp;
+              tryFiles = "$uri =404";
+              priority = 999;
+            };
             "= /unhcr-api/population/v1/countries/" = {
               proxyPass = "https://api.unhcr.org/population/v1/countries/";
               inherit extraConfig;
