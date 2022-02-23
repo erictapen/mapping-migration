@@ -54,7 +54,7 @@ This project was part of the course "Mapping Cities -  Making Cities" by Prof. D
 """
             , a [ href "https://uclab.fh-potsdam.de/mapping/" ] [ text "Mapping Cities - Making Cities." ]
             , text """
-The project was finished in February 2022. Here you find the 
+The project was finished in February 2022. Here you find the
 """
             , a [ href "https://github.com/erictapen/mapping-migration" ] [ text "source code" ]
             , text """
