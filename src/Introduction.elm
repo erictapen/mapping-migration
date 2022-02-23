@@ -66,18 +66,22 @@ to the web app.
               [ span [style "font-weight" "bold"] [text """Frieda Grimm """]
               , span [] [text """- MA Urbane Zukunft, MA Architektur, Concept, Design
 """ ]]
-            , li [style "font-weight" "bold"] [ text """
-Katharina Schürmann, MA Urbane Zukunft, Concept, Data Exploration, Texts
-""" ]
-            , li [style "font-weight" "bold"] [ text """
-Kerstin Humm, BA Kommunikationsdesign, Concept, Programming
-""" ]
-            , li [style "font-weight" "bold"] [ text """
-Kübra Sari, MA Urbane Zukunft, Concept, Data Exploration, Texts
-""" ]
-            , li [style "font-weight" "bold"] [ text """
-Séraphime Reznikoff, MA Urbane Zukunft, Concept, Data Exploration, Texts
-""" ]
+            , li [] 
+              [ span [style "font-weight" "bold"] [text """Katharina Schürmann """]
+              , span [] [text """- MA Urbane Zukunft, Concept, Data Exploration, Programming, Texts
+""" ]]
+            , li [] 
+              [ span [style "font-weight" "bold"] [text """Kerstin Humm """]
+              , span [] [text """- BA Kommunikationsdesign, Concept, Design, Programming
+""" ]]
+            , li [] 
+              [ span [style "font-weight" "bold"] [text """Kübra Sari """]
+              , span [] [text """- MA Urbane Zukunft, Concept, Data Exploration, Texts
+""" ]]
+            , li [] 
+              [ span [style "font-weight" "bold"] [text """Séraphime Reznikoff """]
+              , span [] [text """- MA Urbane Zukunft, Concept, Data Exploration, Texts
+""" ]]
             ]
         , h4 [] [ text "Sources of data" ]
         , p []
