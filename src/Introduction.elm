@@ -62,8 +62,9 @@ to the web app.
 """ ]
         , h4 [] [ text "Team" ]
         , ul []
-            [ li [] [ div [style "font-weight" "bold"] [text """
-Frieda Grimm,"""], div [] [text """ MA Urbane Zukunft, MA Architektur, Concept, Design
+            [ li [] 
+              [ span [style "font-weight" "bold"] [text """Frieda Grimm"""]
+              , span [] [text """MA Urbane Zukunft, MA Architektur, Concept, Design
 """ ]]
             , li [style "font-weight" "bold"] [ text """
 Katharina Schürmann, MA Urbane Zukunft, Concept, Data Exploration, Texts
