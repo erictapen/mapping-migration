@@ -1,6 +1,6 @@
 module Introduction exposing (..)
 
-import Html exposing (Html, a, br, div, h1, h2, h3, h4, hr, li, ol, p, sup, text, ul)
+import Html exposing (Html, a, br, div, h1, h2, h3, h4, hr, li, ol, p, sup, text, ul, span)
 import Html.Attributes exposing (attribute, href, id, style)
 
 
