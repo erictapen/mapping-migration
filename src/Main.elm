@@ -723,14 +723,15 @@ infoboxStyle =
 
 
 infobuttonStyle visible =
-    if visible then
-        "font-weight: bolder; "
-            ++ "background: lightgrey; "
-            ++ "border-radius: 0.3em; "
+    "border: none; "
+        ++ (if visible then
+                "font-weight: bolder; "
+                    ++ "background: lightgrey; "
+                    ++ "border-radius: 0.3em; "
 
-    else
-        "border: none; "
-            ++ "background: none; "
+            else
+                "background: none; "
+           )
 
 
 {-| SVG containing footprints for one decisison category
