@@ -33,3 +33,13 @@ h2 {
         opacity: 1;
     }
 }
+
+.info_button:hover {
+  font-weight: bolder;
+}
+
+.info_button:active {
+  font-weight: bolder;
+  background: lightgrey;
+  border-radius: 0.3em;
+}
