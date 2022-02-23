@@ -457,7 +457,7 @@ update msg model =
                 UrlChange urlRequest ->
                     case urlRequest of
                         Browser.External url ->
-                            (model, Browser.Navigation.load url)
+                            ( model, Browser.Navigation.load url )
 
                         Browser.Internal url ->
                             case state.coaSelect of
@@ -722,6 +722,17 @@ infoboxStyle =
         ++ "font-size: 75%; "
 
 
+infobuttonStyle visible =
+    if visible then
+        "font-weight: bolder; "
+            ++ "background: lightgrey; "
+            ++ "border-radius: 0.3em; "
+
+    else
+        "border: none; "
+            ++ "background: none; "
+
+
 {-| SVG containing footprints for one decisison category
 -}
 footprintDiagram : AnimationState -> Seed -> Simplex.PermutationTable -> Bool -> Int -> ( Float, Float ) -> List (Svg Msg)
@@ -871,7 +882,7 @@ barElement animationState infoVisible toggledInfoState dividend position textCon
                     ++ "z-index: 1; "
             ]
             [ S.text <| (fromInt <| round <| 100 * (toFloat dividend / toFloat total)) ++ "% " ++ textContent
-            , button [ class "info_button", onClick <| ToggleInfo toggledInfoState ] [ text "ⓘ" ]
+            , button [ class "info_button", onClick <| ToggleInfo toggledInfoState, style <| infobuttonStyle infoVisible ] [ text "ⓘ" ]
             ]
         , if infoVisible then
             div [ style <| infoboxStyle ++ "top: 5em; " ++ ("left: " ++ fromFloat xPos ++ "%; ") ]
@@ -1062,10 +1073,10 @@ footprintLegend infoFootprintsVisible =
                 []
             ]
          , text <| "1 decision per " ++ perCapitaUnitString ++ " inhabitants"
-         , button [ class "info_button", onClick ToggleFootprintsInfo ] [ text "ⓘ" ]
+         , button [ class "info_button", onClick ToggleFootprintsInfo, style <| infobuttonStyle infoFootprintsVisible ] [ text "ⓘ" ]
          ]
             ++ (if infoFootprintsVisible then
-                    [ div [ style infoboxStyle ]
+                    [ div [ style <| infoboxStyle ]
                         [ h1 [ style "margin-bottom: unset; font-size: 100%;" ]
                             [ text "One decision does not equal one person!" ]
                         , text """

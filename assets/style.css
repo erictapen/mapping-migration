@@ -34,12 +34,6 @@ h2 {
     }
 }
 
-.info_button {
-  border: none;
-  background: none;
-}
-
-
 .info_button:hover {
   font-weight: bolder;
 }
