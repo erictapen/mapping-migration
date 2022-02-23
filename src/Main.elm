@@ -11,6 +11,7 @@ import Html
         ( Html
         , a
         , br
+        , button
         , div
         , fieldset
         , h1
@@ -27,7 +28,7 @@ import Html
         , text
         )
 import Html.Attributes as HA exposing (attribute, class, href, id, title, type_, value)
-import Html.Events exposing (onInput)
+import Html.Events exposing (onClick, onInput)
 import Html.Styled exposing (toUnstyled)
 import Http exposing (get)
 import Introduction
@@ -89,6 +90,7 @@ init _ url key =
         , coa2 = coa2
         , coaSelect = Nothing
         , navigationKey = key
+        , infoFootprintsVisible = False
         }
     , fetchCountries GotCountries
     )
@@ -119,6 +121,7 @@ type alias ApplicationState =
     , coa1 : CountryCode
     , coa2 : CountryCode
     , coaSelect : Maybe (Result String COASelect)
+    , infoFootprintsVisible : Bool
     }
 
 
@@ -128,6 +131,7 @@ type alias COASelect =
     , coa2SelectState : Select.State
     , year : Year
     , animationStates : ( AnimationState, AnimationState )
+    , infoStates : ( InfoState, InfoState )
     }
 
 
@@ -156,8 +160,28 @@ initFootstepsMoving =
     FootstepsMoving 3000
 
 
+type alias InfoState =
+    { infoRecognizedVisible : Bool
+    , infoComplementaryVisible : Bool
+    , infoOtherwiseVisible : Bool
+    , infoRejectedVisible : Bool
+    }
+
+
+{-| Initial state for InfoState
+-}
+initInfoState =
+    { infoRecognizedVisible = False
+    , infoComplementaryVisible = False
+    , infoOtherwiseVisible = False
+    , infoRejectedVisible = False
+    }
+
+
 type Msg
     = UpdateAnimation Float
+    | ToggleFootprintsInfo
+    | ToggleInfo ( InfoState, InfoState )
     | GotCountries (Result Http.Error (Dict CountryCode Country))
     | ChangeCoo (Select.Msg CountryCode)
     | GotAsylumDecisions (Result Http.Error AvailableCOAs)
@@ -310,6 +334,7 @@ update msg model =
                                                         , coa2SelectState = Select.initState
                                                         , year = "2000"
                                                         , animationStates = ( initWait, initWait )
+                                                        , infoStates = ( initInfoState, initInfoState )
                                                         }
                                     }
                             in
@@ -456,6 +481,28 @@ update msg model =
 
                                 _ ->
                                     noop
+
+                ToggleFootprintsInfo ->
+                    ( Ok { state | infoFootprintsVisible = not state.infoFootprintsVisible }, Cmd.none )
+
+                ToggleInfo toggledInfoStates ->
+                    case state.coaSelect of
+                        Just (Ok coaS) ->
+                            ( Ok
+                                { state
+                                    | coaSelect =
+                                        Just
+                                            (Ok
+                                                { coaS
+                                                    | infoStates = toggledInfoStates
+                                                }
+                                            )
+                                }
+                            , Cmd.none
+                            )
+
+                        _ ->
+                            noop
 
 
 updateAnimationState : Float -> AnimationState -> AnimationState
@@ -662,6 +709,19 @@ footprint4 =
         ]
 
 
+infoboxStyle =
+    "width: 500px; "
+        ++ "position: absolute; "
+        ++ "overflow: visible; "
+        ++ "text-align: left;"
+        ++ "background: white;"
+        ++ "border: 0.1em solid grey; "
+        ++ "border-radius: 0.5em; "
+        ++ "padding: 1em; "
+        ++ "z-index: 1; "
+        ++ "font-size: 75%; "
+
+
 {-| SVG containing footprints for one decisison category
 -}
 footprintDiagram : AnimationState -> Seed -> Simplex.PermutationTable -> Bool -> Int -> ( Float, Float ) -> List (Svg Msg)
@@ -749,8 +809,19 @@ footprintDiagram animationState seed permTable elevatedRow count ( xPos, yPerc )
   - HTML that describes the category
 
 -}
-barElement : AnimationState -> Int -> Int -> String -> String -> String -> Int -> Int -> ( Svg Msg, Svg Msg, Html Msg )
-barElement animationState dividend position textContent explanation color total population =
+barElement :
+    AnimationState
+    -> Bool
+    -> ( InfoState, InfoState )
+    -> Int
+    -> Int
+    -> String
+    -> String
+    -> String
+    -> Int
+    -> Int
+    -> ( Svg Msg, Svg Msg, Html Msg )
+barElement animationState infoVisible toggledInfoState dividend position textContent explanation color total population =
     let
         xPos =
             100 * (toFloat position / toFloat total)
@@ -787,31 +858,49 @@ barElement animationState dividend position textContent explanation color total 
                 footprintCount
                 ( 5, 95 )
         )
-    , div
-        [ style <|
-            "overflow: hidden; "
-                ++ "text-overflow: ellipsis; "
-                ++ "position: absolute; "
-                ++ "top: 80%; "
-                ++ "text-align: center; "
-                ++ ("left: " ++ fromFloat xPos ++ "%; ")
-                ++ ("width: " ++ fromFloat width ++ "%; ")
-        ]
-        [ S.text <| (fromInt <| round <| 100 * (toFloat dividend / toFloat total)) ++ "% " ++ textContent
-        , a [ href "#", title explanation ] [ text "ⓘ" ]
+    , div []
+        [ div
+            [ style <|
+                "overflow: hidden; "
+                    ++ "text-overflow: ellipsis; "
+                    ++ "position: absolute; "
+                    ++ "top: 80%; "
+                    ++ "text-align: center; "
+                    ++ ("left: " ++ fromFloat xPos ++ "%; ")
+                    ++ ("width: " ++ fromFloat width ++ "%; ")
+            ]
+            [ S.text <| (fromInt <| round <| 100 * (toFloat dividend / toFloat total)) ++ "% " ++ textContent
+            , button [ class "info_button", onClick <| ToggleInfo toggledInfoState ] [ text "ⓘ" ]
+            ]
+        , if infoVisible then
+            div [ style <| infoboxStyle ++ "top: 5em; " ++ ("left: " ++ fromFloat xPos ++ "%; ") ]
+                [ text explanation
+                ]
+
+          else
+            text ""
         ]
     )
 
 
 {-| The SVG component of a COA chart
 -}
-coaSvg : AnimationState -> Int -> AsylumDecisions -> Html Msg
-coaSvg animationState population ad =
+coaSvg : AnimationState -> InfoState -> Bool -> Int -> AsylumDecisions -> Html Msg
+coaSvg animationState infoState isCOA1 population ad =
     let
+        toggledInfoStates iS =
+            if isCOA1 then
+                ( iS, initInfoState )
+
+            else
+                ( initInfoState, iS )
+
         barElements =
             map (\f -> f ad.total population)
                 [ barElement
                     animationState
+                    infoState.infoRecognizedVisible
+                    (toggledInfoStates { initInfoState | infoRecognizedVisible = not infoState.infoRecognizedVisible })
                     (withDefault 0 ad.recognized)
                     0
                     "recognized"
@@ -819,6 +908,8 @@ coaSvg animationState population ad =
                     "#a8a8a8"
                 , barElement
                     animationState
+                    infoState.infoComplementaryVisible
+                    (toggledInfoStates { initInfoState | infoComplementaryVisible = not infoState.infoComplementaryVisible })
                     (withDefault 0 ad.other)
                     (withDefault 0 ad.recognized)
                     "complementary protection"
@@ -828,6 +919,8 @@ Country-specific forms of complementary or subsidiary protection for people that
                     "#b7b7b7"
                 , barElement
                     animationState
+                    infoState.infoOtherwiseVisible
+                    (toggledInfoStates { initInfoState | infoOtherwiseVisible = not infoState.infoOtherwiseVisible })
                     (withDefault 0 ad.closed)
                     (withDefault 0 ad.recognized + withDefault 0 ad.other)
                     "otherwise closed"
@@ -835,6 +928,8 @@ Country-specific forms of complementary or subsidiary protection for people that
                     "#cecece"
                 , barElement
                     animationState
+                    infoState.infoRejectedVisible
+                    (toggledInfoStates { initInfoState | infoRejectedVisible = not infoState.infoRejectedVisible })
                     (withDefault 0 ad.rejected)
                     (withDefault 0 ad.recognized + withDefault 0 ad.other + withDefault 0 ad.closed)
                     "rejected"
@@ -885,8 +980,8 @@ Country-specific forms of complementary or subsidiary protection for people that
 
 {-| A complete chart for one COA.
 -}
-coaVis : AnimationState -> Year -> CountryCode -> Maybe Country -> Result String Int -> Maybe AsylumDecisions -> Html Msg
-coaVis animationState year countryCode country maybePopulation maybeAsylumDecisions =
+coaVis : AnimationState -> InfoState -> Bool -> Year -> CountryCode -> Maybe Country -> Result String Int -> Maybe AsylumDecisions -> Html Msg
+coaVis animationState infoState isCOA1 year countryCode country maybePopulation maybeAsylumDecisions =
     div [ style <| "margin-bottom: 4em; " ++ "text-align: center; " ]
         ([ h2
             [ title <|
@@ -936,7 +1031,7 @@ coaVis animationState year countryCode country maybePopulation maybeAsylumDecisi
                                                             ++ " decisions in total"
                                                )
                                     ]
-                                , coaSvg animationState population ad
+                                , coaSvg animationState infoState isCOA1 population ad
                                 ]
                )
         )
@@ -944,15 +1039,15 @@ coaVis animationState year countryCode country maybePopulation maybeAsylumDecisi
 
 {-| The legend that explains what one footprint symbolises
 -}
-footprintLegend : Html Msg
-footprintLegend =
+footprintLegend : Bool -> Html Msg
+footprintLegend infoFootprintsVisible =
     div
         [ style <|
             "padding-left: 1em;"
                 ++ " margin-top: 2em;"
                 ++ " margin-bottom: 2em"
         ]
-        [ svg
+        ([ svg
             [ width "1em"
             , height "1em"
             , viewBox "0 0 5 5"
@@ -965,12 +1060,23 @@ footprintLegend =
                 ]
                 []
             ]
-        , text <| "1 decision per " ++ perCapitaUnitString ++ " inhabitants"
-        , a [ href "#", title "One decision does not equal one person!" ]
-            [ text "ⓘ"
-            , div [ style "width: 100px; background-color: black; position: absolute; visibility: hidden;" ] [ text "It is important to note that one decision does not equal one person. This is due to two major reasons: First, there are two ways of counting decisions in the data set: Persons and cases. Cases can include several people (e.g. a family), but it is not possible to see how many. In the web app, these two ways of counting are summed up. Second, in one year the same person may receive decisions over more than one application if they reapplied after being rejected. For these reasons, it is not possible to read an absolute number of persons who received a decision out of the webapp, just an approximation. (Personal correspondence with UNHCR member, 2022)" ]
-            ]
-        ]
+         , text <| "1 decision per " ++ perCapitaUnitString ++ " inhabitants"
+         , button [ class "info_button", onClick ToggleFootprintsInfo ] [ text "ⓘ" ]
+         ]
+            ++ (if infoFootprintsVisible then
+                    [ div [ style infoboxStyle ]
+                        [ h1 [ style "margin-bottom: unset; font-size: 100%;" ]
+                            [ text "One decision does not equal one person!" ]
+                        , text """
+It is important to note that one decision does not equal one person. This is due to two major reasons: First, there are two ways of counting decisions in the data set: Persons and cases. Cases can include several people (e.g. a family), but it is not possible to see how many. In the web app, these two ways of counting are summed up. Second, in one year the same person may receive decisions over more than one application if they reapplied after being rejected. For these reasons, it is not possible to read an absolute number of persons who received a decision out of the webapp, just an approximation. (Personal correspondence with UNHCR member, 2022)
+"""
+                        ]
+                    ]
+
+                else
+                    []
+               )
+        )
 
 
 {-| Granularity in which we calculate asylum decision count in relation to population of the COA
@@ -1070,7 +1176,7 @@ view model =
                                                             coaS.coa1SelectState
                                                             state.coa2
                                                             coaS.coa2SelectState
-                                                        , footprintLegend
+                                                        , footprintLegend state.infoFootprintsVisible
                                                         , div [] [ yearInput ]
                                                         , p [ style "font-size: 4em; margin-top: 0;" ] [ text coaS.year ]
                                                         ]
@@ -1087,6 +1193,8 @@ view model =
                                         ]
                                         [ coaVis
                                             (Tuple.first coaS.animationStates)
+                                            (Tuple.first coaS.infoStates)
+                                            True
                                             coaS.year
                                             state.coa1
                                             (Dict.get state.coa1 countries)
@@ -1096,6 +1204,8 @@ view model =
                                                 Dict.get state.coa1 coaS.availableCOAs
                                         , coaVis
                                             (Tuple.second coaS.animationStates)
+                                            (Tuple.second coaS.infoStates)
+                                            False
                                             coaS.year
                                             state.coa2
                                             (Dict.get state.coa2 countries)

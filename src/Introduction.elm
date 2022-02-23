@@ -59,7 +59,8 @@ The project was finished in February 2022. Here you find the
             , a [ href "https://github.com/erictapen/mapping-migration" ] [ text "source code" ]
             , text """
 to the web app.
-""" ]
+"""
+            ]
         , h4 [] [ text "Team" ]
         , ul []
             [ li [] 
