@@ -937,7 +937,7 @@ coaSvg animationState infoState isCOA1 population ad =
                     (withDefault 0 ad.closed)
                     (withDefault 0 ad.recognized + withDefault 0 ad.other)
                     "otherwise closed"
-                    "Asylum applications closed without a substantive decision (thus, neither recognized nor rejected). Reasons for that include e.g. inadmissibility, withdrawal, abandonment, death, Dublin II  procedure (Europe only), etc. (Personal correspondence with UNHCR member, 2022)."
+                    "Asylum applications closed without a substantive decision (neither recognized nor rejected). Reasons for that can be e.g. withdrawal, inadmissibility, abandonment, death, Dublin II  procedure (Europe only), etc. (Personal correspondence with UNHCR member, 2022)."
                     "#cecece"
                 , barElement
                     animationState
