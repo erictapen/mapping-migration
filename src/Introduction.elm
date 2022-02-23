@@ -56,7 +56,7 @@ This project was part of the course "Mapping Cities -  Making Cities" by Prof. D
             , text """
 The project was finished in February 2022. Here you find the 
 """
-            , a [ href "https://github.com/erictapen/mapping-migration" ] [ text "source code." ]
+            , a [ href "https://github.com/erictapen/mapping-migration" ] [ text "source code" ]
             , text """
 to the web app.
 """ ]
