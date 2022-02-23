@@ -1,6 +1,6 @@
 module Introduction exposing (..)
 
-import Html exposing (Html, a, br, div, h1, h2, h3, h4, hr, li, ol, p, sup, text, ul, span)
+import Html exposing (Html, a, br, div, h1, h2, h3, h4, hr, li, ol, p, span, sup, text, ul)
 import Html.Attributes exposing (attribute, href, id, style)
 
 
@@ -63,26 +63,31 @@ to the web app here.
             ]
         , h4 [] [ text "Team" ]
         , ul []
-            [ li [] 
-              [ span [style "font-weight" "bold"] [text """Frieda Grimm """]
-              , span [] [text """- MA Urbane Zukunft, MA Architektur, Concept, Design
-""" ]]
-            , li [] 
-              [ span [style "font-weight" "bold"] [text """Katharina Schürmann """]
-              , span [] [text """- MA Urbane Zukunft, Concept, Data Exploration, Programming, Texts
-""" ]]
-            , li [] 
-              [ span [style "font-weight" "bold"] [text """Kerstin Humm """]
-              , span [] [text """- BA Kommunikationsdesign, Concept, Design, Programming
-""" ]]
-            , li [] 
-              [ span [style "font-weight" "bold"] [text """Kübra Sari """]
-              , span [] [text """- MA Urbane Zukunft, Concept, Data Exploration, Texts
-""" ]]
-            , li [] 
-              [ span [style "font-weight" "bold"] [text """Séraphime Reznikoff """]
-              , span [] [text """- MA Urbane Zukunft, Concept, Data Exploration, Texts
-""" ]]
+            [ li []
+                [ span [ style "font-weight" "bold" ] [ text """Frieda Grimm """ ]
+                , span [] [ text """- MA Urbane Zukunft, MA Architektur, Concept, Design
+""" ]
+                ]
+            , li []
+                [ span [ style "font-weight" "bold" ] [ text """Katharina Schürmann """ ]
+                , span [] [ text """- MA Urbane Zukunft, Concept, Data Exploration, Programming, Texts
+""" ]
+                ]
+            , li []
+                [ span [ style "font-weight" "bold" ] [ text """Kerstin Humm """ ]
+                , span [] [ text """- BA Kommunikationsdesign, Concept, Design, Programming
+""" ]
+                ]
+            , li []
+                [ span [ style "font-weight" "bold" ] [ text """Kübra Sari """ ]
+                , span [] [ text """- MA Urbane Zukunft, Concept, Data Exploration, Texts
+""" ]
+                ]
+            , li []
+                [ span [ style "font-weight" "bold" ] [ text """Séraphime Reznikoff """ ]
+                , span [] [ text """- MA Urbane Zukunft, Concept, Data Exploration, Texts
+""" ]
+                ]
             ]
         , h4 [] [ text "Sources of data" ]
         , p []
