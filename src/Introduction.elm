@@ -54,7 +54,7 @@ This project was developed as part of the course "Mapping Cities – Making Citi
 """
             , a [ href "https://uclab.fh-potsdam.de/mapping/" ] [ text "Mapping Cities - Making Cities." ]
             , text """
-The project was completed in February 2022. You can access the source code to the web app
+The project was completed in February 2022. You can access the source code of the web app
 """
             , a [ href "https://github.com/erictapen/mapping-migration" ] [ text "here." ]]
         , h4 [] [ text "Team" ]
