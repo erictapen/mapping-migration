@@ -62,7 +62,7 @@ to the web app.
 """ ]
         , h4 [] [ text "Team" ]
         , ul []
-            [ li [style "font-weight" "bold"] [ text """
+            [ li [] [ [style "font-weight" "bold"], text """
 Frieda Grimm,"""], [ text """ MA Urbane Zukunft, MA Architektur, Concept, Design
 """ ]
             , li [style "font-weight" "bold"] [ text """
