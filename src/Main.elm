@@ -456,8 +456,8 @@ update msg model =
 
                 UrlChange urlRequest ->
                     case urlRequest of
-                        Browser.External _ ->
-                            noop
+                        Browser.External url ->
+                            (model, Browser.Navigation.load url)
 
                         Browser.Internal url ->
                             case state.coaSelect of
