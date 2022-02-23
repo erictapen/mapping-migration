@@ -50,13 +50,16 @@ Our webapp enables the user to select a country of origin and two European count
         , h4 [] [ text "About the project" ]
         , p []
             [ text """
-This project is part of the course "Mapping Cities -  Making Cities" by Prof. Dr. Marian Dörk at University of Applied Sciences Potsdam in Winter semester 2021/2022. More information about the course and its other projects here:
+This project was part of the course "Mapping Cities -  Making Cities" by Prof. Dr. Marian Dörk at University of Applied Sciences Potsdam in Winter semester 2021/2022. More information about the course and its other projects here:
 """
             , a [ href "https://uclab.fh-potsdam.de/mapping/" ] [ text "Mapping Cities - Making Cities." ]
             , text """
-The project was finished in February 2022.
+The project was finished in February 2022. Here you find the 
 """
-            ]
+            , a [ href "https://github.com/erictapen/mapping-migration" ] [ text "source code." ]
+            , text """
+to the web app.
+""" ]
         , h4 [] [ text "Team" ]
         , ul []
             [ li [] [ text """
