@@ -1,13 +1,15 @@
 module Introduction exposing (..)
 
-import Html exposing (Html, a, br, div, h1, h2, h3, h4, hr, li, ol, p, span, sup, text, ul)
+import Html exposing (Html, a, br, button, div, h1, h2, h3, h4, hr, li, ol, p, span, sup, text, ul)
 import Html.Attributes exposing (attribute, href, id, style)
+import Html.Events exposing (onClick)
 
 
-introduction : Html a
-introduction =
-    div [ style "clear" "both", style "padding-top" "5em", id "introduction", style "margin-left" "1em" ]
-        [ h2 []
+introduction : msg -> Html msg
+introduction hideIntroduction =
+    div [ style "clear" "both", style "padding-top" "5em", id "introduction" ]
+        [ button [ onClick hideIntroduction ] [ text "Explore data" ]
+        , h2 []
             [ text "Background"
             ]
         , p [] [ text """

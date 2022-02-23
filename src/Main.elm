@@ -90,6 +90,8 @@ init _ url key =
         , coa2 = coa2
         , coaSelect = Nothing
         , navigationKey = key
+        , shortIntroductionVisible = True
+        , longIntroductionVisible = False
         , infoFootprintsVisible = False
         }
     , fetchCountries GotCountries
@@ -115,6 +117,8 @@ type ApplicationError
 -}
 type alias ApplicationState =
     { navigationKey : Browser.Navigation.Key
+    , shortIntroductionVisible : Bool
+    , longIntroductionVisible : Bool
     , countries : Maybe (Dict CountryCode Country)
     , coo : CountryCode
     , cooSelectState : Select.State
@@ -182,6 +186,7 @@ type Msg
     = UpdateAnimation Float
     | ToggleFootprintsInfo
     | ToggleInfo ( InfoState, InfoState )
+    | HideIntroduction
     | GotCountries (Result Http.Error (Dict CountryCode Country))
     | ChangeCoo (Select.Msg CountryCode)
     | GotAsylumDecisions (Result Http.Error AvailableCOAs)
@@ -485,6 +490,9 @@ update msg model =
                 ToggleFootprintsInfo ->
                     ( Ok { state | infoFootprintsVisible = not state.infoFootprintsVisible }, Cmd.none )
 
+                HideIntroduction ->
+                    ( Ok { state | shortIntroductionVisible = False }, Cmd.none )
+
                 ToggleInfo toggledInfoStates ->
                     case state.coaSelect of
                         Just (Ok coaS) ->
@@ -536,8 +544,8 @@ subscriptions model =
             Sub.none
 
         Ok state ->
-            case state.coaSelect of
-                Just (Ok coaS) ->
+            case ( state.coaSelect, state.shortIntroductionVisible ) of
+                ( Just (Ok coaS), False ) ->
                     case coaS.animationStates of
                         ( Finished, Finished ) ->
                             Sub.none
@@ -1115,23 +1123,24 @@ coaPopulation countries cc =
 
 {-| The complete menu bar to the left
 -}
-menu : List (Html Msg) -> Html Msg
-menu html =
+menubar : List (Html Msg) -> Html Msg
+menubar html =
     div
-        [ style <|
+        [ id "menubar"
+        , style <|
             "float: left;"
                 ++ " width: 24em;"
                 ++ " margin-left: 3em;"
                 ++ " margin-right: 2em;"
+                ++ " overflow-y: scroll;"
+                ++ " height: 100vh;"
+                -- no scrollbar for Firefox
+                ++ " scrollbar-width: none;"
+                -- no scrollbar for IE, Edge
+                ++ " -ms-overflow-style: none;"
         ]
         ([ h1 [] [ text appTitle ] ]
             ++ html
-            ++ [ p []
-                    [ text "Scroll down for an "
-                    , a [ href "#introduction" ] [ text "introduction" ]
-                    , text "."
-                    ]
-               ]
         )
 
 
@@ -1152,48 +1161,52 @@ view model =
 
             Ok state ->
                 [ div []
-                    ([ menu
-                        (case state.countries of
-                            Nothing ->
-                                [ text "Loading countries..."
-                                ]
+                    ([ menubar
+                        (if state.shortIntroductionVisible then
+                            [ Introduction.introduction HideIntroduction ]
 
-                            Just countries ->
-                                [ cooSelect
-                                    countries
-                                    state.coo
-                                    state.cooSelectState
-                                ]
-                                    ++ (case state.coaSelect of
-                                            Nothing ->
-                                                [ text "loading..." ]
+                         else
+                            case state.countries of
+                                Nothing ->
+                                    [ text "Loading countries..."
+                                    ]
 
-                                            Just coaSResult ->
-                                                case coaSResult of
-                                                    Err _ ->
-                                                        [ text <|
-                                                            (String.append "Unfortunately there is no data available for " <|
-                                                                .name <|
-                                                                    withDefault unknownCountry <|
-                                                                        Dict.get state.coo countries
-                                                            )
-                                                                ++ " yet."
-                                                        ]
+                                Just countries ->
+                                    [ cooSelect
+                                        countries
+                                        state.coo
+                                        state.cooSelectState
+                                    ]
+                                        ++ (case state.coaSelect of
+                                                Nothing ->
+                                                    [ text "loading..." ]
 
-                                                    Ok coaS ->
-                                                        [ br [] []
-                                                        , coaSelect
-                                                            countries
-                                                            coaS.availableCOAs
-                                                            state.coa1
-                                                            coaS.coa1SelectState
-                                                            state.coa2
-                                                            coaS.coa2SelectState
-                                                        , footprintLegend state.infoFootprintsVisible
-                                                        , div [] [ yearInput ]
-                                                        , p [ style "font-size: 4em; margin-top: 0;" ] [ text coaS.year ]
-                                                        ]
-                                       )
+                                                Just coaSResult ->
+                                                    case coaSResult of
+                                                        Err _ ->
+                                                            [ text <|
+                                                                (String.append "Unfortunately there is no data available for " <|
+                                                                    .name <|
+                                                                        withDefault unknownCountry <|
+                                                                            Dict.get state.coo countries
+                                                                )
+                                                                    ++ " yet."
+                                                            ]
+
+                                                        Ok coaS ->
+                                                            [ br [] []
+                                                            , coaSelect
+                                                                countries
+                                                                coaS.availableCOAs
+                                                                state.coa1
+                                                                coaS.coa1SelectState
+                                                                state.coa2
+                                                                coaS.coa2SelectState
+                                                            , footprintLegend state.infoFootprintsVisible
+                                                            , div [] [ yearInput ]
+                                                            , p [ style "font-size: 4em; margin-top: 0;" ] [ text coaS.year ]
+                                                            ]
+                                           )
                         )
                      ]
                         ++ (case ( state.countries, state.coaSelect ) of
@@ -1233,6 +1246,5 @@ view model =
                                     []
                            )
                     )
-                , Introduction.introduction
                 ]
     }
