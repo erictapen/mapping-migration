@@ -54,13 +54,10 @@ This project was developed as part of the course "Mapping Cities – Making Citi
 """
             , a [ href "https://uclab.fh-potsdam.de/mapping/" ] [ text "Mapping Cities - Making Cities." ]
             , text """
-The project was completed in February 2022. You can access the
+The project was completed in February 2022. You can access the source code to the web app
 """
-            , a [ href "https://github.com/erictapen/mapping-migration" ] [ text "source code" ]
-            , text """
-to the web app here.
-"""
-            ]
+            , a [ href "https://github.com/erictapen/mapping-migration" ] [ text "here." ]
+]
         , h4 [] [ text "Team" ]
         , ul []
             [ li []
@@ -102,7 +99,7 @@ Broader information:
             , text """
 Please take into account these
 """
-            , a [ href "https://www.unhcr.org/terms-and-conditions-data.html" ] [ text "terms of use for datasets" ]
+            , a [ href "https://www.unhcr.org/terms-and-conditions-data.html" ] [ text "terms of use" ]
             , text """
 if using the data. 
 """
