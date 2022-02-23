@@ -718,7 +718,7 @@ infoboxStyle =
         ++ "border: 0.1em solid grey; "
         ++ "border-radius: 0.5em; "
         ++ "padding: 1em; "
-        ++ "z-index: 1; "
+        ++ "z-index: 2; "
         ++ "font-size: 75%; "
 
 
@@ -868,6 +868,7 @@ barElement animationState infoVisible toggledInfoState dividend position textCon
                     ++ "text-align: center; "
                     ++ ("left: " ++ fromFloat xPos ++ "%; ")
                     ++ ("width: " ++ fromFloat width ++ "%; ")
+                    ++ "z-index: 1; "
             ]
             [ S.text <| (fromInt <| round <| 100 * (toFloat dividend / toFloat total)) ++ "% " ++ textContent
             , button [ class "info_button", onClick <| ToggleInfo toggledInfoState ] [ text "ⓘ" ]
