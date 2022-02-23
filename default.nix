@@ -35,7 +35,7 @@ let
         sed -i 's|GIT_REV|${revision}|g' src/Introduction.elm
         sed -i 's|GITHUB_URL|${revision_url}|g' src/Introduction.elm
 
-        mkdir -p $out/share/doc
+        mkdir -p $out/share/doc $out/assets
         ${lib.concatStrings (map (module: ''
           echo "compiling ${elmfile module}"
           elm make ${elmfile module} --optimize --output $out/${module}.${extension} --docs $out/share/doc/${module}.json
@@ -47,6 +47,7 @@ let
         '') targets)}
         cp ${./assets}/index.html $out/
         cp ${./assets}/style.css $out/
+        cp ${./assets}/explore-data-button.svg $out/assets/
         ${imagemagick}/bin/magick convert assets/favicon-32.png assets/favicon-16.png $out/favicon.ico
         cp '${google-fonts}/share/fonts/truetype/Karla[wght].ttf' "$out/Karla[wght].ttf"
         ${haskellPackages.webify}/bin/webify --no-svg "$out/Karla[wght].ttf"

@@ -1,14 +1,25 @@
 module Introduction exposing (..)
 
-import Html exposing (Html, a, br, button, div, h1, h2, h3, h4, hr, li, ol, p, span, sup, text, ul)
-import Html.Attributes exposing (attribute, href, id, style)
+import Html exposing (Html, a, br, button, div, h1, h2, h3, h4, hr, img, li, ol, p, span, sup, text, ul)
+import Html.Attributes exposing (attribute, href, id, src, style, title)
 import Html.Events exposing (onClick)
 
 
 introduction : msg -> Html msg
 introduction hideIntroduction =
     div [ style "clear" "both", style "padding-top" "5em", id "introduction" ]
-        [ button [ onClick hideIntroduction ] [ text "Explore data" ]
+        [ button
+            [ id "hide-introduction"
+            , onClick hideIntroduction
+            , style "margin-left" "auto"
+            , style "margin-right" "auto"
+            , style "display" "flex"
+            , style "background" "none"
+            , style "border" "none"
+            , style "transition" "transform 0.5s"
+            ]
+            [ img [ title "Explore data", src "/assets/explore-data-button.svg" ] []
+            ]
         , h2 []
             [ text "Background"
             ]

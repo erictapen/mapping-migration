@@ -45,5 +45,9 @@ h2 {
 }
 
 #menubar::-webkit-scrollbar {
-    width: 0px; /* Hide scrollbar For Chrome, Safari, and Opera */
+  width: 0px; /* Hide scrollbar For Chrome, Safari, and Opera */
+}
+
+#hide-introduction:hover {
+  transform: scale(1.1);
 }
