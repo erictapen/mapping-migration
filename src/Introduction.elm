@@ -62,19 +62,19 @@ to the web app.
 """ ]
         , h4 [] [ text "Team" ]
         , ul []
-            [ li [] [ text """
+            [ li [style "font-weight" "bold"] [ text """
 Frieda Grimm, MA Urbane Zukunft, MA Architektur, Concept, Design
 """ ]
-            , li [] [ text """
+            , li [style "font-weight" "bold"] [ text """
 Katharina Schürmann, MA Urbane Zukunft, Concept, Data Exploration, Texts
 """ ]
-            , li [] [ text """
+            , li [style "font-weight" "bold"] [ text """
 Kerstin Humm, BA Kommunikationsdesign, Concept, Programming
 """ ]
-            , li [] [ text """
+            , li [style "font-weight" "bold"] [ text """
 Kübra Sari, MA Urbane Zukunft, Concept, Data Exploration, Texts
 """ ]
-            , li [] [ text """
+            , li [style "font-weight" "bold"] [ text """
 Séraphime Reznikoff, MA Urbane Zukunft, Concept, Data Exploration, Texts
 """ ]
             ]
