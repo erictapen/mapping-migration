@@ -1,0 +1,35 @@
+@font-face {
+    font-family: Karla;
+    src: url('/Karla[wght].eot');
+    src: url('/Karla[wght].eot?#iefix') format('embedded-opentype'),
+    url('/Karla[wght].woff') format('woff'),
+    url('/Karla[wght].ttf') format('truetype');
+    font-style: normal;
+    font-weight: normal;
+}
+
+* {
+    font-family: 'Karla', sans-serif;
+}
+
+
+h1 {
+    font-weight: 600;
+    font-size: 320%;
+    margin-bottom: 2em;
+}
+
+h2 {
+    font-weight: 450;
+    font-size: 200%;
+}
+
+@keyframes blendin {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}

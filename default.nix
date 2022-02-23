@@ -45,6 +45,11 @@ let
                 | uglifyjs --mangle --output $out/${module}.min.${extension}
           ''}
         '') targets)}
+        cp ${./assets}/index.html $out/
+        cp ${./assets}/style.css $out/
+        ${imagemagick}/bin/magick convert assets/favicon-32.png assets/favicon-16.png $out/favicon.ico
+        cp '${google-fonts}/share/fonts/truetype/Karla[wght].ttf' "$out/Karla[wght].ttf"
+        ${haskellPackages.webify}/bin/webify --no-svg "$out/Karla[wght].ttf"
       '';
     };
 in mkDerivation {
@@ -53,6 +58,6 @@ in mkDerivation {
   src = ./.;
   targets = ["Main"];
   srcdir = "./src";
-  outputJavaScript = false;
+  outputJavaScript = true;
 }
 
