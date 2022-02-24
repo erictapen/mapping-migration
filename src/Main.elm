@@ -656,6 +656,66 @@ coaSelect countries coas selectedCOA1 selectedCOA1State selectedCOA2 selectedCOA
             ]
 
 
+temporalSvg : Year -> ( CountryCode, CountryCode ) -> AvailableCOAs -> Html Msg
+temporalSvg selectedYear ( coa1, coa2 ) availableCOAs =
+    let
+        years =
+            List.range 2000 2021
+
+        blockWidth =
+            1 / (toFloat <| List.length years)
+
+        decisionsData coa getter year =
+            Maybe.map toFloat <|
+                Maybe.andThen getter <|
+                    Maybe.andThen (Dict.get <| fromInt year) <|
+                        Dict.get coa availableCOAs
+
+        value coa year =
+            Maybe.map2
+                (/)
+                (decisionsData coa .other year)
+                (decisionsData coa (.total >> Just) year)
+
+        chart coa yBase =
+            List.filterMap identity <|
+                List.indexedMap
+                    (\i year ->
+                        Maybe.andThen
+                            (\v ->
+                                Just <|
+                                    rect
+                                        [ x <| fromFloat <| toFloat i * blockWidth
+                                        , y <| fromFloat <| yBase - v
+                                        , width <| fromFloat blockWidth
+                                        , height <| fromFloat v
+                                        , stroke "none"
+                                        , fill <|
+                                            if fromInt year == selectedYear then
+                                                "#fa6363"
+
+                                            else
+                                                "#b7b7b7"
+                                        ]
+                                        []
+                            )
+                        <|
+                            value coa year
+                    )
+                    years
+    in
+    svg
+        [ width "100"
+        , height "5em"
+        , viewBox "0 0 1 2"
+        , style "width: 100%;"
+        , preserveAspectRatio "none"
+        ]
+    <|
+        chart coa1 1.0
+            ++ chart coa2 2.0
+
+
 yearOption : String -> Html Msg
 yearOption year =
     option [ value year ] [ text year ]
@@ -670,6 +730,7 @@ yearInput =
         , onInput ChangeYear
         , HA.min "2000"
         , HA.max "2021"
+        , style "width: 99%;"
         ]
     <|
         map yearOption <|
@@ -1203,8 +1264,14 @@ view model =
                                                                 state.coa2
                                                                 coaS.coa2SelectState
                                                             , footprintLegend state.infoFootprintsVisible
-                                                            , div [] [ yearInput ]
-                                                            , p [ style "font-size: 4em; margin-top: 0;" ] [ text coaS.year ]
+                                                            , div [ style "height: 5em;" ]
+                                                                [ temporalSvg
+                                                                    coaS.year
+                                                                    ( state.coa1, state.coa2 )
+                                                                    coaS.availableCOAs
+                                                                , yearInput
+                                                                , p [ style "font-size: 4em; margin-top: 0;" ] [ text coaS.year ]
+                                                                ]
                                                             ]
                                            )
                         )
