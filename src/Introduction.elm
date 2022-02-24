@@ -38,12 +38,12 @@ A person applying for or claiming international  protection as a refugee who has
         , h4 [style "padding-bottom" "0em", style "margin-bottom" "0em", style "letter-spacing" "0.3em"] 
             [ text "REFUGEE" 
             ]
-        , p [style "padding-top" "0em", style "margin-top""0em"] [ text """
+        , p [style "padding-top" "0em", style "margin-top""0em", style "text-align" "justify"] [ text """
 A person who falls under one or several of a set of international agreements on refugee status, most importantly the 1951 Geneva Convention and its 1967 Protocol.
 These define a refugee as "someone who is unable or unwilling to return to their country of origin owing to a well-founded fear of being persecuted for the reasons of race, religion, nationality, membership of a particular social group, or political opinion." (UNHCR 2021)
 """ ]
         , br [] []
-        , p []
+        , p [style "text-align" "justify"]
             [ text """
 In order to be recognized as a refugee and granted protection under international law, asylum seekers have to apply for asylum in a specific country. That nation-state then has the power to decide if the circumstances of a person's displacement fit the legal criteria to be granted asylum and thereby recognized as a "refugee".
 """
@@ -52,22 +52,22 @@ In order to be recognized as a refugee and granted protection under internationa
 Nation-states as well as international organizations judge which bodies move “legitimately” and which bodies move without meeting the expectations of what a “real” refugee would have had to endure and come from. They get to decide “[w]ho the ‘real’ refugees [are]” (Zetter 2007, 176) and whose (forced) mobility will be disclaimed as "irregular".
 """
             ]
-        , p [] [ text """
+        , p [style "text-align" "justify"] [ text """
 The international legal basis for decisions on asylum is the 1951 Convention relating to the Status of Refugees (also known as the Geneva Convention) and its succeeding Protocol from 1967. Since then, there has been no equal successor to these documents, despite the changes the world has seen. As a result, the Geneva Convention does not do justice to current migratory movements and questions of displacement, nor to the rapid globalization that has been taking place since these documents were agreed upon. Hence, countries of asylum have established supplementary categories to grant asylum-seekers (temporary) protection in cases that are not covered by the Geneva Convention. 
 """ ]
-        , p [] [ text """
+        , p [style "text-align" "justify"] [ text """
 A lot of asylum-seekers are assigned to sub-categories that offer less certainty and are subject to sudden changes in their asylum decision (see explanation of "complementary protection"). They are classified and categorized according to a complex legal system that fractions one label into many (cf. Zetter 2007, 181), increasingly reinforcing the distinction between "genuine refugees" and asylum-seekers. One of the regions where this bureaucratic classification is most rigorously pursued and serves a restrictive migration governance is Europe.
 """ ]
-        , p [] [ text """
+        , p [style "text-align" "justify"] [ text """
 Through our web application, we want to make decisions on asylum in Europe, their proportions and developments since the year 2000 more easily accessible and visible using UNHCR data. Looking at this data, the fragmentation of asylum decisions beyond "recognized" and "rejected" is inherently visible due to the further categories of "complementary protection" and "otherwise closed". However, these categories represent a summarization of a variety of asylum-decisions and cannot do justice to the complexity of asylum decisions in each individual country.
 """ ]
-        , p [] [ text """
+        , p [style "text-align" "justify"] [ text """
 Our webapp enables the user to select a country of origin and two European countries of asylum. It then visualizes the decisions made on asylum applications in these countries of asylum in the chosen year. To contextualize these numbers and offer the opportunity for comparison between and within countries, two simple visual components are used: A bar chart shows the share of each decision category in a given country. A slider provides the possibility to explore each year from 2000-2021 individually, but also to observe temporal evolutions and changes. When stopped for a few seconds in one year, an animation of footprints entering the country bars starts. These footprints set the total number of decisions per year per country of asylum in relation to the number of inhabitants of that country: One footprint represents one decision per 500,000 inhabitants. At the same time, they serve to remind the user that it is human beings over whom asylum decisions are made.
 """ ]
         , h4 [style "padding-bottom" "0em", style "margin-bottom" "0em", style "letter-spacing" "0.3em"] 
             [ text "ABOUT THE PROJECT" 
             ]
-        , p [style "padding-top" "0em", style "margin-top""0em"]
+        , p [style "padding-top" "0em", style "margin-top""0em", style "text-align" "justify"]
             [ text """
 This project was developed as part of the course "Mapping Cities – Making Cities" by Prof. Dr. Marian Dörk at the University of Applied Sciences Potsdam in the winter semester of 2021/2022. For more information about the course and its other projects, please visit
 """
@@ -110,7 +110,7 @@ The project was completed in February 2022. You can access the source code of th
         , h4 [style "padding-bottom" "0em", style "margin-bottom""0em", style "letter-spacing" "0.3em"] 
             [ text "SOURCES OF DATA" 
             ]
-        , p [style "padding-top" "0em", style "margin-top""0em"]
+        , p [style "padding-top" "0em", style "margin-top""0em", style "text-align" "justify"]
             [ text """
 Refugee Statistics: UNHCR Refugee Population Statistics Database (latest data from mid-2021). Documentation of the API: 
 """
