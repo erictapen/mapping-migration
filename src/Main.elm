@@ -1066,12 +1066,13 @@ coaSvg animationState infoState isCOA1 population ad =
 -}
 coaVis : AnimationState -> InfoState -> Bool -> Year -> CountryCode -> Maybe Country -> Result String Int -> Maybe AsylumDecisions -> Html Msg
 coaVis animationState infoState isCOA1 year countryCode country maybePopulation maybeAsylumDecisions =
-    div [ style <| "margin-bottom: 4em; " ++ "text-align: center; " ]
+    div [ style <| "margin-bottom: 5em; " ++ "text-align: center; " ++ "margin-top: 2.5em; " ]
         ([ h2
             [ title <|
                 String.append ("UNHCR: " ++ countryCode) <|
                     withDefault "" <|
                         Maybe.map (.iso >> String.append ", ISO: ") country
+            , style <| "margin-bottom: 0.5em; "
             ]
             [ text <| withDefault "Unkown country name!" <| Maybe.map .name country ]
          ]
@@ -1089,11 +1090,13 @@ coaVis animationState infoState isCOA1 year countryCode country maybePopulation 
                             Just ad ->
                                 [ div
                                     [ style <|
-                                        if animationState == Finished then
-                                            "animation-name: blendin; animation-duration: 3s"
+                                        "margin-bottom: 0.5em; "
+                                            ++ (if animationState == Finished then
+                                                    "animation-name: blendin; animation-duration: 3s"
 
-                                        else
-                                            "opacity: 0;"
+                                                else
+                                                    "opacity: 0;"
+                                               )
                                     ]
                                     [ text <|
                                         let
