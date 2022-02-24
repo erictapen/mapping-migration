@@ -807,8 +807,8 @@ infobuttonStyle visible =
 
 {-| SVG containing footprints for one decisison category
 -}
-footprintDiagram : AnimationState -> Seed -> Simplex.PermutationTable -> Bool -> Int -> ( Float, Float ) -> List (Svg Msg)
-footprintDiagram animationState seed permTable elevatedRow count ( xPos, yPerc ) =
+footprintDiagram : AnimationState -> Seed -> Simplex.PermutationTable -> Bool -> Int -> ( Int, Int ) -> ( Float, Float ) -> List (Svg Msg)
+footprintDiagram animationState seed permTable elevatedRow count ( currentColumn, maxColumns ) ( xPos, yPerc ) =
     let
         -- base distance
         dy =
@@ -823,13 +823,22 @@ footprintDiagram animationState seed permTable elevatedRow count ( xPos, yPerc )
         -- noise function we use to move the footsteps around
         noise x y =
             (*) noiseStrength <| Simplex.fractal2d { scale = 0.5, steps = 7, stepSize = 2.0, persistence = 2.0 } permTable x y
+
+        capped =
+            currentColumn >= maxColumns
     in
-    case ( animationState, count ) of
-        ( Wait _, _ ) ->
+    case ( animationState, count, capped ) of
+        ( Wait _, _, _ ) ->
             []
 
-        ( _, 0 ) ->
+        ( _, 0, _ ) ->
             []
+
+        ( Finished, _, True ) ->
+            [ circle [ cx <| fromFloat <| xPos + dx - 4.0, cy "97", r "0.75", fill "black" ] []
+            , circle [ cx <| fromFloat <| xPos + dx - 2.0, cy "97", r "0.75", fill "black" ] []
+            , circle [ cx <| fromFloat <| xPos + dx + 0.0, cy "97", r "0.75", fill "black" ] []
+            ]
 
         _ ->
             let
@@ -872,6 +881,7 @@ footprintDiagram animationState seed permTable elevatedRow count ( xPos, yPerc )
                             permTable
                             elevatedRow
                             (count - 1)
+                            ( currentColumn, maxColumns )
                             ( xPos, yPerc - dy )
 
                     else
@@ -881,6 +891,7 @@ footprintDiagram animationState seed permTable elevatedRow count ( xPos, yPerc )
                             permTable
                             (not elevatedRow)
                             (count - 1)
+                            ( currentColumn + 1, maxColumns )
                             ( xPos + dx, 95 )
                    )
 
@@ -975,6 +986,10 @@ barElement animationState infoVisible toggledInfoState dividend position textCon
 
         footprintCount =
             dividend * perCapitaUnit // population
+
+        -- We assume that at maximum 80 footprint columns fit into the chart.
+        maxColumnCount =
+            (round <| 80 * 0.01 * width) - 2
     in
     ( rect
         [ x <| fromFloat xPos
@@ -991,7 +1006,11 @@ barElement animationState infoVisible toggledInfoState dividend position textCon
         , preserveAspectRatio "xMinYMin meet"
         ]
         ([ S.title []
-            [ text <| fromInt footprintCount ++ " decisions/" ++ perCapitaUnitString ++ " inhabitants"
+            [ text <|
+                fromInt footprintCount
+                    ++ " decisions/"
+                    ++ perCapitaUnitString
+                    ++ " inhabitants, "
             ]
          ]
             ++ footprintDiagram
@@ -1000,6 +1019,7 @@ barElement animationState infoVisible toggledInfoState dividend position textCon
                 (Simplex.permutationTableFromInt <| population + position)
                 False
                 footprintCount
+                ( 0, maxColumnCount )
                 ( 5, 95 )
         )
     , categoryLegend
