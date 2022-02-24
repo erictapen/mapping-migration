@@ -29,13 +29,13 @@ Most people would probably associate the term "refugee" with a person that has h
         , p [] [ text """
 The label “refugee” is a political and judicial construction. In fact, looking from an administrative perspective, not anybody escaping their former home is considered a “refugee” officially. Before being recognized as a "refugee", displaced persons are considered "asylum seekers".
 """ ]
-        , h4 [style "padding-bottom" "0em", style "margin-bottom" "0em"] 
+        , h4 [style "padding-bottom" "0em", style "margin-bottom" "0em", style "letter-spacing" "0.3em"] 
             [ text "ASYLUM SEEKER" 
             ]
         , p [style "padding-top" "0em", style "margin-top""0em"] [ text """
 A person applying for or claiming international  protection as a refugee who has not received a decision about their claim yet. Legally and statistically, they are not refugees yet.
 """ ]
-        , h4 [style "padding-bottom" "0em", style "margin-bottom" "0em"] 
+        , h4 [style "padding-bottom" "0em", style "margin-bottom" "0em", style "letter-spacing" "0.3em"] 
             [ text "REFUGEE" 
             ]
         , p [style "padding-top" "0em", style "margin-top""0em"] [ text """
@@ -64,7 +64,7 @@ Through our web application, we want to make decisions on asylum in Europe, thei
         , p [] [ text """
 Our webapp enables the user to select a country of origin and two European countries of asylum. It then visualizes the decisions made on asylum applications in these countries of asylum in the chosen year. To contextualize these numbers and offer the opportunity for comparison between and within countries, two simple visual components are used: A bar chart shows the share of each decision category in a given country. A slider provides the possibility to explore each year from 2000-2021 individually, but also to observe temporal evolutions and changes. When stopped for a few seconds in one year, an animation of footprints entering the country bars starts. These footprints set the total number of decisions per year per country of asylum in relation to the number of inhabitants of that country: One footprint represents one decision per 500,000 inhabitants. At the same time, they serve to remind the user that it is human beings over whom asylum decisions are made.
 """ ]
-        , h4 [style "padding-bottom" "0em", style "margin-bottom" "0em"] 
+        , h4 [style "padding-bottom" "0em", style "margin-bottom" "0em", style "letter-spacing" "0.3em"] 
             [ text "ABOUT THE PROJECT" 
             ]
         , p [style "padding-top" "0em", style "margin-top""0em"]
@@ -77,7 +77,7 @@ The project was completed in February 2022. You can access the source code of th
 """
             , a [ href "https://github.com/erictapen/mapping-migration" ] [ text "here." ]
             ]
-        , h4 [style "padding-bottom" "0em", style "margin-bottom""0em"] 
+        , h4 [style "padding-bottom" "0em", style "margin-bottom""0em", style "letter-spacing" "0.3em"] 
             [ text "WHO WE ARE" 
             ]
         , ul [style "padding-top" "0em", style "margin-top""0em"]
@@ -107,7 +107,7 @@ The project was completed in February 2022. You can access the source code of th
 """ ]
                 ]
             ]
-        , h4 [style "padding-bottom" "0em", style "margin-bottom""0em"] 
+        , h4 [style "padding-bottom" "0em", style "margin-bottom""0em", style "letter-spacing" "0.3em"] 
             [ text "SOURCES OF DATA" 
             ]
         , p [style "padding-top" "0em", style "margin-top""0em"]
@@ -135,7 +135,7 @@ Inhabitant numbers:
 (latest update April 2020)
 """
             ]
-        , h4 [style "padding-bottom" "0em", style "margin-bottom""0em"] 
+        , h4 [style "padding-bottom" "0em", style "margin-bottom""0em", style "letter-spacing" "0.3em"] 
             [ text "REFERENCES" 
             ]
         , p [style "padding-top" "0em", style "margin-top""0em"]
