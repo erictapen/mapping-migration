@@ -71,7 +71,7 @@ The project was completed in February 2022. You can access the source code of th
 """
             , a [ href "https://github.com/erictapen/mapping-migration" ] [ text "here." ]
             ]
-        , h4 [] [ text "WHO WE ARE" ]
+        , h4 [style "padding-bottom" "0em", style "border-bottom" "0em", style "margin-bottom""0em"] [ text "WHO WE ARE" ]
         , ul []
             [ li []
                 [ span [ style "font-weight" "bold" ] [ text """Frieda Grimm """ ]
