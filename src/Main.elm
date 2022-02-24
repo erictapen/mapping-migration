@@ -1133,7 +1133,7 @@ coaVis animationState infoState isCOA1 year countryCode country maybePopulation 
                     Ok population ->
                         case maybeAsylumDecisions of
                             Nothing ->
-                                [ text "No UNHCR data available."
+                                [ div [ style "margin-bottom: 0.5em; " ] [ text "No UNHCR data available." ]
                                 , div [ style "height: 15em; " ] []
                                 ]
 
