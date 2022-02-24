@@ -110,7 +110,7 @@ The project was completed in February 2022. You can access the source code of th
         , h4 [style "padding-bottom" "0em", style "margin-bottom""0em", style "letter-spacing" "0.3em"] 
             [ text "SOURCES OF DATA" 
             ]
-        , p [style "padding-top" "0em", style "margin-top""0em", style "text-align" "justify"]
+        , p [style "padding-top" "0em", style "margin-top""0em"]
             [ text """
 Refugee Statistics: UNHCR Refugee Population Statistics Database (latest data from mid-2021). Documentation of the API: 
 """
@@ -138,7 +138,7 @@ Inhabitant numbers:
         , h4 [style "padding-bottom" "0em", style "margin-bottom""0em", style "letter-spacing" "0.3em"] 
             [ text "REFERENCES" 
             ]
-        , p [style "padding-top" "0em", style "margin-top""0em", style "text-align" "justify"]
+        , p [style "padding-top" "0em", style "margin-top""0em"]
             [ text """
 Bundesamt für Migration und Flüchtlinge (2021): Subsidiärer Schutz. Accessed February 15th, 2022 under https://www.bamf.de/DE/Themen/AsylFluechtlingsschutz/AblaufAsylverfahrens/Schutzformen/SubisidiaerSchutz/subisidiaerschutz-node.html.
 """
