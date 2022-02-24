@@ -26,13 +26,13 @@ introduction hideIntroduction =
         , p [style "padding-top" "0em", style "margin-top""0em", style "text-align" "justify"] [ text """
 Most people would probably associate the term "refugee" with a person that has had to escape from his or her home to search and hopefully find a new place to live that offers safety, fair living conditions and new opportunities. The word evokes so many images of human bodies on the move, in camps, or in detention centers, it almost seems as if being a “refugee” were the natural state of a particular, homogenous group of people. As if this word were not a political one. But it is. Refugees are not simply “refugees”, they are labelled as such (cf. Zetter 2007). Refugees are not born “refugees”, they simply have had to react to the events disrupting the place they have coincidentally been born into. A reaction that is made out to be unnatural by a system that wants to establish lines and borders, legal classifications and categories as the “normal (…) order of things” (Malkki 1992, 26), rather than movement and fluidity.
 """ ]
-        , p [] [ text """
+        , p [style "text-align" "justify"] [ text """
 The label “refugee” is a political and judicial construction. In fact, looking from an administrative perspective, not anybody escaping their former home is considered a “refugee” officially. Before being recognized as a "refugee", displaced persons are considered "asylum seekers".
 """ ]
         , h4 [style "padding-bottom" "0em", style "margin-bottom" "0em", style "letter-spacing" "0.3em"] 
             [ text "ASYLUM SEEKER" 
             ]
-        , p [style "padding-top" "0em", style "margin-top""0em"] [ text """
+        , p [style "padding-top" "0em", style "margin-top""0em", style "text-align" "justify"] [ text """
 A person applying for or claiming international  protection as a refugee who has not received a decision about their claim yet. Legally and statistically, they are not refugees yet.
 """ ]
         , h4 [style "padding-bottom" "0em", style "margin-bottom" "0em", style "letter-spacing" "0.3em"] 
