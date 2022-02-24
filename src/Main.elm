@@ -691,11 +691,13 @@ temporalSvg selectedYear ( coa1, coa2 ) availableCOAs =
                                         , height <| fromFloat v
                                         , stroke "none"
                                         , fill <|
-                                            if fromInt year == selectedYear then
-                                                "#fa6363"
+                                            if fromInt year /= selectedYear then
+                                                -- the tone from our coaSvg for complementary protection
+                                                "#b7b7b7"
 
                                             else
-                                                "#b7b7b7"
+                                                -- a slightly redder tone for the selected year
+                                                "#fa6363"
                                         ]
                                         []
                             )
