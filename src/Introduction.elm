@@ -29,12 +29,12 @@ Most people would probably associate the term "refugee" with a person that has h
         , p [] [ text """
 The label “refugee” is a political and judicial construction. In fact, looking from an administrative perspective, not anybody escaping their former home is considered a “refugee” officially. Before being recognized as a "refugee", displaced persons are considered "asylum seekers".
 """ ]
-        , h4 [] [ text "ASYLUM SEEKER" ]
-        , p [] [ text """
+        , h4 [style "padding-bottom" "0em", style "margin-bottom""0em"] [ text "ASYLUM SEEKER" ]
+        , p [style "padding-top" "0em", style "margin-top""0em"] [ text """
 A person applying for or claiming international  protection as a refugee who has not received a decision about their claim yet. Legally and statistically, they are not refugees yet.
 """ ]
-        , h4 [] [ text "REFUGEE" ]
-        , p [] [ text """
+        , h4 [style "padding-bottom" "0em", style "margin-bottom""0em"] [ text "REFUGEE" ]
+        , p [style "padding-top" "0em", style "margin-top""0em"] [ text """
 A person who falls under one or several of a set of international agreements on refugee status, most importantly the 1951 Geneva Convention and its 1967 Protocol.
 These define a refugee as "someone who is unable or unwilling to return to their country of origin owing to a well-founded fear of being persecuted for the reasons of race, religion, nationality, membership of a particular social group, or political opinion." (UNHCR 2021)
 """ ]
@@ -60,8 +60,8 @@ Through our web application, we want to make decisions on asylum in Europe, thei
         , p [] [ text """
 Our webapp enables the user to select a country of origin and two European countries of asylum. It then visualizes the decisions made on asylum applications in these countries of asylum in the chosen year. To contextualize these numbers and offer the opportunity for comparison between and within countries, two simple visual components are used: A bar chart shows the share of each decision category in a given country. A slider provides the possibility to explore each year from 2000-2021 individually, but also to observe temporal evolutions and changes. When stopped for a few seconds in one year, an animation of footprints entering the country bars starts. These footprints set the total number of decisions per year per country of asylum in relation to the number of inhabitants of that country: One footprint represents one decision per 500,000 inhabitants. At the same time, they serve to remind the user that it is human beings over whom asylum decisions are made.
 """ ]
-        , h4 [] [ text "ABOUT THE PROJECT" ]
-        , p []
+        , h4 [style "padding-bottom" "0em", style "margin-bottom""0em"] [ text "ABOUT THE PROJECT" ]
+        , p [style "padding-top" "0em", style "margin-top""0em"]
             [ text """
 This project was developed as part of the course "Mapping Cities – Making Cities" by Prof. Dr. Marian Dörk at the University of Applied Sciences Potsdam in the winter semester of 2021/2022. For more information about the course and its other projects, please visit
 """
@@ -71,8 +71,8 @@ The project was completed in February 2022. You can access the source code of th
 """
             , a [ href "https://github.com/erictapen/mapping-migration" ] [ text "here." ]
             ]
-        , h4 [] [ text "WHO WE ARE" ]
-        , ul []
+        , h4 [style "padding-bottom" "0em", style "margin-bottom""0em"] [ text "WHO WE ARE" ]
+        , ul [style "padding-top" "0em", style "margin-top""0em"]
             [ li []
                 [ span [ style "font-weight" "bold" ] [ text """Frieda Grimm """ ]
                 , span [] [ text """- MA Urbane Zukunft, MA Architektur, Concept, Design
@@ -99,8 +99,8 @@ The project was completed in February 2022. You can access the source code of th
 """ ]
                 ]
             ]
-        , h4 [] [ text "SOURCES OF DATA" ]
-        , p []
+        , h4 [style "padding-bottom" "0em", style "margin-bottom""0em"] [ text "SOURCES OF DATA" ]
+        , p [style "padding-top" "0em", style "margin-top""0em"]
             [ text """
 Refugee Statistics: UNHCR Refugee Population Statistics Database (latest data from mid-2021). Documentation of the API: 
 """
@@ -125,8 +125,8 @@ Inhabitant numbers:
 (latest update April 2020)
 """
             ]
-        , h4 [] [ text "REFERENCES" ]
-        , p []
+        , h4 [style "padding-bottom" "0em", style "margin-bottom""0em"] [ text "REFERENCES" ]
+        , p [style "padding-top" "0em", style "margin-top""0em"]
             [ text """
 Bundesamt für Migration und Flüchtlinge (2021): Subsidiärer Schutz. Accessed February 15th, 2022 under https://www.bamf.de/DE/Themen/AsylFluechtlingsschutz/AblaufAsylverfahrens/Schutzformen/SubisidiaerSchutz/subisidiaerschutz-node.html.
 """
