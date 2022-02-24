@@ -20,7 +20,7 @@ introduction hideIntroduction =
             ]
             [ img [ title "Explore data", src "/assets/explore-data-button.svg" ] []
             ]
-        , h4 []
+        , h4 [style "margin-bottom" "1em"]
             [ text "BACKGROUND"
             ]
         , p [] [ text """
