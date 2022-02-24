@@ -138,7 +138,7 @@ Inhabitant numbers:
         , h4 [style "padding-bottom" "0em", style "margin-bottom""0em", style "letter-spacing" "0.3em"] 
             [ text "REFERENCES" 
             ]
-        , p [style "padding-top" "0em", style "margin-top""0em"]
+        , p [style "padding-top" "0em", style "margin-top""0em", style "text-align" "justify"]
             [ text """
 Bundesamt für Migration und Flüchtlinge (2021): Subsidiärer Schutz. Accessed February 15th, 2022 under https://www.bamf.de/DE/Themen/AsylFluechtlingsschutz/AblaufAsylverfahrens/Schutzformen/SubisidiaerSchutz/subisidiaerschutz-node.html.
 """
