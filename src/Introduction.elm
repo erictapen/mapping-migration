@@ -21,7 +21,7 @@ introduction hideIntroduction =
             [ img [ title "Explore data", src "/assets/explore-data-button.svg" ] []
             ]
         , h2 []
-            [ text "Background"
+            [ text "BACKGROUND"
             ]
         , p [] [ text """
 Most people would probably associate the term "refugee" with a person that has had to escape from his or her home to search and hopefully find a new place to live that offers safety, fair living conditions and new opportunities. The word evokes so many images of human bodies on the move, in camps, or in detention centers, it almost seems as if being a “refugee” were the natural state of a particular, homogenous group of people. As if this word were not a political one. But it is. Refugees are not simply “refugees”, they are labelled as such (cf. Zetter 2007). Refugees are not born “refugees”, they simply have had to react to the events disrupting the place they have coincidentally been born into. A reaction that is made out to be unnatural by a system that wants to establish lines and borders, legal classifications and categories as the “normal (…) order of things” (Malkki 1992, 26), rather than movement and fluidity.
@@ -60,7 +60,7 @@ Through our web application, we want to make decisions on asylum in Europe, thei
         , p [] [ text """
 Our webapp enables the user to select a country of origin and two European countries of asylum. It then visualizes the decisions made on asylum applications in these countries of asylum in the chosen year. To contextualize these numbers and offer the opportunity for comparison between and within countries, two simple visual components are used: A bar chart shows the share of each decision category in a given country. A slider provides the possibility to explore each year from 2000-2021 individually, but also to observe temporal evolutions and changes. When stopped for a few seconds in one year, an animation of footprints entering the country bars starts. These footprints set the total number of decisions per year per country of asylum in relation to the number of inhabitants of that country: One footprint represents one decision per 500,000 inhabitants. At the same time, they serve to remind the user that it is human beings over whom asylum decisions are made.
 """ ]
-        , h4 [] [ text "About the project" ]
+        , h4 [] [ text "ABOUT THE PROJECT" ]
         , p []
             [ text """
 This project was developed as part of the course "Mapping Cities – Making Cities" by Prof. Dr. Marian Dörk at the University of Applied Sciences Potsdam in the winter semester of 2021/2022. For more information about the course and its other projects, please visit
@@ -71,7 +71,7 @@ The project was completed in February 2022. You can access the source code of th
 """
             , a [ href "https://github.com/erictapen/mapping-migration" ] [ text "here." ]
             ]
-        , h4 [] [ text "Team" ]
+        , h4 [] [ text "WHO WE ARE" ]
         , ul []
             [ li []
                 [ span [ style "font-weight" "bold" ] [ text """Frieda Grimm """ ]
@@ -99,7 +99,7 @@ The project was completed in February 2022. You can access the source code of th
 """ ]
                 ]
             ]
-        , h4 [] [ text "Sources of data" ]
+        , h4 [] [ text "SOURCES OF DATA" ]
         , p []
             [ text """
 Refugee Statistics: UNHCR Refugee Population Statistics Database (latest data from mid-2021). Documentation of the API: 
@@ -125,7 +125,7 @@ Inhabitant numbers:
 (latest update April 2020)
 """
             ]
-        , h4 [] [ text "References" ]
+        , h4 [] [ text "REFERENCES" ]
         , p []
             [ text """
 Bundesamt für Migration und Flüchtlinge (2021): Subsidiärer Schutz. Accessed February 15th, 2022 under https://www.bamf.de/DE/Themen/AsylFluechtlingsschutz/AblaufAsylverfahrens/Schutzformen/SubisidiaerSchutz/subisidiaerschutz-node.html.
