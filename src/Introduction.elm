@@ -29,11 +29,11 @@ Most people would probably associate the term "refugee" with a person that has h
         , p [] [ text """
 The label “refugee” is a political and judicial construction. In fact, looking from an administrative perspective, not anybody escaping their former home is considered a “refugee” officially. Before being recognized as a "refugee", displaced persons are considered "asylum seekers".
 """ ]
-        , h4 [] [ text "Asylum seeker" ]
+        , h4 [] [ text "ASYLUM SEEKER" ]
         , p [] [ text """
 A person applying for or claiming international  protection as a refugee who has not received a decision about their claim yet. Legally and statistically, they are not refugees yet.
 """ ]
-        , h4 [] [ text "Refugee" ]
+        , h4 [] [ text "REFUGEE" ]
         , p [] [ text """
 A person who falls under one or several of a set of international agreements on refugee status, most importantly the 1951 Geneva Convention and its 1967 Protocol.
 These define a refugee as "someone who is unable or unwilling to return to their country of origin owing to a well-founded fear of being persecuted for the reasons of race, religion, nationality, membership of a particular social group, or political opinion." (UNHCR 2021)
