@@ -38,19 +38,19 @@ let
         mkdir -p $out/share/doc $out/assets
         ${lib.concatStrings (map (module: ''
           echo "compiling ${elmfile module}"
-          elm make ${elmfile module} --optimize --output $out/${module}.${extension} --docs $out/share/doc/${module}.json
+          elm make ${elmfile module} --optimize --output $out/assets/${module}.${extension} --docs $out/share/doc/${module}.json
           ${lib.optionalString outputJavaScript ''
             echo "minifying ${elmfile module}"
-            uglifyjs $out/${module}.${extension} --compress 'pure_funcs="F2,F3,F4,F5,F6,F7,F8,F9,A2,A3,A4,A5,A6,A7,A8,A9",pure_getters,keep_fargs=false,unsafe_comps,unsafe' \
-                | uglifyjs --mangle --output $out/${module}.min.${extension}
+            uglifyjs $out/assets/${module}.${extension} --compress 'pure_funcs="F2,F3,F4,F5,F6,F7,F8,F9,A2,A3,A4,A5,A6,A7,A8,A9",pure_getters,keep_fargs=false,unsafe_comps,unsafe' \
+                | uglifyjs --mangle --output $out/assets/${module}.min.${extension}
           ''}
         '') targets)}
         cp ${./assets}/index.html $out/
-        cp ${./assets}/style.css $out/
+        cp ${./assets}/style.css $out/assets/
         cp ${./assets}/explore-data-button.svg $out/assets/
         ${imagemagick}/bin/magick convert assets/favicon-32.png assets/favicon-16.png $out/favicon.ico
-        cp '${google-fonts}/share/fonts/truetype/Karla[wght].ttf' "$out/Karla[wght].ttf"
-        ${haskellPackages.webify}/bin/webify --no-svg "$out/Karla[wght].ttf"
+        cp '${google-fonts}/share/fonts/truetype/Karla[wght].ttf' "$out/assets/Karla[wght].ttf"
+        ${haskellPackages.webify}/bin/webify --no-svg "$out/assets/Karla[wght].ttf"
       '';
     };
 in mkDerivation {

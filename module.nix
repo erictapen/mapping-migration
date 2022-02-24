@@ -41,27 +41,7 @@ in
             '';
           in
           {
-            "= /Main.min.js" = {
-              root = webapp;
-              tryFiles = "/Main.min.js =404";
-              priority = 999;
-            };
-            "= /Main.js" = {
-              root = webapp;
-              tryFiles = "/Main.js =404";
-              priority = 999;
-            };
-            "= /style.css" = {
-              root = webapp;
-              tryFiles = "/style.css =404";
-              priority = 999;
-            };
             "= /favicon.ico" = {
-              root = webapp;
-              tryFiles = "$uri =404";
-              priority = 999;
-            };
-            "= /Karla[wght].ttf" = {
               root = webapp;
               tryFiles = "$uri =404";
               priority = 999;
