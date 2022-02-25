@@ -1,10 +1,10 @@
 Visit the current prototype at [mappingmigration.erictapen.name](https://mappingmigration.erictapen.name/)
 
 
-For building the application run:
+For testing the application run:
 
 ```
-elm make src/Main.elm
+elm reactor
 ```
 
-Then open `index.html` in a web browser.
+Then open `http://localhost:8000` in a web browser and navigate to `src/Main.elm`.
