@@ -8,7 +8,10 @@ import Html.Events exposing (onClick)
 introduction : msg -> Html msg
 introduction hideIntroduction =
     div [ style "clear" "both", style "padding-top" "5em", id "introduction" ]
-        [ button
+        [ p [style "font-weight" "bold"] [ text """
+             The term "refugee" is political. A person fleeing from home is not automatically recognized as a refugee, but first has to apply for asylum in a specific country. That nation-state then decides who is granted the refugee status, who is rejected and who is put into one of numerous other categories. This process is all the more relevant in Europe today, where increasing legal as well as physical borders fragmentize and hinder human migration. Based on UNHCR data, the following web app offers an overview of the decisions made on asylum applications in Europe since the year 2000.
+""" ]
+        , button
             [ id "hide-introduction"
             , onClick hideIntroduction
             , style "margin-left" "auto"
