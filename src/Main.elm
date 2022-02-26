@@ -1172,8 +1172,8 @@ coaSvg animationState infoState isCOA1 population ad =
 
 {-| A complete chart for one COA.
 -}
-coaVis : AnimationState -> InfoState -> Bool -> Year -> CountryCode -> Maybe Country -> Result String Int -> Maybe AsylumDecisions -> Html Msg
-coaVis animationState infoState isCOA1 year countryCode country maybePopulation maybeAsylumDecisions =
+coaVis : AnimationState -> InfoState -> Bool -> Year -> CountryCode -> Maybe Country -> Maybe AsylumDecisions -> Html Msg
+coaVis animationState infoState isCOA1 year countryCode country maybeAsylumDecisions =
     div [ style <| "margin-bottom: 5em; " ++ "text-align: center; " ++ "margin-top: 2.5em; " ]
         ([ h2
             [ title <|
@@ -1184,7 +1184,7 @@ coaVis animationState infoState isCOA1 year countryCode country maybePopulation 
             ]
             [ text <| withDefault "Unkown country name!" <| Maybe.map .name country ]
          ]
-            ++ (case maybePopulation of
+            ++ (case coaPopulation country of
                     Err e ->
                         [ text e ]
 
@@ -1289,11 +1289,11 @@ perCapitaUnitString =
     "500,000"
 
 
-coaPopulation : Dict CountryCode Country -> CountryCode -> Result String Int
-coaPopulation countries cc =
-    case Dict.get cc countries of
+coaPopulation : Maybe Country -> Result String Int
+coaPopulation maybeCountry =
+    case maybeCountry of
         Nothing ->
-            Err <| "Country " ++ cc ++ " not available."
+            Err <| "Country not available."
 
         Just country ->
             Result.fromMaybe "No population data available." <|
@@ -1409,7 +1409,6 @@ view model =
                                             coaS.year
                                             state.coa1
                                             (Dict.get state.coa1 countries)
-                                            (coaPopulation countries state.coa1)
                                           <|
                                             Maybe.andThen (Dict.get coaS.year) <|
                                                 Dict.get state.coa1 coaS.availableCOAs
@@ -1420,7 +1419,6 @@ view model =
                                             coaS.year
                                             state.coa2
                                             (Dict.get state.coa2 countries)
-                                            (coaPopulation countries state.coa2)
                                           <|
                                             Maybe.andThen (Dict.get coaS.year) <|
                                                 Dict.get state.coa2 coaS.availableCOAs
