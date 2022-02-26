@@ -1203,6 +1203,11 @@ coaVis animationState infoState isCOA1 year countryCode country maybePopulation 
         )
 
 
+infoboxH1Style : S.Attribute msg
+infoboxH1Style =
+    style "margin-bottom: unset; font-size: 100%;"
+
+
 {-| The legend that explains what one footprint symbolises
 -}
 footprintLegend : Bool -> Html Msg
@@ -1231,7 +1236,7 @@ footprintLegend infoFootprintsVisible =
          ]
             ++ (if infoFootprintsVisible then
                     [ div [ style <| infoboxStyle ]
-                        [ h1 [ style "margin-bottom: unset; font-size: 100%;" ]
+                        [ h1 [ infoboxH1Style ]
                             [ text "One decision does not equal one person!" ]
                         , text """
 It is important to note that one decision does not equal one person. This is due to two major reasons: First, there are two ways of counting decisions in the data set: Persons and cases. Cases can include several people (e.g. a family), but it is not possible to see how many. In the web app, these two ways of counting are summed up. Second, in one year the same person may receive decisions over more than one application if they reapplied after being rejected. For these reasons, it is not possible to read an absolute number of persons who received a decision out of the webapp, just an approximation. (Personal correspondence with UNHCR member, 2022)
