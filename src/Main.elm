@@ -955,9 +955,11 @@ categoryLegend xPos width categoryName linewrapHeuristic msg infoVisible explana
                     ([ if width < linewrapHeuristic then
                         p [] [ text <| (fromInt <| round width) ++ "% " ++ categoryName ]
 
-                      else
+                       else
                         text ""
-                    ] ++ explanation)
+                     ]
+                        ++ explanation
+                    )
 
               else
                 text ""
@@ -1075,7 +1077,7 @@ coaSvg animationState infoState isCOA1 population ad =
                     "complementary protection"
                     [ text """
                     Country-specific forms of complementary or subsidiary protection for people that do not fall under other definitions of refugee, but still are in need of protection. What is included in these kinds of protection can widely differ, from protection from deportation to the full rights a refugee status entails. In the EU asylum system, a "third country national or stateless person" can be granted subsidiary protection if they do not qualify as a refugee but on return to their country of origin are in danger of "serious harm" (Expert Group on Refugee and Internally Displaced Persons Statistics 2018, 23). In Germany, major differences between a refugee status and subsidiary protection are: with subsidiary protection, family reunification is restricted. Moreover, a residence permit is issued only for one year and can be prolonged for two years at a time whereas with a refugee status, a residence permit directly is issued for three years with the chance of extension (Bundesamt für Migration und Flüchtlinge 2021; Hanewinkel 2021)
-                    """]
+                    """ ]
                     27.7
                     "#b7b7b7"
                 , barElement
@@ -1085,7 +1087,7 @@ coaSvg animationState infoState isCOA1 population ad =
                     (withDefault 0 ad.closed)
                     (withDefault 0 ad.recognized + withDefault 0 ad.other)
                     "otherwise closed"
-                    [text "Asylum applications closed without a substantive decision (neither recognized nor rejected). Reasons for that can be e.g. withdrawal, inadmissibility, abandonment, death, Dublin II  procedure (Europe only), etc. (Personal correspondence with UNHCR member, 2022)."]
+                    [ text "Asylum applications closed without a substantive decision (neither recognized nor rejected). Reasons for that can be e.g. withdrawal, inadmissibility, abandonment, death, Dublin II  procedure (Europe only), etc. (Personal correspondence with UNHCR member, 2022)." ]
                     17.7
                     "#cecece"
                 , barElement
@@ -1095,7 +1097,7 @@ coaSvg animationState infoState isCOA1 population ad =
                     (withDefault 0 ad.rejected)
                     (withDefault 0 ad.recognized + withDefault 0 ad.other + withDefault 0 ad.closed)
                     "rejected"
-                    [text "Asylum claims that have been rejected in the chosen period of time."]
+                    [ text "Asylum claims that have been rejected in the chosen period of time." ]
                     11.5
                     "#dddddd"
                 ]
