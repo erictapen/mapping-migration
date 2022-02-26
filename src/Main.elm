@@ -144,14 +144,25 @@ type alias COASelect =
 {-|
 
   - Wait: Wait a few seconds before anything starts
-  - FootstepsMoving: Move the footsteps from right to left
+  - FootprintsMoving: Move the footsteps from right to left
   - Finished: The animation has stopped, we can cancel the subscription to animation frames
 
 -}
 type AnimationState
     = Wait Float
-    | FootstepsMoving Float
+    | FootprintsMoving Float (List FootprintSteps)
     | Finished
+
+
+{-| A list of positions, accompanied by frame count, that describes one
+movement of an individual pair of footprints over time.
+-}
+type alias FootprintSteps =
+    List ( Float, Point )
+
+
+type alias Point =
+    ( Float, Float )
 
 
 {-| Initial state for AnimationState
@@ -162,8 +173,8 @@ initWait =
 
 {-| Initial state for AnimationState
 -}
-initFootstepsMoving =
-    FootstepsMoving 3000
+initFootprintsMoving =
+    FootprintsMoving 3000 []
 
 
 type alias InfoState =
@@ -239,8 +250,16 @@ update msg model =
                                                 { coaS
                                                     | animationStates =
                                                         Tuple.mapBoth
-                                                            (updateAnimationState delta)
-                                                            (updateAnimationState delta)
+                                                            (updateAnimationState
+                                                                (Maybe.andThen (Dict.get coaS.year) <| Dict.get state.coa1 coaS.availableCOAs)
+                                                                coaS.year
+                                                                delta
+                                                            )
+                                                            (updateAnimationState
+                                                                (Maybe.andThen (Dict.get coaS.year) <| Dict.get state.coa2 coaS.availableCOAs)
+                                                                coaS.year
+                                                                delta
+                                                            )
                                                             coaS.animationStates
                                                 }
                                             )
@@ -519,22 +538,30 @@ update msg model =
                             noop
 
 
-updateAnimationState : Float -> AnimationState -> AnimationState
-updateAnimationState delta aS =
+prepareFootstepMovement : Random.Generator Float -> Seed -> (FootprintSteps, Seed)
+prepareFootstepMovement gen seed = ([], seed)
+
+
+updateAnimationState : Maybe AsylumDecisions -> Year -> Float -> AnimationState -> AnimationState
+updateAnimationState asylumDecisions year delta aS =
+--  let
+--        footprintCount =
+--            dividend * perCapitaUnit // population
+--  in
     case aS of
         Wait t ->
             if t - delta <= 0 then
-                initFootstepsMoving
+                initFootprintsMoving
 
             else
                 Wait <| t - delta
 
-        FootstepsMoving t ->
+        FootprintsMoving t footprintState ->
             if t - delta <= 0 then
                 Finished
 
             else
-                FootstepsMoving <| t - delta
+                FootprintsMoving (t - delta) footprintState
 
         Finished ->
             Finished
@@ -868,10 +895,10 @@ footprintDiagram animationState seed permTable elevatedRow count ( currentColumn
                 ( noiseX, noiseY ) =
                     ( noise xPos yPos, noise yPos (xPos + 1000) )
 
-                -- animationComponent that is dependent on the state of the animation
+                -- animation component that is dependent on the state of the animation
                 ( animX, animY ) =
                     case animationState of
-                        FootstepsMoving t ->
+                        FootprintsMoving t _ ->
                             ( t / 5, (yPos - 50) * sin ((t / 3000) * pi * 0.5) * 1.5 )
 
                         _ ->
@@ -1269,7 +1296,7 @@ coaPopulation countries cc =
             Err <| "Country " ++ cc ++ " not available."
 
         Just country ->
-            Result.fromMaybe "No population data for available." <|
+            Result.fromMaybe "No population data available." <|
                 (Dict.get country.iso >> Maybe.andThen (Dict.get 2018)) Data.population
 
 
