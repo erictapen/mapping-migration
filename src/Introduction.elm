@@ -181,7 +181,7 @@ Inhabitant numbers:
             [ text "REFERENCES"
             ]
         , p [ style "padding-top" "0em", style "margin-top" "0em" ] [ text """
-Apart from the following references, information on data structure and decision categories comes from personal correspondence with UNHCR members.
+Apart from the following references, information on data structure and decision categories was elaborated in personal correspondence with UNHCR members.
 """ ]
         , p [ style "text-align" "justify" ] [ text """
 Bundesamt für Migration und Flüchtlinge (2021): Subsidiärer Schutz. Accessed February 15th, 2022 under
