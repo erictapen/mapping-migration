@@ -83,7 +83,8 @@ init _ url key =
             withDefault defaultUrlTriple <| Url.Parser.parse urlTriple url
     in
     ( Ok
-        { countries = Nothing
+        { currentYear = Nothing
+        , countries = Nothing
         , coo = coo
         , cooSelectState = Select.initState
         , coa1 = coa1
@@ -94,7 +95,7 @@ init _ url key =
         , longIntroductionVisible = False
         , infoFootprintsVisible = False
         }
-    , fetchCountries GotCountries
+    , Cmd.batch [ fetchCountries GotCountries, Task.perform StartupTime Time.now ]
     )
 
 
@@ -116,7 +117,8 @@ type ApplicationError
 {-| About coaSelect: The outer Maybe is for the case if it isn't loaded yet. The inner Result is for no available data
 -}
 type alias ApplicationState =
-    { navigationKey : Browser.Navigation.Key
+    { currentYear : Maybe Int
+    , navigationKey : Browser.Navigation.Key
     , shortIntroductionVisible : Bool
     , longIntroductionVisible : Bool
     , countries : Maybe (Dict CountryCode Country)
@@ -183,7 +185,8 @@ initInfoState =
 
 
 type Msg
-    = UpdateAnimation Float
+    = StartupTime Time.Posix
+    | UpdateAnimation Float
     | ToggleFootprintsInfo
     | ToggleInfo ( InfoState, InfoState )
     | HideIntroduction
@@ -222,6 +225,9 @@ update msg model =
 
         Ok state ->
             case msg of
+                StartupTime time ->
+                    ( Ok { state | currentYear = Just <| Time.toYear Time.utc time }, Cmd.none )
+
                 UpdateAnimation delta ->
                     case state.coaSelect of
                         Just (Ok coaS) ->
@@ -725,19 +731,23 @@ yearOption year =
 
 {-| The HTML input element that makes the year selectable
 -}
-yearInput : Html Msg
-yearInput =
+yearInput : Int -> Html Msg
+yearInput currentYear =
+    let
+        maxYear =
+            currentYear - 1
+    in
     input
         [ type_ "range"
         , onInput ChangeYear
         , HA.min "2000"
-        , HA.max "2021"
+        , HA.max <| fromInt maxYear
         , style "width: 99%;"
         ]
     <|
         map yearOption <|
             map fromInt <|
-                range 2000 2021
+                range 2000 maxYear
 
 
 footprint1 : Svg Msg
@@ -1302,12 +1312,8 @@ view model =
                             [ Introduction.introduction HideIntroduction ]
 
                          else
-                            case state.countries of
-                                Nothing ->
-                                    [ text "Loading countries..."
-                                    ]
-
-                                Just countries ->
+                            case ( state.currentYear, state.countries ) of
+                                ( Just currentYear, Just countries ) ->
                                     [ cooSelect
                                         countries
                                         state.coo
@@ -1344,11 +1350,15 @@ view model =
                                                                     coaS.year
                                                                     ( state.coa1, state.coa2 )
                                                                     coaS.availableCOAs
-                                                                , yearInput
+                                                                , yearInput currentYear
                                                                 , p [ style "font-size: 4em; margin-top: 0;" ] [ text coaS.year ]
                                                                 ]
                                                             ]
                                            )
+
+                                _ ->
+                                    [ text "Loading countries..."
+                                    ]
                         )
                      ]
                         ++ (case ( state.countries, state.coaSelect ) of
