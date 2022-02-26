@@ -27,7 +27,7 @@ introduction hideIntroduction =
             [ text "BACKGROUND"
             ]
         , p [ style "padding-top" "0em", style "margin-top" "0em", style "text-align" "justify" ] [ text """
-Most people would probably associate the term "refugee" with a person that has had to escape from his or her home to search and hopefully find a new place to live that offers safety, fair living conditions and new opportunities. The word evokes so many images of human bodies on the move, in camps, or in detention centers, it almost seems as if being a “refugee” were the natural state of a particular, homogenous group of people. As if this word were not a political one. But it is. Refugees are not simply “refugees”, they are labelled as such (cf. Zetter 2007). Refugees are not born “refugees”, they simply have had to react to the events disrupting the place they have coincidentally been born into. A reaction that is made out to be unnatural by a system that wants to establish lines and borders, legal classifications and categories as the “normal (…) order of things” (Malkki 1992, 26), rather than movement and fluidity.
+Most people would probably associate the term "refugee" with a person that has had to escape from his or her home to search and hopefully find a new place to live that offers safety, fair living conditions and new opportunities. The word evokes so many images of human bodies on the move, in camps, or in detention centers, it almost seems as if being a “refugee” were the natural state of a particular, homogenous group of people. As if this word were not a political one. But it is. Refugees are not simply “refugees”, they are labelled as such (cf. Zetter 2007). Refugees are not born “refugees”, they simply have had to react to the events disrupting the place they were coincidentally born into. A reaction that is made out to be unnatural by a system that wants to establish lines and borders, legal classifications and categories as the “normal (…) order of things” (Malkki 1992, 26).
 """ ]
         , p [ style "text-align" "justify" ] [ text """
 The label “refugee” is a political and judicial construction. In fact, looking from an administrative perspective, not anybody escaping their former home is considered a “refugee” officially. Before being recognized as a "refugee", displaced persons are considered "asylum seekers".
@@ -65,18 +65,47 @@ A lot of asylum-seekers are assigned to sub-categories that offer less certainty
             [ text "WHAT THE WEB APP CAN SHOW YOU"
             ]
         , p [ style "text-align" "justify" ] [ text """
-Through our web application, we want to make decisions on asylum in Europe, their proportions and developments since the year 2000 more easily accessible and visible using UNHCR data. Looking at this data, the fragmentation of asylum decisions beyond "recognized" and "rejected" is inherently visible due to the further categories of "complementary protection" and "otherwise closed". However, these categories represent a summarization of a variety of asylum-decisions and cannot do justice to the complexity of asylum decisions in each individual country.
+Through our web application, we want to make decisions on asylum in Europe2, their proportions and developments since the year 2000 more easily accessible and visible using UNHCR data. By exploring the data, you can get an impression of how likely it has been for people from a certain country of origin to be granted or denied asylum in Europe. Two European countries of asylum can be compared at a time. Furthermore, the fragmentation of asylum decisions beyond "recognized" and "rejected"  is inherently visible due to the further categories of "complementary  protection" and "otherwise closed". Beyond the comparison of relative proportions between decision categories within a country as well as between countries, the absolute figures of decisions are set in relation to the number of inhabitants of each chosen country. This can give you an understanding of how high or low the number of decisions is and puts the number into perspective. Another aspect the web app allows you to investigate is that of temporal evolutions in decisions from 2000 until last year.
 """ ]
         , h4 [ style "padding-bottom" "0em", style "margin-bottom" "0em", style "letter-spacing" "0.3em" ]
             [ text "HOW TO USE THE WEB APP"
             ]
         , p [ style "text-align" "justify" ] [ text """
-Our webapp enables the user to select a country of origin and two European countries of asylum. It then visualizes the decisions made on asylum applications in these countries of asylum in the chosen year. To contextualize these numbers and offer the opportunity for comparison between and within countries, two simple visual components are used: A bar chart shows the share of each decision category in a given country. A slider provides the possibility to explore each year from 2000-2021 individually, but also to observe temporal evolutions and changes. When stopped for a few seconds in one year, an animation of footprints entering the country bars starts. These footprints set the total number of decisions per year per country of asylum in relation to the number of inhabitants of that country: One footprint represents one decision per 500,000 inhabitants. At the same time, they serve to remind the user that it is human beings over whom asylum decisions are made.
+On our web app, you can select a country of origin, two European countries of asylum and a specific year.
+""" ]
+        , p [ style "text-align" "justify" ] [ text """
+The app then shows you the decisions made on asylum applications in these countries of asylum in the chosen year. To  contextualize these numbers and offer you the opportunity to compare  between and within countries, two visual components are used: A bar chart visualizes the share of each decision category in a given country. That way, you can immediately see what percent of decisions fell under "recognized", "rejected", "complementary protection" or "otherwise closed" (the percentage relates to total decisions, not total applications in the chosen year).
+""" ]
+        , p [ style "text-align" "justify" ] [ text """
+In addition, a slider provides the possibility to explore each year from 2000 until last year individually, but also to observe temporal evolutions and changes. Above the time slider, a bar graph provides an overview of the development of total decisions in the chosen countries of asylum from 2000 on.
+""" ]
+        , p [ style "text-align" "justify" ] [ text """
+When  stopped for a few seconds in one year, an animation of footprints  entering the bar charts starts. These footprints set the absolute number of decisions per year per country of asylum in relation to the number of  inhabitants of that country: One footprint represents one decision per 500,000 inhabitants.
+""" ]
+        , p [ style "text-align" "justify" ] [ text """
+The total number of decisions per 500,000 inhabitants is displayed in a sentence beneath the country names.
+""" ]
+        , p [ style "text-align" "justify" ] [ text """
+When hovering above a footprint, you can find out the number of decisions in this footprint's category. Beyond indicating numbers, the footprints serve to remind you that it is human beings over whom asylum decisions are made.
 """ ]
         , h4 [ style "padding-bottom" "0em", style "margin-bottom" "0em", style "letter-spacing" "0.3em" ]
             [ text "WHAT THE WEB APP CANNOT SHOW YOU"
             ]
-        , p [ style "text-align" "justify" ] [ text """XXXXXXX """ ]
+        , p [ style "text-align" "justify" ] [ text """
+Even though the footprints used in our visualization are an attempt to hint toward the human dimension of migration, our web app cannot do justice to actual experiences of refugees on the move or within the asylum applications in place. Experiences that go beyond numbers, in depth as well as in significance. None of us – the team behind this project – have ever experienced what fleeing, searching for refuge and being subjected to the European asylum system and visa policies feels like, nor what impact it can have on entire life courses and families. As German citizens and with all privileges that come with that, we feel responsible to act in solidarity with all migrants trying to find living conditions like the ones we were coincidentally born into. Throughout our process of developing this project, we tried to invite organizations of refugees to share their perspective on the available data with us, however, time constraints did not allow for that to happen.
+""" ]
+        , p [ style "text-align" "justify" ] [ text """
+Besides the human dimension, it is important to note that numbers of asylum decisions do not coincide entirely with numbers of asylum applications. Asylum decisions are often not made in the same year asylum was applied for. Moreover, in one year, the same person may receive decisions over more than one application if they reapplied after being rejected. Therefore, the number of decisions does not indicate how many people newly arrived and applied for asylum in the chosen country. Another reason why one decision does not equal one person is that the data set includes two ways of counting decisions (which are based on the countries' methods of recording data): persons and cases. Cases can include several people (e.g. a family), but it is not possible to see how many. In the web app, these two ways of counting are summed up.
+""" ]
+        , p [ style "text-align" "justify" ] [ text """
+The decision categories represented in the web app adhere to the categories the UNHCR monitors and publishes its data in. These categories – especially the "complementary protection" category – are a summarization of a variety of asylum-decisions and do not show the complexity of asylum decisions in each individual country. Furthermore, UNHCR data are not 100% accurate due to their highly aggregated nature and dependency on national records, counting methods and circumstances.		
+""" ]
+        , p [ style "text-align" "justify" ] [ text """
+The decision figures were also rounded for programming and visual purposes. Additionally, because absolute figures were broken down to "per 500,000 inhabitants", small numbers of asylum decisions are often not represented in the footprints.
+""" ]
+        , p [ style "text-align" "justify" ] [ text """
+Last but not least, it is important to state that the source the data is drawn from – the UNHCR –, is not a neutral institution. The UNHCR is financially and politically dependent on nation-states and therefore involved in the before mentioned processes of "migration management".
+""" ]        
         , h4 [ style "padding-bottom" "0em", style "margin-bottom" "0em", style "letter-spacing" "0.3em" ]
             [ text "ABOUT THE PROJECT"
             ]
