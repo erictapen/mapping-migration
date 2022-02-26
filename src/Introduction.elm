@@ -98,14 +98,14 @@ Even though the footprints used in our visualization are an attempt to hint towa
 Besides the human dimension, it is important to note that numbers of asylum decisions do not coincide entirely with numbers of asylum applications. Asylum decisions are often not made in the same year asylum was applied for. Moreover, in one year, the same person may receive decisions over more than one application if they reapplied after being rejected. Therefore, the number of decisions does not indicate how many people newly arrived and applied for asylum in the chosen country. Another reason why one decision does not equal one person is that the data set includes two ways of counting decisions (which are based on the countries' methods of recording data): persons and cases. Cases can include several people (e.g. a family), but it is not possible to see how many. In the web app, these two ways of counting are summed up.
 """ ]
         , p [ style "text-align" "justify" ] [ text """
-The decision categories represented in the web app adhere to the categories the UNHCR monitors and publishes its data in. These categories – especially the "complementary protection" category – are a summarization of a variety of asylum-decisions and do not show the complexity of asylum decisions in each individual country. Furthermore, UNHCR data are not 100% accurate due to their highly aggregated nature and dependency on national records, counting methods and circumstances.		
+The decision categories represented in the web app adhere to the categories the UNHCR monitors and publishes its data in. These categories – especially the "complementary protection" category – are a summarization of a variety of asylum-decisions and do not show the complexity of asylum decisions in each individual country. Furthermore, UNHCR data are not 100% accurate due to their highly aggregated nature and dependency on national records, counting methods and circumstances.\t\t
 """ ]
         , p [ style "text-align" "justify" ] [ text """
 The decision figures were also rounded for programming and visual purposes. Additionally, because absolute figures were broken down to "per 500,000 inhabitants", small numbers of asylum decisions are often not represented in the footprints.
 """ ]
         , p [ style "text-align" "justify" ] [ text """
 Last but not least, it is important to state that the source the data is drawn from – the UNHCR –, is not a neutral institution. The UNHCR is financially and politically dependent on nation-states and therefore involved in the before mentioned processes of "migration management".
-""" ]        
+""" ]
         , h4 [ style "padding-bottom" "0em", style "margin-bottom" "0em", style "letter-spacing" "0.3em" ]
             [ text "ABOUT THE PROJECT"
             ]
@@ -183,7 +183,8 @@ Inhabitant numbers:
         , p [ style "padding-top" "0em", style "margin-top" "0em" ] [ text """
 Apart from the following references, information on data structure and decision categories was elaborated in personal correspondence with UNHCR members.
 """ ]
-        , p [ style "text-align" "justify" ] [ text """
+        , p [ style "text-align" "justify" ]
+            [ text """
 Bundesamt für Migration und Flüchtlinge (2021): Subsidiärer Schutz. Accessed February 15th, 2022 under
 """
             , a [ href "https://www.bamf.de/DE/Themen/AsylFluechtlingsschutz/AblaufAsylverfahrens/Schutzformen/SubisidiaerSchutz/subisidiaerschutz-node.html" ] [ text "https://www.bamf.de/DE/Themen/AsylFluechtlingsschutz/AblaufAsylverfahrens/Schutzformen/SubisidiaerSchutz/subisidiaerschutz-node.html." ]
