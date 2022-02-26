@@ -61,12 +61,22 @@ The international legal basis for decisions on asylum is the 1951 Convention rel
         , p [style "text-align" "justify"] [ text """
 A lot of asylum-seekers are assigned to sub-categories that offer less certainty and are subject to sudden changes in their asylum decision (see explanation of "complementary protection"). They are classified and categorized according to a complex legal system that fractions one label into many (cf. Zetter 2007, 181), increasingly reinforcing the distinction between "genuine refugees" and asylum-seekers. One of the regions where this bureaucratic classification is most rigorously pursued and serves a restrictive migration governance is Europe.
 """ ]
+        , h4 [style "padding-bottom" "0em", style "margin-bottom" "0em", style "letter-spacing" "0.3em"] 
+            [ text "WHAT THE WEB APP CAN SHOW YOU"
+            ]
         , p [style "text-align" "justify"] [ text """
 Through our web application, we want to make decisions on asylum in Europe, their proportions and developments since the year 2000 more easily accessible and visible using UNHCR data. Looking at this data, the fragmentation of asylum decisions beyond "recognized" and "rejected" is inherently visible due to the further categories of "complementary protection" and "otherwise closed". However, these categories represent a summarization of a variety of asylum-decisions and cannot do justice to the complexity of asylum decisions in each individual country.
 """ ]
+        , h4 [style "padding-bottom" "0em", style "margin-bottom" "0em", style "letter-spacing" "0.3em"]
+            [ text "HOW TO USE THE WEB APP"
+            ]
         , p [style "text-align" "justify"] [ text """
 Our webapp enables the user to select a country of origin and two European countries of asylum. It then visualizes the decisions made on asylum applications in these countries of asylum in the chosen year. To contextualize these numbers and offer the opportunity for comparison between and within countries, two simple visual components are used: A bar chart shows the share of each decision category in a given country. A slider provides the possibility to explore each year from 2000-2021 individually, but also to observe temporal evolutions and changes. When stopped for a few seconds in one year, an animation of footprints entering the country bars starts. These footprints set the total number of decisions per year per country of asylum in relation to the number of inhabitants of that country: One footprint represents one decision per 500,000 inhabitants. At the same time, they serve to remind the user that it is human beings over whom asylum decisions are made.
 """ ]
+        , h4 [style "padding-bottom" "0em", style "margin-bottom" "0em", style "letter-spacing" "0.3em"]
+            [ text "WHAT THE WEB APP CANNOT SHOW YOU"
+            ]
+        , p [style "text-align" "justify"] [ text """XXXXXXX """ ]
         , h4 [style "padding-bottom" "0em", style "margin-bottom" "0em", style "letter-spacing" "0.3em"] 
             [ text "ABOUT THE PROJECT" 
             ]
