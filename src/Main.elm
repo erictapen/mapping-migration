@@ -32,8 +32,8 @@ import Html.Events exposing (onClick, onInput)
 import Html.Styled exposing (toUnstyled)
 import Http exposing (get)
 import Introduction
-import List exposing (filter, head, map, range)
-import Maybe exposing (withDefault)
+import List exposing (filter, head, map, range, tail)
+import Maybe exposing (andThen, withDefault)
 import Platform.Cmd
 import Random exposing (Seed, initialSeed, int, step)
 import Select
@@ -171,12 +171,6 @@ initWait =
     Wait 3000
 
 
-{-| Initial state for AnimationState
--}
-initFootprintsMoving =
-    FootprintsMoving 3000 []
-
-
 type alias InfoState =
     { infoRecognizedVisible : Bool
     , infoComplementaryVisible : Bool
@@ -251,13 +245,27 @@ update msg model =
                                                     | animationStates =
                                                         Tuple.mapBoth
                                                             (updateAnimationState
-                                                                (Maybe.andThen (Dict.get coaS.year) <| Dict.get state.coa1 coaS.availableCOAs)
-                                                                coaS.year
+                                                                ( andThen
+                                                                    (Dict.get state.coa1)
+                                                                    state.countries
+                                                                , andThen
+                                                                    (Dict.get coaS.year)
+                                                                  <|
+                                                                    Dict.get state.coa1 coaS.availableCOAs
+                                                                , coaS.year
+                                                                )
                                                                 delta
                                                             )
                                                             (updateAnimationState
-                                                                (Maybe.andThen (Dict.get coaS.year) <| Dict.get state.coa2 coaS.availableCOAs)
-                                                                coaS.year
+                                                                ( andThen
+                                                                    (Dict.get state.coa2)
+                                                                    state.countries
+                                                                , andThen
+                                                                    (Dict.get coaS.year)
+                                                                  <|
+                                                                    Dict.get state.coa2 coaS.availableCOAs
+                                                                , coaS.year
+                                                                )
                                                                 delta
                                                             )
                                                             coaS.animationStates
@@ -343,7 +351,7 @@ update msg model =
 
                                     else
                                         withDefault coa1 <|
-                                            Maybe.andThen List.head <|
+                                            andThen List.head <|
                                                 List.tail <|
                                                     map Tuple.first <|
                                                         fasCOAs
@@ -538,20 +546,61 @@ update msg model =
                             noop
 
 
-prepareFootstepMovement : Random.Generator Float -> Seed -> (FootprintSteps, Seed)
-prepareFootstepMovement gen seed = ([], seed)
+{-| Total length of the animation of footsteps in ms.
+-}
+footstepAnimationLength =
+    3000
 
 
-updateAnimationState : Maybe AsylumDecisions -> Year -> Float -> AnimationState -> AnimationState
-updateAnimationState asylumDecisions year delta aS =
---  let
---        footprintCount =
---            dividend * perCapitaUnit // population
---  in
+prepareFootstepMovement : Seed -> FootprintSteps
+prepareFootstepMovement seed =
+    [ ( 2000, ( 100, 0 ) ), ( 1000, ( 75, 10 ) ), ( 0, ( 0, 0 ) ) ]
+
+
+{-| Initial state for AnimationState
+-}
+initFootprintsMoving : ( Maybe Country, Maybe AsylumDecisions, Year ) -> AnimationState
+initFootprintsMoving ( maybeCountry, maybeAsylumDecisions, year ) =
+    let
+        footprintCount =
+            case ( coaPopulation maybeCountry, maybeAsylumDecisions ) of
+                ( Ok population, Just aD ) ->
+                    aD.total * perCapitaUnit // population
+
+                _ ->
+                    0
+
+        yearInt =
+            withDefault 2000 <| String.toInt year
+    in
+    FootprintsMoving footstepAnimationLength <|
+        map ((+) yearInt >> initialSeed >> prepareFootstepMovement) <|
+            List.range 1 footprintCount
+
+
+{-| Clean FootprintSteps of outdated animation keyframes. We assume
+FootprintSteps to be a List ordered by animation frame.
+-}
+cleanOutdatedFootprintSteps : Float -> FootprintSteps -> FootprintSteps
+cleanOutdatedFootprintSteps t fpSteps =
+    case fpSteps of
+        [] ->
+            []
+
+        ( maxFrame, point ) :: remainingSteps ->
+            if maxFrame < t then
+                fpSteps
+
+            else
+                cleanOutdatedFootprintSteps t remainingSteps
+
+
+updateAnimationState : ( Maybe Country, Maybe AsylumDecisions, Year ) -> Float -> AnimationState -> AnimationState
+updateAnimationState fpInfo delta aS =
     case aS of
         Wait t ->
             if t - delta <= 0 then
-                initFootprintsMoving
+                initFootprintsMoving fpInfo
 
             else
                 Wait <| t - delta
@@ -561,7 +610,7 @@ updateAnimationState asylumDecisions year delta aS =
                 Finished
 
             else
-                FootprintsMoving (t - delta) footprintState
+                FootprintsMoving (t - delta) <| map (cleanOutdatedFootprintSteps (t - delta)) footprintState
 
         Finished ->
             Finished
@@ -700,8 +749,8 @@ temporalSvg selectedYear ( coa1, coa2 ) availableCOAs =
 
         decisionsData coa getter year =
             Maybe.map toFloat <|
-                Maybe.andThen getter <|
-                    Maybe.andThen (Dict.get <| fromInt year) <|
+                andThen getter <|
+                    andThen (Dict.get <| fromInt year) <|
                         Dict.get coa availableCOAs
 
         value coa year =
@@ -714,7 +763,7 @@ temporalSvg selectedYear ( coa1, coa2 ) availableCOAs =
             List.filterMap identity <|
                 List.indexedMap
                     (\i year ->
-                        Maybe.andThen
+                        andThen
                             (\v ->
                                 Just <|
                                     rect
@@ -896,13 +945,18 @@ footprintDiagram animationState seed permTable elevatedRow count ( currentColumn
                     ( noise xPos yPos, noise yPos (xPos + 1000) )
 
                 -- animation component that is dependent on the state of the animation
-                ( animX, animY ) =
+                ( ( animX, animY ), nextAnimationState ) =
                     case animationState of
-                        FootprintsMoving t _ ->
-                            ( t / 5, (yPos - 50) * sin ((t / 3000) * pi * 0.5) * 1.5 )
+                        FootprintsMoving t fpSteps ->
+                            ( withDefault ( 0, 0 ) <|
+                                Maybe.map Tuple.second <|
+                                    andThen head <|
+                                        head fpSteps
+                            , FootprintsMoving t <| withDefault [] <| tail fpSteps
+                            )
 
-                        _ ->
-                            ( 0, 0 )
+                        aS ->
+                            ( ( 0, 0 ), aS )
             in
             use
                 [ attribute "href"
@@ -1297,7 +1351,7 @@ coaPopulation maybeCountry =
 
         Just country ->
             Result.fromMaybe "No population data available." <|
-                (Dict.get country.iso >> Maybe.andThen (Dict.get 2018)) Data.population
+                (Dict.get country.iso >> andThen (Dict.get 2018)) Data.population
 
 
 {-| The complete menu bar to the left
@@ -1410,7 +1464,7 @@ view model =
                                             state.coa1
                                             (Dict.get state.coa1 countries)
                                           <|
-                                            Maybe.andThen (Dict.get coaS.year) <|
+                                            andThen (Dict.get coaS.year) <|
                                                 Dict.get state.coa1 coaS.availableCOAs
                                         , coaVis
                                             (Tuple.second coaS.animationStates)
@@ -1420,7 +1474,7 @@ view model =
                                             state.coa2
                                             (Dict.get state.coa2 countries)
                                           <|
-                                            Maybe.andThen (Dict.get coaS.year) <|
+                                            andThen (Dict.get coaS.year) <|
                                                 Dict.get state.coa2 coaS.availableCOAs
                                         ]
                                     ]
