@@ -144,7 +144,7 @@ type alias COASelect =
 {-|
 
   - Wait: Wait a few seconds before anything starts
-  - FootprintsMoving: Move the footsteps from right to left
+  - FootprintsMoving: Move the footprints from right to left
   - Finished: The animation has stopped, we can cancel the subscription to animation frames
 
 -}
@@ -546,14 +546,14 @@ update msg model =
                             noop
 
 
-{-| Total length of the animation of footsteps in ms.
+{-| Total length of the animation of footprints in ms.
 -}
-footstepAnimationLength =
+footprintAnimationLength =
     3000
 
 
-prepareFootstepMovement : Seed -> FootprintSteps
-prepareFootstepMovement seed =
+prepareFootprintMovement : Seed -> FootprintSteps
+prepareFootprintMovement seed =
     [ ( 2000, ( 100, 0 ) ), ( 1000, ( 75, 10 ) ), ( 0, ( 0, 0 ) ) ]
 
 
@@ -573,8 +573,8 @@ initFootprintsMoving ( maybeCountry, maybeAsylumDecisions, year ) =
         yearInt =
             withDefault 2000 <| String.toInt year
     in
-    FootprintsMoving footstepAnimationLength <|
-        map ((+) yearInt >> initialSeed >> prepareFootstepMovement) <|
+    FootprintsMoving footprintAnimationLength <|
+        map ((+) yearInt >> initialSeed >> prepareFootprintMovement) <|
             List.range 1 footprintCount
 
 
@@ -906,7 +906,7 @@ footprintDiagram animationState seed permTable elevatedRow count ( currentColumn
         noiseStrength =
             3.0
 
-        -- noise function we use to move the footsteps around
+        -- noise function we use to move the footprints around
         noise x y =
             (*) noiseStrength <| Simplex.fractal2d { scale = 0.5, steps = 7, stepSize = 2.0, persistence = 2.0 } permTable x y
 
@@ -940,7 +940,7 @@ footprintDiagram animationState seed permTable elevatedRow count ( currentColumn
                             0
                           )
 
-                -- noise component, that causes the footsteps to be placed irregularly
+                -- noise component, that causes the footprints to be placed irregularly
                 ( noiseX, noiseY ) =
                     ( noise xPos yPos, noise yPos (xPos + 1000) )
 
