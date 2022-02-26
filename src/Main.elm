@@ -1076,7 +1076,7 @@ coaSvg animationState infoState isCOA1 population ad =
                     (withDefault 0 ad.recognized)
                     "complementary protection"
                     [ text """
-                    Country-specific forms of complementary or subsidiary protection for people that do not fall under other definitions of refugee, but still are in need of protection. What is included in these kinds of protection can widely differ, from protection from deportation to the full rights a refugee status entails. In the EU asylum system, a "third country national or stateless person" can be granted subsidiary protection if they do not qualify as a refugee but on return to their country of origin are in danger of "serious harm" (Expert Group on Refugee and Internally Displaced Persons Statistics 2018, 23). In Germany, major differences between a refugee status and subsidiary protection are: with subsidiary protection, family reunification is restricted. Moreover, a residence permit is issued only for one year and can be prolonged for two years at a time whereas with a refugee status, a residence permit directly is issued for three years with the chance of extension (Bundesamt für Migration und Flüchtlinge 2021; Hanewinkel 2021)
+                    Country-specific forms of complementary or subsidiary protection for people that do not fall under other definitions of refugee, but still are in need of protection. What is included in these kinds of protection can widely differ, from protection from deportation to the full rights a refugee status entails. In the EU asylum system, a "third country national or stateless person" can be granted subsidiary protection if they do not qualify as a refugee but on return to their country of origin are in danger of "serious harm" (Expert Group on Refugee and Internally Displaced Persons Statistics 2018, 23). In Germany, major differences between a refugee status and subsidiary protection are: with subsidiary protection, family reunification is restricted. Moreover, a residence permit is issued only for one year and can be prolonged for two years at a time whereas with a refugee status, a residence permit directly is issued for three years with the chance of extension.
                     """ ]
                     27.7
                     "#b7b7b7"
@@ -1087,7 +1087,7 @@ coaSvg animationState infoState isCOA1 population ad =
                     (withDefault 0 ad.closed)
                     (withDefault 0 ad.recognized + withDefault 0 ad.other)
                     "otherwise closed"
-                    [ text "Asylum applications closed without a substantive decision (neither recognized nor rejected). Reasons for that can be e.g. withdrawal, inadmissibility, abandonment, death, Dublin II  procedure (Europe only), etc. (Personal correspondence with UNHCR member, 2022)." ]
+                    [ text "Asylum applications closed without a substantive decision (neither recognized nor rejected). Reasons for that can be e.g. withdrawal, inadmissibility, abandonment, death, Dublin II  procedure (Europe only), etc." ]
                     17.7
                     "#cecece"
                 , barElement
@@ -1241,7 +1241,7 @@ footprintLegend infoFootprintsVisible =
                         [ h1 [ infoboxH1Style ]
                             [ text "One decision does not equal one person!" ]
                         , text """
-It is important to note that one decision does not equal one person. This is due to two major reasons: First, there are two ways of counting decisions in the data set: Persons and cases. Cases can include several people (e.g. a family), but it is not possible to see how many. In the web app, these two ways of counting are summed up. Second, in one year the same person may receive decisions over more than one application if they reapplied after being rejected. For these reasons, it is not possible to read an absolute number of persons who received a decision out of the webapp, just an approximation. (Personal correspondence with UNHCR member, 2022)
+To learn more, read "What the web app cannot show you" in the introduction.
 """
                         ]
                     ]

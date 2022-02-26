@@ -36,7 +36,7 @@ The label “refugee” is a political and judicial construction. In fact, looki
             [ text "ASYLUM SEEKER"
             ]
         , p [ style "padding-top" "0em", style "margin-top" "0em", style "text-align" "justify" ] [ text """
-A person applying for or claiming international  protection as a refugee who has not received a decision about their claim yet. Legally and statistically, they are not refugees yet.
+A person applying for or claiming international  protection as a refugee who has not received a decision over that claim yet. Legally and statistically, that person is not considered a refugee.
 """ ]
         , h4 [ style "padding-bottom" "0em", style "margin-bottom" "0em", style "letter-spacing" "0.3em" ]
             [ text "REFUGEE"
@@ -180,8 +180,10 @@ Inhabitant numbers:
         , h4 [ style "padding-bottom" "0em", style "margin-bottom" "0em", style "letter-spacing" "0.3em" ]
             [ text "REFERENCES"
             ]
-        , p [ style "padding-top" "0em", style "margin-top" "0em" ]
-            [ text """
+        , p [ style "padding-top" "0em", style "margin-top" "0em" ] [ text """
+Apart from the following references, information on data structure and decision categories comes from personal correspondence with UNHCR members.
+""" ]
+        , p [ style "text-align" "justify" ] [ text """
 Bundesamt für Migration und Flüchtlinge (2021): Subsidiärer Schutz. Accessed February 15th, 2022 under
 """
             , a [ href "https://www.bamf.de/DE/Themen/AsylFluechtlingsschutz/AblaufAsylverfahrens/Schutzformen/SubisidiaerSchutz/subisidiaerschutz-node.html" ] [ text "https://www.bamf.de/DE/Themen/AsylFluechtlingsschutz/AblaufAsylverfahrens/Schutzformen/SubisidiaerSchutz/subisidiaerschutz-node.html." ]
