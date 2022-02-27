@@ -145,7 +145,7 @@ Last but not least, it is important to state that the source the data is drawn f
             [ text """
 This project was developed as part of the course “Mapping Cities – Making Cities” by Prof. Dr. Marian Dörk at the University of Applied Sciences Potsdam in the winter semester of 2021/2022. For more information about the course and its other projects, please visit
 """
-            , a [ href "https://uclab.fh-potsdam.de/mapping/" ] [ text "Mapping Cities - Making Cities." ]
+            , a [ href "https://uclab.fh-potsdam.de/mapping/" ] [ text "Mapping Cities – Making Cities." ]
             , text """
 The project was completed in February 2022. You can access the source code of the web app
 """
