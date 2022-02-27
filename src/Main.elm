@@ -94,7 +94,7 @@ init _ url key =
         , shortIntroductionVisible = True
         , longIntroductionVisible = False
         , infoFootprintsVisible = False
-        , missingMigrants = ( Just False, initWait )
+        , missingMigrants = ( Just True, initWait )
         }
     , Cmd.batch [ fetchCountries GotCountries, Task.perform StartupTime Time.now ]
     )
