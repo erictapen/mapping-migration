@@ -1,11 +1,31 @@
 @font-face {
     font-family: Karla;
-    src: url('/Karla[wght].eot');
-    src: url('/Karla[wght].eot?#iefix') format('embedded-opentype'),
-    url('/Karla[wght].woff') format('woff'),
-    url('/Karla[wght].ttf') format('truetype');
+    src: url('/assets/Karla-Regular.eot');
+    src: url('/assets/Karla-Regular.eot?#iefix') format('embedded-opentype'),
+    url('/assets/Karla-Regular.woff') format('woff'),
+    url('/assets/Karla-Regular.ttf') format('truetype');
     font-style: normal;
     font-weight: normal;
+}
+
+@font-face {
+    font-family: Karla;
+    src: url('/assets/Karla-Medium.eot');
+    src: url('/assets/Karla-Medium.eot?#iefix') format('embedded-opentype'),
+    url('/assets/Karla-Medium.woff') format('woff'),
+    url('/assets/Karla-Medium.ttf') format('truetype');
+    font-style: normal;
+    font-weight: 500;
+}
+
+@font-face {
+    font-family: Karla;
+    src: url('/assets/Karla-Bold.eot');
+    src: url('/assets/Karla-Bold.eot?#iefix') format('embedded-opentype'),
+    url('/assets/Karla-Bold.woff') format('woff'),
+    url('/assets/Karla-Bold.ttf') format('truetype');
+    font-style: normal;
+    font-weight: 700;
 }
 
 * {
@@ -14,13 +34,13 @@
 
 
 h1 {
-    font-weight: 600;
+    font-weight: 700;
     font-size: 320%;
     margin-bottom: 2em;
 }
 
 h2 {
-    font-weight: 450;
+    font-weight: 500;
     font-size: 200%;
 }
 
@@ -35,11 +55,11 @@ h2 {
 }
 
 .info_button:hover {
-  font-weight: bolder;
+  font-weight: 700;
 }
 
 .info_button:active {
-  font-weight: bolder;
+  font-weight: 700;
   background: lightgrey;
   border-radius: 0.3em;
 }

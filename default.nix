@@ -49,8 +49,8 @@ let
         cp ${./assets}/style.css $out/assets/
         cp ${./assets}/explore-data-button.svg $out/assets/
         ${imagemagick}/bin/magick convert assets/favicon-32.png assets/favicon-16.png $out/favicon.ico
-        cp '${google-fonts}/share/fonts/truetype/Karla[wght].ttf' "$out/assets/Karla[wght].ttf"
-        ${haskellPackages.webify}/bin/webify --no-svg "$out/assets/Karla[wght].ttf"
+        cp ${google-fonts}/share/fonts/truetype/Karla-* $out/assets/
+        ${haskellPackages.webify}/bin/webify --no-svg $out/assets/Karla-*.ttf
       '';
     };
 in mkDerivation {

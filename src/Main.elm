@@ -985,7 +985,7 @@ infoboxStyle =
 infobuttonStyle visible =
     "border: none; "
         ++ (if visible then
-                "font-weight: bolder; "
+                "font-weight: 700; "
                     ++ "background: lightgrey; "
                     ++ "border-radius: 0.3em; "
 

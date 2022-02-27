@@ -1,5 +1,13 @@
 !assets/
 elm-stuff/
-./*.html
+*.html
 result*
 untracked/
+population/
+*.png
+*.jpg
+*.js
+
+*.eot
+*.ttf
+*.woff
