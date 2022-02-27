@@ -94,7 +94,7 @@ init _ url key =
         , shortIntroductionVisible = True
         , longIntroductionVisible = False
         , infoFootprintsVisible = False
-        , missingMigrants = ( True, initWait )
+        , missingMigrants = ( Just False, initWait )
         }
     , Cmd.batch [ fetchCountries GotCountries, Task.perform StartupTime Time.now ]
     )
@@ -134,7 +134,7 @@ type alias ApplicationState =
 
 
 type alias MissingMigrantsState =
-    ( Bool, AnimationState )
+    ( Maybe Bool, AnimationState )
 
 
 type alias COASelect =
@@ -201,7 +201,7 @@ type Msg
     | ToggleFootprintsInfo
     | ToggleInfo ( InfoState, InfoState )
     | HideIntroduction
-    | HideMissingMigrantsInfo
+    | ToggleMissingMigrantsInfo
     | GotCountries (Result Http.Error (Dict CountryCode Country))
     | ChangeCoo (Select.Msg CountryCode)
     | GotAsylumDecisions (Result Http.Error AvailableCOAs)
@@ -535,8 +535,14 @@ update msg model =
                 ToggleFootprintsInfo ->
                     ( Ok { state | infoFootprintsVisible = not state.infoFootprintsVisible }, Cmd.none )
 
-                HideMissingMigrantsInfo ->
-                    ( Ok { state | missingMigrants = ( False, Finished ) }, Cmd.none )
+                ToggleMissingMigrantsInfo ->
+                        let
+                            newVisibility = case Tuple.first state.missingMigrants of
+                                    Just False -> Just True
+                                    Just True -> Nothing
+                                    _ -> Nothing
+                        in
+                    ( Ok { state | missingMigrants = ( newVisibility, Finished ) }, Cmd.none )
 
                 HideIntroduction ->
                     ( Ok { state | shortIntroductionVisible = False }, Cmd.none )
@@ -1152,7 +1158,7 @@ categoryLegend xPos width categoryName linewrapHeuristic msg infoVisible explana
 missingMigrantsVis : MissingMigrantsState -> List (Svg Msg)
 missingMigrantsVis missingMigrantsState =
     case missingMigrantsState of
-        ( True, FootprintsMoving t fpSteps ) ->
+        ( Just _, FootprintsMoving t fpSteps ) ->
             let
                 footprint ( animX, animY ) idStr =
                     use
@@ -1174,7 +1180,7 @@ missingMigrantsVis missingMigrantsState =
 missingMigrantsInfobox : MissingMigrantsState -> Html Msg
 missingMigrantsInfobox missingMigrantsState =
     case missingMigrantsState of
-        ( visible, Finished ) ->
+        ( Just visible, Finished ) ->
             div
                 [ style <|
                     "position: absolute; "
@@ -1182,7 +1188,7 @@ missingMigrantsInfobox missingMigrantsState =
                         ++ "margin-left: 2em; "
                         ++ "z-index: 3; "
                 ]
-                [ button [ class "info_button", onClick HideMissingMigrantsInfo, style <| infobuttonStyle visible ] [ text "ⓘ" ]
+                [ button [ class "info_button", onClick ToggleMissingMigrantsInfo, style <| infobuttonStyle visible ] [ text "ⓘ" ]
                 , if visible then
                     div [ style <| infoboxStyle ]
                         [ h1 [ infoboxH1Style ]
