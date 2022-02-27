@@ -124,28 +124,28 @@ The project was completed in February 2022. You can access the source code of th
             ]
         , ul []
             [ li []
-                [ span [ style "font-weight" "bold" ] [ text """Frieda Grimm, """ ]
-                , span [] [ text """MA Urbane Zukunft / MA Architektur - Concept, Design
+                [ span [ style "font-weight" "bold" ] [ text "Frieda Grimm" ]
+                , span [] [ text """, MA Urbane Zukunft / MA Architektur - Concept, Design
 """ ]
                 ]
             , li []
-                [ span [ style "font-weight" "bold" ] [ text """Katharina Schürmann, """ ]
-                , span [] [ text """MA Urbane Zukunft - Concept, Data Exploration, Programming, Texts
+                [ span [ style "font-weight" "bold" ] [ text "Katharina Schürmann" ]
+                , span [] [ text """, MA Urbane Zukunft - Concept, Data Exploration, Programming, Texts
 """ ]
                 ]
             , li []
-                [ span [ style "font-weight" "bold" ] [ text """Kerstin Humm, """ ]
-                , span [] [ text """BA Kommunikationsdesign - Concept, Design, Programming
+                [ span [ style "font-weight" "bold" ] [ text "Kerstin Humm" ]
+                , span [] [ text """, BA Kommunikationsdesign - Concept, Design, Programming
 """ ]
                 ]
             , li []
-                [ span [ style "font-weight" "bold" ] [ text """Kübra Sari, """ ]
-                , span [] [ text """MA Urbane Zukunft - Concept, Data Exploration, Texts
+                [ span [ style "font-weight" "bold" ] [ text "Kübra Sari" ]
+                , span [] [ text """, MA Urbane Zukunft - Concept, Data Exploration, Texts
 """ ]
                 ]
             , li []
-                [ span [ style "font-weight" "bold" ] [ text """Séraphime Reznikoff, """ ]
-                , span [] [ text """MA Urbane Zukunft - Concept, Data Exploration, Layout, Texts
+                [ span [ style "font-weight" "bold" ] [ text "Séraphime Reznikoff" ]
+                , span [] [ text """, MA Urbane Zukunft - Concept, Data Exploration, Layout, Texts
 """ ]
                 ]
             ]
