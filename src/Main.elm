@@ -1154,20 +1154,48 @@ missingMigrantsVis missingMigrantsState =
     case missingMigrantsState of
         ( True, FootprintsMoving t fpSteps ) ->
             let
-                footprint (animX, animY) idStr = use
-                  [ attribute "href" idStr
-                  , x <| fromFloat <| 10 + animX
-                  , y <| fromFloat <| 130 + animY
-                  ]
-                  []
+                footprint ( animX, animY ) idStr =
+                    use
+                        [ attribute "href" idStr
+                        , x <| fromFloat <| 10 + animX
+                        , y <| fromFloat <| 130 + animY
+                        ]
+                        []
             in
-              List.map2
+            List.map2
                 footprint
                 (map Tuple.second <| withDefault [] <| head fpSteps)
-                [ "#fsmm1", "#fsmm2","#fsmm3","#fsmm4","#fsmm5"     ]
+                [ "#fsmm1", "#fsmm2", "#fsmm3", "#fsmm4", "#fsmm5" ]
 
         _ ->
             []
+
+
+missingMigrantsInfobox : MissingMigrantsState -> Html Msg
+missingMigrantsInfobox missingMigrantsState =
+    case missingMigrantsState of
+        ( visible, Finished ) ->
+            div
+                [ style <|
+                    "position: absolute; "
+                        ++ "top: 27em; "
+                        ++ "margin-left: 2em; "
+                        ++ "z-index: 3; "
+                ]
+                [ button [ class "info_button", onClick HideMissingMigrantsInfo, style <| infobuttonStyle visible ] [ text "ⓘ" ]
+                , if visible then
+                    div [ style <| infoboxStyle ]
+                        [ h1 [ infoboxH1Style ]
+                            [ text "Missing Migrants" ]
+                        , text "missing migrants"
+                        ]
+
+                  else
+                    text ""
+                ]
+
+        _ ->
+            text ""
 
 
 {-| Produces three different elements for each decision category:
@@ -1598,7 +1626,8 @@ view model =
                                                 ++ " width: 60%;"
                                                 ++ " margin-left: 3em;"
                                         ]
-                                        [ coaVis
+                                        [ missingMigrantsInfobox state.missingMigrants
+                                        , coaVis
                                             (Just state.missingMigrants)
                                             (Tuple.first coaS.animationStates)
                                             (Tuple.first coaS.infoStates)
