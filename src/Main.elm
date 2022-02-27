@@ -979,6 +979,9 @@ footprintDiagram animationState seed permTable elevatedRow count ( currentColumn
             , circle [ cx <| fromFloat <| xPos + dx + 0.0, cy "97", r "0.75", fill "black" ] []
             ]
 
+        ( _, _, True ) ->
+            []
+
         _ ->
             let
                 ( symbolIndex, nextSeed ) =
