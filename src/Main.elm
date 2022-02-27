@@ -1199,7 +1199,8 @@ missingMigrantsInfobox missingMigrantsState =
                     div [ style <| infoboxStyle ]
                         [ h1 [ infoboxH1Style ]
                             [ text "Missing Migrants" ]
-                        , text "missing migrants"
+                        , text "In Europe and the Meditteranean sea, the Missing Migrant Project has recorded 24,278 deaths and disappearances of migrants from 2014 until the end of February 2022. The estimated number supposedly is very much higher. For more information, please click here: "
+                        , a [ href "https://missingmigrants.iom.int/" ] [ text "https://missingmigrants.iom.int/." ]
                         ]
 
                   else
