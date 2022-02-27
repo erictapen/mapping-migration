@@ -536,12 +536,18 @@ update msg model =
                     ( Ok { state | infoFootprintsVisible = not state.infoFootprintsVisible }, Cmd.none )
 
                 ToggleMissingMigrantsInfo ->
-                        let
-                            newVisibility = case Tuple.first state.missingMigrants of
-                                    Just False -> Just True
-                                    Just True -> Nothing
-                                    _ -> Nothing
-                        in
+                    let
+                        newVisibility =
+                            case Tuple.first state.missingMigrants of
+                                Just False ->
+                                    Just True
+
+                                Just True ->
+                                    Nothing
+
+                                _ ->
+                                    Nothing
+                    in
                     ( Ok { state | missingMigrants = ( newVisibility, Finished ) }, Cmd.none )
 
                 HideIntroduction ->
