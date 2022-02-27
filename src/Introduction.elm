@@ -90,13 +90,15 @@ A lot of asylum-seekers are assigned to sub-categories that offer less certainty
         , h2 []
             [ text "What the web app can show you"
             ]
-        , p [] [ text """
+        , p []
+            [ text """
 Through our web application, we want to make decisions on asylum in Europe,
 """
             , a [ href "#fn2", attribute "role" "doc-noteref", id "fnref2" ] [ sup [] [ text "2" ] ]
             , text """
  their proportions and developments since the year 2000 more easily accessible and visible using UNHCR data. By exploring the data, you can get an impression of how likely it has been for people from a certain country of origin to be granted or denied asylum in Europe. Two European countries of asylum can be compared at a time. Furthermore, the fragmentation of asylum decisions beyond "recognized" and "rejected"  is inherently visible due to the further categories of "complementary  protection" and "otherwise closed". Beyond the comparison of relative proportions between decision categories within a country as well as between countries, the absolute figures of decisions are set in relation to the number of inhabitants of each chosen country. This can give you an understanding of how high or low the number of decisions is and puts the number into perspective. Another aspect the web app allows you to investigate is that of temporal evolutions in decisions from 2000 until last year.
-""" ]
+"""
+            ]
         , h2 []
             [ text "How to use the web app"
             ]
