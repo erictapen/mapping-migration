@@ -506,15 +506,16 @@ update msg model =
 
                                         newState =
                                             { state | coo = coo, coa1 = coa1, coa2 = coa2 }
+
+                                        newUrl =
+                                            { url | path = currentUrl newState }
                                     in
-                                    if ( state.coo, state.coa1, state.coa2 ) == ( coo, coa1, coa2 ) then
+                                    if url == newUrl then
                                         noop
 
                                     else
                                         ( Ok newState
-                                        , Cmd.batch
-                                            [ pushUrl newState.navigationKey <| currentUrl newState
-                                            ]
+                                        , pushUrl newState.navigationKey <| Url.toString newUrl
                                         )
 
                                 _ ->
