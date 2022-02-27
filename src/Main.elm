@@ -569,7 +569,11 @@ prepareFootprintMovement initSeed =
                     let
                         ( newDirection, seed1 ) =
                             R.step
-                                (R.map ((+) direction) <| R.float (-0.1 * 2 * pi) (0.1 * 2 * pi))
+                                (R.map ((+) direction >> (*) 0.5) <|
+                                    R.float
+                                        (-0.2 * 2 * pi)
+                                        (0.2 * 2 * pi)
+                                )
                                 seed0
 
                         ( newLength, seed2 ) =
@@ -579,7 +583,7 @@ prepareFootprintMovement initSeed =
 
                         ( newDt, seed3 ) =
                             R.step
-                                (R.map ((+) dt) <| R.float -50 100)
+                                (R.map ((+) dt) <| R.float -30 30)
                                 seed2
 
                         newCursor =
@@ -590,9 +594,9 @@ prepareFootprintMovement initSeed =
                             (frame + newDt)
                             seed3
                             newCursor
-                            ( newDirection, newLength, newDt )
+                            ( newDirection, newLength, max 10 newDt )
         in
-        move 0 initSeed ( 0, 0 ) ( 0, 100, 300 )
+        move 0 initSeed ( 0, 0 ) ( 0, 20, 100 )
 
 
 {-| Initial state for AnimationState
