@@ -94,6 +94,7 @@ init _ url key =
         , shortIntroductionVisible = True
         , longIntroductionVisible = False
         , infoFootprintsVisible = False
+        , missingMigrants = ( True, initWait )
         }
     , Cmd.batch [ fetchCountries GotCountries, Task.perform StartupTime Time.now ]
     )
@@ -128,7 +129,12 @@ type alias ApplicationState =
     , coa2 : CountryCode
     , coaSelect : Maybe (Result String COASelect)
     , infoFootprintsVisible : Bool
+    , missingMigrants : MissingMigrantsState
     }
+
+
+type alias MissingMigrantsState =
+    ( Bool, AnimationState )
 
 
 type alias COASelect =
@@ -195,6 +201,7 @@ type Msg
     | ToggleFootprintsInfo
     | ToggleInfo ( InfoState, InfoState )
     | HideIntroduction
+    | HideMissingMigrantsInfo
     | GotCountries (Result Http.Error (Dict CountryCode Country))
     | ChangeCoo (Select.Msg CountryCode)
     | GotAsylumDecisions (Result Http.Error AvailableCOAs)
@@ -238,7 +245,11 @@ update msg model =
                         Just (Ok coaS) ->
                             ( Ok
                                 { state
-                                    | coaSelect =
+                                    | missingMigrants =
+                                        Tuple.mapSecond
+                                            (updateMissingMigrantsAnimationState delta)
+                                            state.missingMigrants
+                                    , coaSelect =
                                         Just
                                             (Ok
                                                 { coaS
@@ -524,6 +535,9 @@ update msg model =
                 ToggleFootprintsInfo ->
                     ( Ok { state | infoFootprintsVisible = not state.infoFootprintsVisible }, Cmd.none )
 
+                HideMissingMigrantsInfo ->
+                    ( Ok { state | missingMigrants = ( False, Finished ) }, Cmd.none )
+
                 HideIntroduction ->
                     ( Ok { state | shortIntroductionVisible = False }, Cmd.none )
 
@@ -667,6 +681,32 @@ updateAnimationState fpInfo delta aS =
             Finished
 
 
+{-| The update for the missing migrants footstep is a bit different, hence the duplicated logic.
+-}
+updateMissingMigrantsAnimationState : Float -> AnimationState -> AnimationState
+updateMissingMigrantsAnimationState delta aS =
+    case aS of
+        Wait t ->
+            if t - delta <= 0 then
+                FootprintsMoving 4000 <|
+                    List.singleton <|
+                        prepareFootprintMovement 0 <|
+                            initialSeed 42
+
+            else
+                Wait <| t - delta
+
+        FootprintsMoving t footprintState ->
+            if t - delta <= 0 then
+                Finished
+
+            else
+                FootprintsMoving (t - delta) <| map (cleanOutdatedFootprintSteps (t - delta)) footprintState
+
+        Finished ->
+            Finished
+
+
 {-| Elm subcriptions that we want to subcribe to during runtime. We only need
 time spent since last animation draw IF there is actually an animation running.
 -}
@@ -679,8 +719,8 @@ subscriptions model =
         Ok state ->
             case ( state.coaSelect, state.shortIntroductionVisible ) of
                 ( Just (Ok coaS), False ) ->
-                    case coaS.animationStates of
-                        ( Finished, Finished ) ->
+                    case ( Tuple.second state.missingMigrants, coaS.animationStates ) of
+                        ( Finished, ( Finished, Finished ) ) ->
                             Sub.none
 
                         _ ->
@@ -877,43 +917,43 @@ yearInput currentYear =
                 range 2000 maxYear
 
 
-footprint1 : Svg Msg
-footprint1 =
-    symbol [ id "fs1" ]
-        [ path [ stroke "none", fill "black", d "M 2.12064 2.21568 C 2.48736 2.20482 2.7805 2.19638 3.00005 2.19035 C 3.46328 2.17708 3.29801 -0.00515408 2.59593 0.0696378 C 2.00966 0.13116 1.65742 2.23016 2.12064 2.21568 Z" ] []
-        , path [ stroke "none", fill "black", d "M 2.10737 2.47625 C 2.25937 2.47142 2.94335 2.44971 3.01935 2.44729 C 3.17135 2.44247 3.09052 3.19521 3.01211 3.38461 C 2.9325 3.58003 2.22559 3.51489 2.14959 3.42321 C 2.03138 3.27966 1.95538 2.48107 2.10737 2.47625 Z" ] []
-        , path [ stroke "none", fill "black", d "M 0.309957 3.4027 C 0.676678 3.38461 0.969814 3.37134 1.19057 3.36048 C 1.655 3.33756 1.32809 1.1698 0.629631 1.25786 C 0.0445662 1.33024 -0.154477 3.42441 0.309957 3.4027 Z" ] []
-        , path [ stroke "none", fill "black", d "M 0.303925 3.67895 C 0.455921 3.67171 1.14111 3.63914 1.21711 3.63552 C 1.36911 3.62828 1.33895 4.36534 1.27501 4.55232 C 1.20867 4.74533 0.494524 4.69226 0.412494 4.60419 C 0.282211 4.46426 0.151929 3.68619 0.303925 3.67895 Z" ] []
+footprint1 : String -> String -> Svg Msg
+footprint1 idStr color =
+    symbol [ id idStr ]
+        [ path [ stroke "none", fill color, d "M 2.12064 2.21568 C 2.48736 2.20482 2.7805 2.19638 3.00005 2.19035 C 3.46328 2.17708 3.29801 -0.00515408 2.59593 0.0696378 C 2.00966 0.13116 1.65742 2.23016 2.12064 2.21568 Z" ] []
+        , path [ stroke "none", fill color, d "M 2.10737 2.47625 C 2.25937 2.47142 2.94335 2.44971 3.01935 2.44729 C 3.17135 2.44247 3.09052 3.19521 3.01211 3.38461 C 2.9325 3.58003 2.22559 3.51489 2.14959 3.42321 C 2.03138 3.27966 1.95538 2.48107 2.10737 2.47625 Z" ] []
+        , path [ stroke "none", fill color, d "M 0.309957 3.4027 C 0.676678 3.38461 0.969814 3.37134 1.19057 3.36048 C 1.655 3.33756 1.32809 1.1698 0.629631 1.25786 C 0.0445662 1.33024 -0.154477 3.42441 0.309957 3.4027 Z" ] []
+        , path [ stroke "none", fill color, d "M 0.303925 3.67895 C 0.455921 3.67171 1.14111 3.63914 1.21711 3.63552 C 1.36911 3.62828 1.33895 4.36534 1.27501 4.55232 C 1.20867 4.74533 0.494524 4.69226 0.412494 4.60419 C 0.282211 4.46426 0.151929 3.68619 0.303925 3.67895 Z" ] []
         ]
 
 
-footprint2 : Svg Msg
-footprint2 =
-    symbol [ id "fs2" ]
-        [ path [ stroke "none", fill "black", d "M 2.57663 2.75491 C 2.90113 2.68856 3.16049 2.63669 3.35591 2.59688 C 3.76606 2.51364 3.11948 0.172175 2.50908 0.356742 C 1.9988 0.511151 2.16528 2.83814 2.57663 2.75491 Z" ] []
-        , path [ stroke "none", fill "black", d "M 2.62006 3.00582 C 2.75517 2.97808 3.36074 2.85503 3.42829 2.84176 C 3.5634 2.81402 3.62854 3.48232 3.59477 3.65965 C 3.55978 3.8418 2.91681 3.89247 2.83237 3.82491 C 2.69968 3.71634 2.48495 3.03236 2.62006 3.00582 Z" ] []
-        , path [ stroke "none", fill "black", d "M 0.389574 3.1168 C 0.714074 3.18315 0.973433 3.23623 1.16765 3.27604 C 1.5778 3.35927 1.88903 0.993679 1.25451 0.924919 C 0.727343 0.867015 -0.0205751 3.03357 0.389574 3.1168 Z" ] []
-        , path [ stroke "none", fill "black", d "M 0.309957 3.4027 C 0.445064 3.43045 1.05064 3.55349 1.11819 3.56797 C 1.2533 3.59571 1.05184 4.23627 0.951719 4.38585 C 0.847975 4.54026 0.236371 4.33519 0.185706 4.23989 C 0.104882 4.08789 0.174849 3.37495 0.309957 3.4027 Z" ] []
+footprint2 : String -> String -> Svg Msg
+footprint2 idStr color =
+    symbol [ id idStr ]
+        [ path [ stroke "none", fill color, d "M 2.57663 2.75491 C 2.90113 2.68856 3.16049 2.63669 3.35591 2.59688 C 3.76606 2.51364 3.11948 0.172175 2.50908 0.356742 C 1.9988 0.511151 2.16528 2.83814 2.57663 2.75491 Z" ] []
+        , path [ stroke "none", fill color, d "M 2.62006 3.00582 C 2.75517 2.97808 3.36074 2.85503 3.42829 2.84176 C 3.5634 2.81402 3.62854 3.48232 3.59477 3.65965 C 3.55978 3.8418 2.91681 3.89247 2.83237 3.82491 C 2.69968 3.71634 2.48495 3.03236 2.62006 3.00582 Z" ] []
+        , path [ stroke "none", fill color, d "M 0.389574 3.1168 C 0.714074 3.18315 0.973433 3.23623 1.16765 3.27604 C 1.5778 3.35927 1.88903 0.993679 1.25451 0.924919 C 0.727343 0.867015 -0.0205751 3.03357 0.389574 3.1168 Z" ] []
+        , path [ stroke "none", fill color, d "M 0.309957 3.4027 C 0.445064 3.43045 1.05064 3.55349 1.11819 3.56797 C 1.2533 3.59571 1.05184 4.23627 0.951719 4.38585 C 0.847975 4.54026 0.236371 4.33519 0.185706 4.23989 C 0.104882 4.08789 0.174849 3.37495 0.309957 3.4027 Z" ] []
         ]
 
 
-footprint3 : Svg Msg
-footprint3 =
-    symbol [ id "fs3" ]
-        [ path [ stroke "none", fill "black", d "M 2.36046 3.01764 C 2.68134 3.10208 2.93708 3.16843 3.12889 3.2191 C 3.53421 3.32525 3.94315 1.09959 3.31586 0.992231 C 2.79232 0.902964 1.95514 2.91149 2.36046 3.01764 Z" ] []
-        , path [ stroke "none", fill "black", d "M 2.2917 3.16723 C 2.42439 3.20221 3.02273 3.35903 3.08908 3.37713 C 3.22177 3.41211 2.98654 4.0406 2.87676 4.18415 C 2.76458 4.33253 2.16504 4.09368 2.1204 3.99597 C 2.04923 3.84035 2.159 3.13224 2.2917 3.16723 Z" ] []
-        , path [ stroke "none", fill "black", d "M 0.739165 3.15396 C 1.06367 3.08761 1.32302 3.03453 1.51724 2.99472 C 1.92739 2.91028 1.30975 0.732872 0.69815 0.915027 C 0.19029 1.06702 0.329016 3.2384 0.739165 3.15396 Z" ] []
-        , path [ stroke "none", fill "black", d "M 0.777768 3.30233 C 0.912875 3.27459 1.51845 3.15034 1.586 3.13707 C 1.72111 3.10932 1.78746 3.77762 1.75368 3.95495 C 1.7187 4.13831 1.07573 4.18898 0.992492 4.12143 C 0.858591 4.01286 0.643866 3.32887 0.777768 3.30233 Z" ] []
+footprint3 : String -> String -> Svg Msg
+footprint3 idStr color =
+    symbol [ id idStr ]
+        [ path [ stroke "none", fill color, d "M 2.36046 3.01764 C 2.68134 3.10208 2.93708 3.16843 3.12889 3.2191 C 3.53421 3.32525 3.94315 1.09959 3.31586 0.992231 C 2.79232 0.902964 1.95514 2.91149 2.36046 3.01764 Z" ] []
+        , path [ stroke "none", fill color, d "M 2.2917 3.16723 C 2.42439 3.20221 3.02273 3.35903 3.08908 3.37713 C 3.22177 3.41211 2.98654 4.0406 2.87676 4.18415 C 2.76458 4.33253 2.16504 4.09368 2.1204 3.99597 C 2.04923 3.84035 2.159 3.13224 2.2917 3.16723 Z" ] []
+        , path [ stroke "none", fill color, d "M 0.739165 3.15396 C 1.06367 3.08761 1.32302 3.03453 1.51724 2.99472 C 1.92739 2.91028 1.30975 0.732872 0.69815 0.915027 C 0.19029 1.06702 0.329016 3.2384 0.739165 3.15396 Z" ] []
+        , path [ stroke "none", fill color, d "M 0.777768 3.30233 C 0.912875 3.27459 1.51845 3.15034 1.586 3.13707 C 1.72111 3.10932 1.78746 3.77762 1.75368 3.95495 C 1.7187 4.13831 1.07573 4.18898 0.992492 4.12143 C 0.858591 4.01286 0.643866 3.32887 0.777768 3.30233 Z" ] []
         ]
 
 
-footprint4 : Svg Msg
-footprint4 =
-    symbol [ id "fs4" ]
-        [ path [ stroke "none", fill "black", d "M 2.2917 3.16723 C 2.61861 3.22151 2.87918 3.26494 3.07581 3.29751 C 3.48957 3.36627 3.69224 1.11166 3.05771 1.0622 C 2.52814 1.02118 1.87914 3.09847 2.2917 3.16723 Z" ] []
-        , path [ stroke "none", fill "black", d "M 2.21691 3.57617 C 2.35202 3.59909 2.96241 3.70042 3.02997 3.71128 C 3.16507 3.7342 2.98775 4.38078 2.89245 4.53399 C 2.79473 4.69201 2.17589 4.50986 2.12161 4.41577 C 2.03717 4.2686 2.0818 3.55325 2.21691 3.57617 Z" ] []
-        , path [ stroke "none", fill "black", d "M 0.620946 2.44223 C 0.94424 2.36864 1.20239 2.31074 1.3954 2.26611 C 1.80435 2.17322 1.13966 0.0090805 0.532885 0.204504 C 0.0274365 0.366151 0.212003 2.53391 0.620946 2.44223 Z" ] []
-        , path [ stroke "none", fill "black", d "M 0.690912 2.85238 C 0.824814 2.82222 1.42797 2.6847 1.49553 2.67022 C 1.62943 2.64006 1.71025 3.30595 1.68009 3.48449 C 1.64873 3.66785 1.00817 3.73299 0.922526 3.66664 C 0.787418 3.56169 0.557011 2.88253 0.690912 2.85238 Z" ] []
+footprint4 : String -> String -> Svg Msg
+footprint4 idStr color =
+    symbol [ id idStr ]
+        [ path [ stroke "none", fill color, d "M 2.2917 3.16723 C 2.61861 3.22151 2.87918 3.26494 3.07581 3.29751 C 3.48957 3.36627 3.69224 1.11166 3.05771 1.0622 C 2.52814 1.02118 1.87914 3.09847 2.2917 3.16723 Z" ] []
+        , path [ stroke "none", fill color, d "M 2.21691 3.57617 C 2.35202 3.59909 2.96241 3.70042 3.02997 3.71128 C 3.16507 3.7342 2.98775 4.38078 2.89245 4.53399 C 2.79473 4.69201 2.17589 4.50986 2.12161 4.41577 C 2.03717 4.2686 2.0818 3.55325 2.21691 3.57617 Z" ] []
+        , path [ stroke "none", fill color, d "M 0.620946 2.44223 C 0.94424 2.36864 1.20239 2.31074 1.3954 2.26611 C 1.80435 2.17322 1.13966 0.0090805 0.532885 0.204504 C 0.0274365 0.366151 0.212003 2.53391 0.620946 2.44223 Z" ] []
+        , path [ stroke "none", fill color, d "M 0.690912 2.85238 C 0.824814 2.82222 1.42797 2.6847 1.49553 2.67022 C 1.62943 2.64006 1.71025 3.30595 1.68009 3.48449 C 1.64873 3.66785 1.00817 3.73299 0.922526 3.66664 C 0.787418 3.56169 0.557011 2.88253 0.690912 2.85238 Z" ] []
         ]
 
 
@@ -1109,6 +1149,27 @@ categoryLegend xPos width categoryName linewrapHeuristic msg infoVisible explana
         )
 
 
+missingMigrantsVis : MissingMigrantsState -> List (Svg Msg)
+missingMigrantsVis missingMigrantsState =
+    case missingMigrantsState of
+        ( True, FootprintsMoving t fpSteps ) ->
+            let
+                footprint (animX, animY) idStr = use
+                  [ attribute "href" idStr
+                  , x <| fromFloat <| 10 + animX
+                  , y <| fromFloat <| 130 + animY
+                  ]
+                  []
+            in
+              List.map2
+                footprint
+                (map Tuple.second <| withDefault [] <| head fpSteps)
+                [ "#fsmm1", "#fsmm2","#fsmm3","#fsmm4","#fsmm5"     ]
+
+        _ ->
+            []
+
+
 {-| Produces three different elements for each decision category:
 
   - SVG consisting of the rectangle
@@ -1117,7 +1178,8 @@ categoryLegend xPos width categoryName linewrapHeuristic msg infoVisible explana
 
 -}
 barElement :
-    AnimationState
+    Maybe MissingMigrantsState
+    -> AnimationState
     -> Bool
     -> ( InfoState, InfoState )
     -> Int
@@ -1129,7 +1191,7 @@ barElement :
     -> Int
     -> Int
     -> ( Svg Msg, Svg Msg, Html Msg )
-barElement animationState infoVisible toggledInfoState dividend position categoryName explanation linewrapHeuristic color total population =
+barElement maybeMissingMigrants animationState infoVisible toggledInfoState dividend position categoryName explanation linewrapHeuristic color total population =
     let
         xPos =
             100 * (toFloat position / toFloat total)
@@ -1175,6 +1237,7 @@ barElement animationState infoVisible toggledInfoState dividend position categor
                     ++ " inhabitants, "
             ]
          ]
+            ++ (withDefault [] <| Maybe.map missingMigrantsVis maybeMissingMigrants)
             ++ footprintDiagram
                 animationStateShare
                 (initialSeed <| population + position)
@@ -1197,8 +1260,8 @@ barElement animationState infoVisible toggledInfoState dividend position categor
 
 {-| The SVG component of a COA chart
 -}
-coaSvg : AnimationState -> InfoState -> Bool -> Int -> AsylumDecisions -> Html Msg
-coaSvg animationState infoState isCOA1 population ad =
+coaSvg : Maybe MissingMigrantsState -> AnimationState -> InfoState -> Bool -> Int -> AsylumDecisions -> Html Msg
+coaSvg maybeMissingMigrants animationState infoState isCOA1 population ad =
     let
         toggledInfoStates iS =
             if isCOA1 then
@@ -1210,6 +1273,7 @@ coaSvg animationState infoState isCOA1 population ad =
         barElements =
             map (\f -> f ad.total population)
                 [ barElement
+                    maybeMissingMigrants
                     animationState
                     infoState.infoRecognizedVisible
                     (toggledInfoStates { initInfoState | infoRecognizedVisible = not infoState.infoRecognizedVisible })
@@ -1220,6 +1284,7 @@ coaSvg animationState infoState isCOA1 population ad =
                     13.5
                     "#a8a8a8"
                 , barElement
+                    Nothing
                     animationState
                     infoState.infoComplementaryVisible
                     (toggledInfoStates { initInfoState | infoComplementaryVisible = not infoState.infoComplementaryVisible })
@@ -1232,6 +1297,7 @@ coaSvg animationState infoState isCOA1 population ad =
                     27.7
                     "#b7b7b7"
                 , barElement
+                    Nothing
                     animationState
                     infoState.infoOtherwiseVisible
                     (toggledInfoStates { initInfoState | infoOtherwiseVisible = not infoState.infoOtherwiseVisible })
@@ -1242,6 +1308,7 @@ coaSvg animationState infoState isCOA1 population ad =
                     17.7
                     "#cecece"
                 , barElement
+                    Nothing
                     animationState
                     infoState.infoRejectedVisible
                     (toggledInfoStates { initInfoState | infoRejectedVisible = not infoState.infoRejectedVisible })
@@ -1268,10 +1335,15 @@ coaSvg animationState infoState isCOA1 population ad =
             , height "300%"
             , style "width: 200%; top: -15em; position: relative;"
             ]
-            ([ footprint1
-             , footprint2
-             , footprint3
-             , footprint4
+            ([ footprint1 "fs1" "black"
+             , footprint2 "fs2" "black"
+             , footprint3 "fs3" "black"
+             , footprint4 "fs4" "black"
+             , footprint1 "fsmm1" "#c3c3e1"
+             , footprint2 "fsmm2" "#9d9ee3"
+             , footprint3 "fsmm3" "#7071e1"
+             , footprint4 "fsmm4" "#4244df"
+             , footprint1 "fsmm5" "#0002d5"
              , svg
                 [ viewBox "0 -100 200 300"
                 , id "bar"
@@ -1296,8 +1368,8 @@ coaSvg animationState infoState isCOA1 population ad =
 
 {-| A complete chart for one COA.
 -}
-coaVis : AnimationState -> InfoState -> Bool -> Year -> CountryCode -> Maybe Country -> Maybe AsylumDecisions -> Html Msg
-coaVis animationState infoState isCOA1 year countryCode country maybeAsylumDecisions =
+coaVis : Maybe MissingMigrantsState -> AnimationState -> InfoState -> Bool -> Year -> CountryCode -> Maybe Country -> Maybe AsylumDecisions -> Html Msg
+coaVis maybeMissingMigrants animationState infoState isCOA1 year countryCode country maybeAsylumDecisions =
     div [ style <| "margin-bottom: 5em; " ++ "text-align: center; " ++ "margin-top: 2.5em; " ]
         ([ h2
             [ title <|
@@ -1350,7 +1422,7 @@ coaVis animationState infoState isCOA1 year countryCode country maybeAsylumDecis
                                                             ++ " decisions in total"
                                                )
                                     ]
-                                , coaSvg animationState infoState isCOA1 population ad
+                                , coaSvg maybeMissingMigrants animationState infoState isCOA1 population ad
                                 ]
                )
         )
@@ -1376,7 +1448,7 @@ footprintLegend infoFootprintsVisible =
             , height "1em"
             , viewBox "0 0 5 5"
             ]
-            [ footprint1
+            [ footprint1 "fs1" "black"
             , use
                 [ attribute "href" "#fs1"
                 , y "0"
@@ -1527,6 +1599,7 @@ view model =
                                                 ++ " margin-left: 3em;"
                                         ]
                                         [ coaVis
+                                            (Just state.missingMigrants)
                                             (Tuple.first coaS.animationStates)
                                             (Tuple.first coaS.infoStates)
                                             True
@@ -1537,6 +1610,7 @@ view model =
                                             andThen (Dict.get coaS.year) <|
                                                 Dict.get state.coa1 coaS.availableCOAs
                                         , coaVis
+                                            Nothing
                                             (Tuple.second coaS.animationStates)
                                             (Tuple.second coaS.infoStates)
                                             False
