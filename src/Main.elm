@@ -1190,7 +1190,7 @@ missingMigrantsInfobox missingMigrantsState =
             div
                 [ style <|
                     "position: absolute; "
-                        ++ "top: 27em; "
+                        ++ "margin-top: 27em; "
                         ++ "margin-left: 2em; "
                         ++ "z-index: 3; "
                 ]
