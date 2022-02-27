@@ -8,7 +8,22 @@ import Html.Events exposing (onClick)
 introduction : msg -> Html msg
 introduction hideIntroduction =
     div [ style "clear" "both", id "introduction" ]
-        [ p
+        [ div [ style "position" "relative" ]
+            [ button
+                [ id "hide-introduction-cross"
+                , onClick hideIntroduction
+                , style "position" "absolute"
+                , style "background" "none"
+                , style "border" "none"
+                , style "transition" "transform 0.5s"
+                , style "font-size" "200%"
+                , style "bottom" "0.5em"
+                , style "right" "-1em"
+                ]
+                [ text "ⓧ"
+                ]
+            ]
+        , p
             [ style "font-weight" "500"
             , style "line-heigt" "125%"
             ]

@@ -1547,13 +1547,15 @@ menubar html =
             "float: left;"
                 ++ " width: 24em;"
                 ++ " margin-left: 3em;"
-                ++ " margin-right: 6em;"
+                ++ " margin-right: 2em;"
+                ++ " padding-right: 4em;"
                 ++ " overflow-y: scroll;"
                 ++ " height: 100vh;"
                 -- no scrollbar for Firefox
                 ++ " scrollbar-width: none;"
                 -- no scrollbar for IE, Edge
                 ++ " -ms-overflow-style: none;"
+                ++ " border-right: lightgray 1px solid;"
         ]
         ([ h1 [] [ text appTitle ] ]
             ++ html
