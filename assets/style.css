@@ -64,6 +64,15 @@ h2 {
     margin-top: 0.5em;
 }
 
+#menubar .definition {
+    margin-left: 1em;
+    margin-right: 1em;
+}
+
+#menubar .definition h2 {
+    font-style: italic;
+}
+
 @keyframes blendin {
     from {
         opacity: 0;
