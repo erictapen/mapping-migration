@@ -76,7 +76,11 @@ A lot of asylum-seekers are assigned to sub-categories that offer less certainty
             [ text "What the web app can show you"
             ]
         , p [] [ text """
-Through our web application, we want to make decisions on asylum in Europe2, their proportions and developments since the year 2000 more easily accessible and visible using UNHCR data. By exploring the data, you can get an impression of how likely it has been for people from a certain country of origin to be granted or denied asylum in Europe. Two European countries of asylum can be compared at a time. Furthermore, the fragmentation of asylum decisions beyond "recognized" and "rejected"  is inherently visible due to the further categories of "complementary  protection" and "otherwise closed". Beyond the comparison of relative proportions between decision categories within a country as well as between countries, the absolute figures of decisions are set in relation to the number of inhabitants of each chosen country. This can give you an understanding of how high or low the number of decisions is and puts the number into perspective. Another aspect the web app allows you to investigate is that of temporal evolutions in decisions from 2000 until last year.
+Through our web application, we want to make decisions on asylum in Europe,
+"""
+            , a [ href "#fn2", attribute "role" "doc-noteref", id "fnref2" ] [ sup [] [ text "2" ] ]
+            , text """
+ their proportions and developments since the year 2000 more easily accessible and visible using UNHCR data. By exploring the data, you can get an impression of how likely it has been for people from a certain country of origin to be granted or denied asylum in Europe. Two European countries of asylum can be compared at a time. Furthermore, the fragmentation of asylum decisions beyond "recognized" and "rejected"  is inherently visible due to the further categories of "complementary  protection" and "otherwise closed". Beyond the comparison of relative proportions between decision categories within a country as well as between countries, the absolute figures of decisions are set in relation to the number of inhabitants of each chosen country. This can give you an understanding of how high or low the number of decisions is and puts the number into perspective. Another aspect the web app allows you to investigate is that of temporal evolutions in decisions from 2000 until last year.
 """ ]
         , h2 []
             [ text "How to use the web app"
@@ -247,6 +251,14 @@ Zetter, Roger (2007): More Labels, Fewer Refugees: Remaking the Refugee Label in
 In some cases, large groups of people fleeing at the same time from similar circumstances are granted asylum and thereby recognized as refugees without having formally applied for asylum. They are called “prima facie refugees”. Also, it is not always nation-states who manage questions of asylum; some get support by the UNHCR. This, however, is currently barely ever the case in Europe, where each country has full control over who gets to stay and who has to leave.
 """
                         , a [ href "#fnref1", attribute "role" "doc-backlink" ] [ text "↩︎" ]
+                        ]
+                    ]
+                , li [ id "fn2", attribute "role" "doc-endnote" ]
+                    [ p []
+                        [ text """
+Definitions of how "Europe" is defined, that is, what countries belong to it, can vary depending on the context the definition is used for (e.g. economical, geographical, political) and are often subject to conflictual debates and geopolitical claims. For the purpose of our web application, we stick to the UNHCR's definition of the region of Europe, which is also used by the UNHCR to categorize its data.
+"""
+                        , a [ href "#fnref2", attribute "role" "doc-backlink" ] [ text "↩︎" ]
                         ]
                     ]
                 ]
