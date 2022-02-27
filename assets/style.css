@@ -44,6 +44,12 @@ h2 {
     font-size: 200%;
 }
 
+#menubar h2 {
+    font-weight: 500;
+    font-size: 120%;
+    margin-top: 2em;
+}
+
 @keyframes blendin {
     from {
         opacity: 0;
