@@ -200,7 +200,7 @@ type Msg
     | UpdateAnimation Float
     | ToggleFootprintsInfo
     | ToggleInfo ( InfoState, InfoState )
-    | HideIntroduction
+    | ToggleIntroduction
     | ToggleMissingMigrantsInfo
     | GotCountries (Result Http.Error (Dict CountryCode Country))
     | ChangeCoo (Select.Msg CountryCode)
@@ -550,8 +550,8 @@ update msg model =
                     in
                     ( Ok { state | missingMigrants = ( newVisibility, Finished ) }, Cmd.none )
 
-                HideIntroduction ->
-                    ( Ok { state | shortIntroductionVisible = False }, Cmd.none )
+                ToggleIntroduction ->
+                    ( Ok { state | shortIntroductionVisible = not state.shortIntroductionVisible }, Cmd.none )
 
                 ToggleInfo toggledInfoStates ->
                     case state.coaSelect of
@@ -1578,7 +1578,7 @@ view model =
                 [ div []
                     ([ menubar
                         (if state.shortIntroductionVisible then
-                            [ Introduction.introduction HideIntroduction ]
+                            [ Introduction.introduction ToggleIntroduction ]
 
                          else
                             case ( state.currentYear, state.countries ) of
@@ -1621,6 +1621,11 @@ view model =
                                                                     coaS.availableCOAs
                                                                 , yearInput currentYear
                                                                 , p [ style "font-size: 4em; margin-top: 0;" ] [ text coaS.year ]
+                                                                , button
+                                                                    [ class "introduction_button"
+                                                                    , onClick ToggleIntroduction
+                                                                    ]
+                                                                    [ text "Read introduction" ]
                                                                 ]
                                                             ]
                                            )
