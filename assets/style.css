@@ -10,6 +10,16 @@
 
 @font-face {
     font-family: Karla;
+    src: url('/assets/Karla-Italic[wght].eot');
+    src: url('/assets/Karla-Italic[wght].eot?#iefix') format('embedded-opentype'),
+    url('/assets/Karla-Italic[wght].woff') format('woff'),
+    url('/assets/Karla-Italic[wght].ttf') format('truetype');
+    font-style: italic;
+    font-weight: normal;
+}
+
+@font-face {
+    font-family: Karla;
     src: url('/assets/Karla-Medium.eot');
     src: url('/assets/Karla-Medium.eot?#iefix') format('embedded-opentype'),
     url('/assets/Karla-Medium.woff') format('woff'),
@@ -48,6 +58,10 @@ h2 {
     font-weight: 500;
     font-size: 120%;
     margin-top: 2em;
+}
+
+#menubar li {
+    margin-top: 0.5em;
 }
 
 @keyframes blendin {
