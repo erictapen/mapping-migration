@@ -38,15 +38,26 @@
     font-weight: 700;
 }
 
+@font-face {
+    font-family: Karla;
+    src: url('/assets/Karla-ExtraBold.eot');
+    src: url('/assets/Karla-ExtraBold.eot?#iefix') format('embedded-opentype'),
+    url('/assets/Karla-ExtraBold.woff') format('woff'),
+    url('/assets/Karla-ExtraBold.ttf') format('truetype');
+    font-style: normal;
+    font-weight: 800;
+}
+
 * {
     font-family: 'Karla', sans-serif;
 }
 
 
 h1 {
-    font-weight: 700;
+    font-weight: 800;
     font-size: 320%;
     margin-bottom: 2em;
+    line-height: 110%;
 }
 
 h2 {
@@ -55,9 +66,10 @@ h2 {
 }
 
 #menubar h2 {
-    font-weight: 500;
-    font-size: 120%;
+    font-weight: 700;
+    font-size: 180%;
     margin-top: 2em;
+    margin-left: 0.5em;
 }
 
 #menubar li {
