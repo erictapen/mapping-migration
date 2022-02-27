@@ -74,7 +74,7 @@ These define a refugee as “someone who is unable or unwilling to return to the
         , br [] []
         , p []
             [ text """
-In order to be recognized as a refugee and granted protection under international law, asylum seekers have to apply for asylum in a specific country. That nation-state then has the power to decide if the circumstances of a person's displacement fit the legal criteria to be granted asylum and thereby recognized as a “refugee”.
+In order to be recognized as a refugee and granted protection under international law, asylum seekers have to apply for asylum in a specific country. That nation-state then has the power to decide if the circumstances of a person’s displacement fit the legal criteria to be granted asylum and thereby recognized as a “refugee”.
 """
             , a [ href "#fn1", attribute "role" "doc-noteref", id "fnref1" ] [ sup [] [ text "1" ] ]
             , text """
@@ -118,7 +118,7 @@ When  stopped for a few seconds in one year, an animation of footprints entering
 The total number of decisions per 500,000 inhabitants is displayed in a sentence beneath the country names.
 """ ]
         , p [] [ text """
-When hovering above a footprint, you can find out the number of decisions in this footprint's category. Beyond indicating numbers, the footprints serve to remind you that it is human beings over whom asylum decisions are made.
+When hovering above a footprint, you can find out the number of decisions in this footprint’s category. Beyond indicating numbers, the footprints serve to remind you that it is human beings over whom asylum decisions are made.
 """ ]
         , h2 []
             [ text "What the web app cannot show you"
@@ -127,7 +127,7 @@ When hovering above a footprint, you can find out the number of decisions in thi
 Even though the footprints used in our visualization are an attempt to hint toward the human dimension of migration, our web app cannot do justice to actual experiences of refugees on the move or within the asylum applications in place. Experiences that go beyond numbers, in depth as well as in significance. None of us – the team behind this project – have ever experienced what fleeing, searching for refuge and being subjected to the European asylum system and visa policies feels like, nor what impact it can have on entire life courses and families. As German citizens and with all privileges that come with that, we feel responsible to act in solidarity with all migrants trying to find living conditions like the ones we were coincidentally born into. Throughout our process of developing this project, we tried to invite organizations of refugees to share their perspective on the available data with us, however, time constraints did not allow for that to happen.
 """ ]
         , p [] [ text """
-Besides the human dimension, it is important to note that numbers of asylum decisions do not coincide entirely with numbers of asylum applications. Asylum decisions are often not made in the same year asylum was applied for. Moreover, in one year, the same person may receive decisions over more than one application if they reapplied after being rejected. Therefore, the number of decisions does not indicate how many people newly arrived and applied for asylum in the chosen country. Another reason why one decision does not equal one person is that the data set includes two ways of counting decisions (which are based on the countries' methods of recording data): persons and cases. Cases can include several people (e.g. a family), but it is not possible to see how many. In the web app, these two ways of counting are summed up.
+Besides the human dimension, it is important to note that numbers of asylum decisions do not coincide entirely with numbers of asylum applications. Asylum decisions are often not made in the same year asylum was applied for. Moreover, in one year, the same person may receive decisions over more than one application if they reapplied after being rejected. Therefore, the number of decisions does not indicate how many people newly arrived and applied for asylum in the chosen country. Another reason why one decision does not equal one person is that the data set includes two ways of counting decisions (which are based on the countries’ methods of recording data): persons and cases. Cases can include several people (e.g. a family), but it is not possible to see how many. In the web app, these two ways of counting are summed up.
 """ ]
         , p [] [ text """
 The decision categories represented in the web app adhere to the categories the UNHCR monitors and publishes its data in. These categories – especially the “complementary protection” category – are a summarization of a variety of asylum-decisions and do not show the complexity of asylum decisions in each individual country. Furthermore, UNHCR data are not 100% accurate due to their highly aggregated nature and dependency on national records, counting methods and circumstances.\t\t
@@ -273,7 +273,7 @@ In some cases, large groups of people fleeing at the same time from similar circ
                 , li [ id "fn2", attribute "role" "doc-endnote" ]
                     [ p []
                         [ text """
-Definitions of how “Europe” is defined, that is, what countries belong to it, can vary depending on the context the definition is used for (e.g. economical, geographical, political) and are often subject to conflictual debates and geopolitical claims. For the purpose of our web application, we stick to the UNHCR's definition of the region of Europe, which is also used by the UNHCR to categorize its data.
+Definitions of how “Europe” is defined, that is, what countries belong to it, can vary depending on the context the definition is used for (e.g. economical, geographical, political) and are often subject to conflictual debates and geopolitical claims. For the purpose of our web application, we stick to the UNHCR’s definition of the region of Europe, which is also used by the UNHCR to categorize its data.
 """
                         , a [ href "#fnref2", attribute "role" "doc-backlink" ] [ text "↩︎" ]
                         ]
