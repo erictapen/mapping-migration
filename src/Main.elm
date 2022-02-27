@@ -1546,7 +1546,7 @@ menubar html =
             "float: left;"
                 ++ " width: 24em;"
                 ++ " margin-left: 3em;"
-                ++ " margin-right: 8em;"
+                ++ " margin-right: 6em;"
                 ++ " overflow-y: scroll;"
                 ++ " height: 100vh;"
                 -- no scrollbar for Firefox
