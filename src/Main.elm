@@ -796,14 +796,26 @@ menuItem ( cc, country ) =
     { item = cc, label = country.name }
 
 
+selectLegend : String -> Html Msg
+selectLegend description =
+    div [ style "text-align: right; display: flex;" ]
+        [ div [ style "flex: 1; margin-right: 0.3em;" ] [ hr [ style "color: #898ba9;" ] [] ]
+        , text description
+        ]
+
+
 {-| Select element for a country of origin.
 -}
 cooSelect : Dict CountryCode Country -> CountryCode -> Select.State -> Html Msg
-cooSelect countries selectedCountry =
-    countrySelectElement "selectCOO"
-        ChangeCoo
-        (Dict.toList countries)
-        (Maybe.map (\c -> menuItem ( selectedCountry, c )) <| Dict.get selectedCountry countries)
+cooSelect countries selectedCountry selectState =
+    div []
+        [ selectLegend "select a country of origin"
+        , countrySelectElement "selectCOO"
+            ChangeCoo
+            (Dict.toList countries)
+            (Maybe.map (\c -> menuItem ( selectedCountry, c )) <| Dict.get selectedCountry countries)
+            selectState
+        ]
 
 
 {-| Select element for a country of asylum.
@@ -826,7 +838,8 @@ coaSelect countries coas selectedCOA1 selectedCOA1State selectedCOA2 selectedCOA
                 Maybe.map (\c -> menuItem ( cc, c )) <| Dict.get cc countries
         in
         div []
-            [ countrySelectElement
+            [ selectLegend "select two countries of asylum"
+            , countrySelectElement
                 "selectCOA1"
                 ChangeCoa1
                 (filteredAndSortedCOAs countries coas)
