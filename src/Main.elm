@@ -619,9 +619,13 @@ initFootprintsMoving ( maybeCountry, maybeAsylumDecisions, year ) =
         ratio i =
             (toFloat footprintCount - toFloat i) / toFloat footprintCount
     in
-    FootprintsMoving footprintAnimationLength <|
-        map (\i -> prepareFootprintMovement (ratio i) <| initialSeed <| yearInt + i) <|
-            List.range 1 footprintCount
+    if footprintCount == 0 then
+        Finished
+
+    else
+        FootprintsMoving footprintAnimationLength <|
+            map (\i -> prepareFootprintMovement (ratio i) <| initialSeed <| yearInt + i) <|
+                List.range 1 footprintCount
 
 
 {-| Clean FootprintSteps of outdated animation keyframes. We assume
@@ -954,8 +958,8 @@ footprintDiagram animationState seed permTable elevatedRow count ( currentColumn
 
         -- noise function we use to move the footprints around
         noise =
-            (*) noiseStrength >>
-                Simplex.fractal2d
+            (*) noiseStrength
+                >> Simplex.fractal2d
                     { scale = 0.5
                     , steps = 7
                     , stepSize = 2.0
