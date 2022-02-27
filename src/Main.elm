@@ -953,8 +953,15 @@ footprintDiagram animationState seed permTable elevatedRow count ( currentColumn
             3.0
 
         -- noise function we use to move the footprints around
-        noise x y =
-            (*) noiseStrength <| Simplex.fractal2d { scale = 0.5, steps = 7, stepSize = 2.0, persistence = 2.0 } permTable x y
+        noise =
+            (*) noiseStrength >>
+                Simplex.fractal2d
+                    { scale = 0.5
+                    , steps = 7
+                    , stepSize = 2.0
+                    , persistence = 2.0
+                    }
+                    permTable
 
         capped =
             currentColumn >= maxColumns
