@@ -32,10 +32,10 @@ import Html.Events exposing (onClick, onInput)
 import Html.Styled exposing (toUnstyled)
 import Http exposing (get)
 import Introduction
-import List exposing (filter, head, map, range, tail)
+import List exposing (filter, head, map, range, reverse, tail)
 import Maybe exposing (andThen, withDefault)
 import Platform.Cmd
-import Random exposing (Seed, initialSeed, int, step)
+import Random as R exposing (Seed, initialSeed, int, step)
 import Select
 import Set exposing (Set)
 import Simplex
@@ -552,9 +552,47 @@ footprintAnimationLength =
     3000
 
 
+{-| We can't really compute the whole animation sequence for every frame, so
+we have to hold it as state. Here is this state generated once for a given
+animation for each footprint.
+-}
 prepareFootprintMovement : Seed -> FootprintSteps
-prepareFootprintMovement seed =
-    [ ( 2000, ( 100, 0 ) ), ( 1000, ( 75, 10 ) ), ( 0, ( 0, 0 ) ) ]
+prepareFootprintMovement initSeed =
+    reverse <|
+        let
+            move : Float -> Seed -> Point -> ( Float, Float, Float ) -> FootprintSteps
+            move frame seed0 ( x, y ) ( direction, length, dt ) =
+                if frame > footprintAnimationLength then
+                    []
+
+                else
+                    let
+                        ( newDirection, seed1 ) =
+                            R.step
+                                (R.map ((+) direction) <| R.float (-0.1 * 2 * pi) (0.1 * 2 * pi))
+                                seed0
+
+                        ( newLength, seed2 ) =
+                            R.step
+                                (R.map ((+) length) <| R.float -0.5 1.5)
+                                seed1
+
+                        ( newDt, seed3 ) =
+                            R.step
+                                (R.map ((+) dt) <| R.float -50 100)
+                                seed2
+
+                        newCursor =
+                            ( x + newLength * cos newDirection, y + newLength * sin newDirection )
+                    in
+                    ( frame + newDt, ( x, y ) )
+                        :: move
+                            (frame + newDt)
+                            seed3
+                            newCursor
+                            ( newDirection, newLength, newDt )
+        in
+        move 0 initSeed ( 0, 0 ) ( 0, 100, 300 )
 
 
 {-| Initial state for AnimationState
@@ -967,7 +1005,7 @@ footprintDiagram animationState seed permTable elevatedRow count ( currentColumn
                 []
                 :: (if yPerc > 5 then
                         footprintDiagram
-                            animationState
+                            nextAnimationState
                             nextSeed
                             permTable
                             elevatedRow
@@ -977,7 +1015,7 @@ footprintDiagram animationState seed permTable elevatedRow count ( currentColumn
 
                     else
                         footprintDiagram
-                            animationState
+                            nextAnimationState
                             nextSeed
                             permTable
                             (not elevatedRow)
@@ -1082,6 +1120,15 @@ barElement animationState infoVisible toggledInfoState dividend position categor
         -- We assume that at maximum 80 footprint columns fit into the chart.
         maxColumnCount =
             (round <| 80 * 0.01 * width) - 2
+
+        -- Our share of the precomputed footprint positions for this category
+        animationStateShare =
+            case animationState of
+                FootprintsMoving t fpSteps ->
+                    FootprintsMoving t <| List.drop (position * perCapitaUnit // population) fpSteps
+
+                aS ->
+                    aS
     in
     ( rect
         [ x <| fromFloat xPos
@@ -1106,7 +1153,7 @@ barElement animationState infoVisible toggledInfoState dividend position categor
             ]
          ]
             ++ footprintDiagram
-                animationState
+                animationStateShare
                 (initialSeed <| population + position)
                 (Simplex.permutationTableFromInt <| population + position)
                 False
