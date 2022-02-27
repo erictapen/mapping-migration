@@ -556,8 +556,8 @@ footprintAnimationLength =
 we have to hold it as state. Here is this state generated once for a given
 animation for each footprint.
 -}
-prepareFootprintMovement : Seed -> FootprintSteps
-prepareFootprintMovement initSeed =
+prepareFootprintMovement : Float -> Seed -> FootprintSteps
+prepareFootprintMovement ratio initSeed =
     reverse <|
         let
             move : Float -> Seed -> Point -> ( Float, Float, Float ) -> FootprintSteps
@@ -596,7 +596,7 @@ prepareFootprintMovement initSeed =
                             newCursor
                             ( newDirection, newLength, max 10 newDt )
         in
-        move 0 initSeed ( 0, 0 ) ( 0, 20, 100 )
+        move (ratio * 1000) initSeed ( 0, 0 ) ( 0, 20, 100 )
 
 
 {-| Initial state for AnimationState
@@ -614,9 +614,13 @@ initFootprintsMoving ( maybeCountry, maybeAsylumDecisions, year ) =
 
         yearInt =
             withDefault 2000 <| String.toInt year
+
+        -- a ratio that tells us about in which place a footprint is
+        ratio i =
+            (toFloat footprintCount - toFloat i) / toFloat footprintCount
     in
     FootprintsMoving footprintAnimationLength <|
-        map ((+) yearInt >> initialSeed >> prepareFootprintMovement) <|
+        map (\i -> prepareFootprintMovement (ratio i) <| initialSeed <| yearInt + i) <|
             List.range 1 footprintCount
 
 
