@@ -81,6 +81,7 @@ h2 {
 
 #menubar .definition h2 {
     font-style: italic;
+    margin-left: 0;
 }
 
 @keyframes blendin {
