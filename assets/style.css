@@ -61,13 +61,11 @@ h1 {
 }
 
 h2 {
-    font-weight: 500;
+    font-weight: 700;
     font-size: 200%;
 }
 
 #menubar h2 {
-    font-weight: 700;
-    font-size: 180%;
     margin-top: 2em;
     margin-left: 0.5em;
 }
