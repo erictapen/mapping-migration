@@ -223,7 +223,7 @@ Inhabitant numbers:
             [ text "References"
             ]
         , p [] [ text """
-Apart from the following references, information on data structure and decision categories was elaborated in personal correspondence with UNHCR members.
+Apart from the following references, information on data structure and decision categories was elaborated in personal correspondence with UNHCR members. We hereby would like to thank them for their time and effort in supporting us with this project.
 """ ]
         , p []
             [ text """
