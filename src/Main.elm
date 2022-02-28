@@ -1160,7 +1160,7 @@ categoryLegend xPos width categoryName linewrapHeuristic msg infoVisible explana
             , if infoVisible then
                 div [ style <| infoboxStyle ++ "top: 5em; " ++ ("left: " ++ fromFloat xPos ++ "%; ") ]
                     ([ if width < linewrapHeuristic then
-                        p [] [ text <| (fromInt <| round width) ++ "% " ++ categoryName ]
+                        p [ style "margin-top: 0;"] [ text <| (fromInt <| round width) ++ "% " ++ categoryName ]
 
                        else
                         text ""
@@ -1492,7 +1492,7 @@ coaVis maybeMissingMigrants animationState infoState isCOA1 year countryCode cou
 
 infoboxH1Style : S.Attribute msg
 infoboxH1Style =
-    style "margin-bottom: unset; font-size: 100%;"
+    style "margin-top: unset; margin-bottom: 1em; font-size: 100%;"
 
 
 {-| The legend that explains what one footprint symbolises
