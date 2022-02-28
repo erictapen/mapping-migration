@@ -30,10 +30,11 @@ introduction hideIntroduction =
             [ text """
              The term
 """
-                , span [ style "font-style" "italic" ] [ text "refugee" ]
+            , span [ style "font-style" "italic" ] [ text "refugee" ]
             , text """
 is political. A person fleeing from home is not automatically recognized as a refugee, but first has to apply for asylum in a specific country. That nation-state then decides who is granted the refugee status, who is rejected, and who is put into one of numerous other categories. This process is all the more relevant in Europe today, where increasing legal as well as physical borders fragment and hinder human migration. Based on UNHCR data, the following web app offers an overview of the decisions made on asylum applications in Europe since the year 2000.
-""" ]
+"""
+            ]
         , button
             [ id "hide-introduction"
             , onClick hideIntroduction
@@ -50,7 +51,8 @@ is political. A person fleeing from home is not automatically recognized as a re
         , h2 []
             [ text "Introduction"
             ]
-        , p [] [ text """
+        , p []
+            [ text """
 Most people would probably associate the term
 """
             , span [ style "font-style" "italic" ] [ text "refugee" ]
@@ -68,10 +70,12 @@ they are labelled as such (cf. Zetter 2007). Refugees are not born
             , span [ style "font-style" "italic" ] [ text "refugees," ]
             , text """
 they simply have had to react to the events disrupting the place they were coincidentally born into. A reaction that is made out to be unnatural by a system that wants to establish lines and borders, legal classifications and categories as the “normal (…) order of things” (Malkki 1992, 26).
-""" ]
-        , p [] [ text """
+"""
+            ]
+        , p []
+            [ text """
 The label
-""" 
+"""
             , span [ style "font-style" "italic" ] [ text "refugee" ]
             , text """
 is a political and judicial construction. In fact, looking from an administrative perspective, not anybody escaping their former home is considered a
@@ -85,7 +89,7 @@ officially. Before being recognized as a
 displaced persons are considered
 """
             , span [ style "font-style" "italic" ] [ text "asylum seekers." ]
-    ]
+            ]
         , div [ class "definition" ]
             [ h2 []
                 [ text "Asylum seeker"
@@ -111,20 +115,23 @@ These define a refugee as “someone who is unable or unwilling to return to the
 In order to be recognized as a refugee and granted protection under international law, asylum seekers have to apply for asylum in a specific country. That nation-state then has the power to decide if the circumstances of a person’s displacement fit the legal criteria to be granted asylum and thereby recognized as a
 """
             , span [ style "font-style" "italic" ] [ text "refugee." ]
-            , a [ href "#fn1", attribute "role" "doc-noteref", id "fnref1" ] [ sup [] [ text "1" ]]
+            , a [ href "#fn1", attribute "role" "doc-noteref", id "fnref1" ] [ sup [] [ text "1" ] ]
             , text """
 Nation-states as well as international organizations judge which bodies move “legitimately” and which bodies move without meeting the expectations of what a “real” refugee would have had to endure and come from. They get to decide “[w]ho the ‘real’ refugees [are]” (Zetter 2007, 176) and whose (forced) mobility will be disclaimed as “irregular”.
-""" ]
+"""
+            ]
         , p [] [ text """
 The international legal basis for decisions on asylum is the 1951 Convention relating to the Status of Refugees (also known as the Geneva Convention) and its succeeding Protocol from 1967. Since then, there has been no equal successor to these documents, despite the changes the world has seen. As a result, the Geneva Convention does not do justice to current migratory movements and questions of displacement, nor to the rapid globalization that has been taking place since these documents were agreed upon. Hence, countries of asylum have established supplementary categories to grant asylum-seekers (temporary) protection in cases that are not covered by the Geneva Convention. 
 """ ]
-        , p [] [ text """
+        , p []
+            [ text """
 A lot of asylum-seekers are assigned to sub-categories that offer less certainty and are subject to sudden changes in their asylum decision (see explanation of
 """
-        , span [ style "font-style" "italic" ] [ text "complementary protection" ]
-        , text """
+            , span [ style "font-style" "italic" ] [ text "complementary protection" ]
+            , text """
 in the infobox). They are classified and categorized according to a complex legal system that fractions one label into many (cf. Zetter 2007, 181), increasingly reinforcing the distinction between “genuine refugees” and asylum-seekers. One of the regions where this bureaucratic classification is most rigorously pursued and serves a restrictive migration governance is Europe.
-""" ]
+"""
+            ]
         , h2 []
             [ text "What the web app can show you"
             ]
@@ -159,7 +166,8 @@ Beyond the comparison of relative proportions between decision categories within
         , p [] [ text """
 On our web app, you can select a country of origin, two European countries of asylum and a specific year.
 """ ]
-        , p [] [ text """
+        , p []
+            [ text """
 The app then shows you the decisions made on asylum applications in these countries of asylum in the chosen year. To  contextualize these numbers and offer you the opportunity to compare  between and within countries, two visual components are used: A bar chart visualizes the share of each decision category in a given country. That way, you can immediately see what percent of decisions fell under
 """
             , span [ style "font-style" "italic" ] [ text "recognized, " ]
@@ -171,7 +179,8 @@ or
             , span [ style "font-style" "italic" ] [ text "otherwise closed" ]
             , text """
 (the percentage relates to total decisions, not total applications in the chosen year).
-""" ]
+"""
+            ]
         , p [] [ text """
 In addition, a slider provides the possibility to explore each year from 2000 until last year individually, but also to observe temporal evolutions and changes. Above the time slider, a bar graph provides an overview of the development of total decisions in the chosen countries of asylum from 2000 on.
 """ ]
@@ -193,13 +202,15 @@ Even though the footprints used in our visualization are an attempt to hint towa
         , p [] [ text """
 Besides the human dimension, it is important to note that numbers of asylum decisions do not coincide entirely with numbers of asylum applications. Asylum decisions are often not made in the same year asylum was applied for. Moreover, in one year, the same person may receive decisions over more than one application if they reapplied after being rejected. Therefore, the number of decisions does not indicate how many people newly arrived and applied for asylum in the chosen country. Another reason why one decision does not equal one person is that the data set includes two ways of counting decisions (which are based on the countries’ methods of recording data): persons and cases. Cases can include several people (e.g. a family), but it is not possible to see how many. In the web app, these two ways of counting are summed up.
 """ ]
-        , p [] [ text """
+        , p []
+            [ text """
 The decision categories represented in the web app adhere to the categories the UNHCR monitors and publishes its data in. These categories – especially the
 """
             , span [ style "font-style" "italic" ] [ text "complementary protection" ]
             , text """
 category – are a summarization of a variety of asylum-decisions and do not show the complexity of asylum decisions in each individual country. Furthermore, UNHCR data are not 100% accurate due to their highly aggregated nature and dependency on national records, counting methods and circumstances.\t\t
-""" ]
+"""
+            ]
         , p [] [ text """
 The decision figures were also rounded for programming and visual purposes. Additionally, because absolute figures were broken down to “per 500,000 inhabitants”, small numbers of asylum decisions are often not represented in the footprints.
 """ ]
