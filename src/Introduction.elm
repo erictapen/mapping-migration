@@ -193,7 +193,7 @@ When  stopped for a few seconds in one year, an animation of footprints entering
         , p [] [ text """
 The total number of decisions per 500,000 inhabitants is displayed in a sentence beneath the country names.
 """ ]
-        , img [ title "total decision per 500,000 inhabitants", src "/assets/total decision per 500,000 inhabitants.png" ] []
+        , img [ title "total decision per 500,000 inhabitants", src "/assets/total decision per 500000 inhabitants.png" ] []
         , p [] [ text """
 When hovering above a footprint, you can find out the number of decisions in this footprint’s category. Beyond indicating numbers, the footprints serve to remind you that it is human beings over whom asylum decisions are made.
 """ ]
