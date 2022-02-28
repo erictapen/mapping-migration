@@ -1334,7 +1334,7 @@ coaSvg maybeMissingMigrants animationState infoState isCOA1 population ad =
                     (withDefault 0 ad.recognized)
                     0
                     "recognized"
-                    [ h1 [ infoboxH1Style ] [ text "Recognized" ]
+                    [ h1 [ infoboxH1Style ] [ text "Recognized asylum claims" ]
                     , text "Asylum claims that have been recognized in the chosen period of time. The applicants are now recognized refugees under UNHCR´s mandate." ]
                     13.5
                     "#a8a8a8"
@@ -1346,9 +1346,9 @@ coaSvg maybeMissingMigrants animationState infoState isCOA1 population ad =
                     (withDefault 0 ad.other)
                     (withDefault 0 ad.recognized)
                     "complementary protection"
-                    [ h1 [ infoboxH1Style ] [ text "Complementary / Subsidiary Protection" ]
+                    [ h1 [ infoboxH1Style ] [ text "Forms of complementary / subsidiary protection" ]
                     , text """
-                    Country-specific forms of complementary or subsidiary protection for people that do not fall under other definitions of refugee, but still are in need of protection. What is included in these kinds of protection can widely differ, from protection from deportation to the full rights a refugee status entails. In the EU asylum system, a “third country national or stateless person” can be granted subsidiary protection if they do not qualify as a refugee but on return to their country of origin are in danger of “serious harm” (Expert Group on Refugee and Internally Displaced Persons Statistics 2018, 23). In Germany, major differences between a refugee status and subsidiary protection are: with subsidiary protection, family reunification is restricted. Moreover, a residence permit is issued only for one year and can be prolonged for two years at a time whereas with a refugee status, a residence permit directly is issued for three years with the chance of extension.
+                    Country-specific forms of complementary or subsidiary protection for people that do not fall under other definitions of refugee, but still are in need of protection. What is included in these kinds of protection can widely differ, from protection from deportation to the full rights a refugee status entails. In the EU asylum system, a “third country national or stateless person” can be granted subsidiary protection if they do not qualify as a refugee but on return to their country of origin are in danger of “serious harm” (Expert Group on Refugee and Internally Displaced Persons Statistics 2018, 23). In Germany for example, major differences between a refugee status and subsidiary protection are: with subsidiary protection, family reunification is restricted. Moreover, a residence permit is issued only for one year and can be prolonged for two years at a time whereas with a refugee status, a residence permit directly is issued for three years with the chance of extension.
                     """ ]
                     27.7
                     "#b7b7b7"
@@ -1360,7 +1360,7 @@ coaSvg maybeMissingMigrants animationState infoState isCOA1 population ad =
                     (withDefault 0 ad.closed)
                     (withDefault 0 ad.recognized + withDefault 0 ad.other)
                     "otherwise closed"
-                    [ h1 [ infoboxH1Style ] [ text "Otherwise Closed" ]
+                    [ h1 [ infoboxH1Style ] [ text "Otherwise closed asylum claims" ]
                     , text "Asylum applications closed without a substantive decision (neither recognized nor rejected). Reasons for that can be e.g. withdrawal, inadmissibility, abandonment, death, Dublin II  procedure (Europe only), etc." ]
                     17.7
                     "#cecece"
@@ -1372,7 +1372,7 @@ coaSvg maybeMissingMigrants animationState infoState isCOA1 population ad =
                     (withDefault 0 ad.rejected)
                     (withDefault 0 ad.recognized + withDefault 0 ad.other + withDefault 0 ad.closed)
                     "rejected"
-                    [ h1 [ infoboxH1Style ] [ text "Rejected" ]
+                    [ h1 [ infoboxH1Style ] [ text "Rejected asylum claims" ]
                     , text "Asylum claims that have been rejected in the chosen period of time." ]
                     11.5
                     "#dddddd"
