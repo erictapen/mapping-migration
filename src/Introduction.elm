@@ -166,7 +166,7 @@ Beyond the comparison of relative proportions between decision categories within
         , p [] [ text """
 On our web app, you can select a country of origin, two European countries of asylum and a specific year.
 """ ]
-        , img [ title "Länderauswahl", src "/assets/barchart6.png" ] []
+        , img [ title "Länderauswahl", src "/assets/Länderauswahl.png" ] []
         , p []
             [ text """
 The app then shows you the decisions made on asylum applications in these countries of asylum in the chosen year. To  contextualize these numbers and offer you the opportunity to compare  between and within countries, two visual components are used: A bar chart visualizes the share of each decision category in a given country. That way, you can immediately see what percent of decisions fell under
@@ -181,23 +181,23 @@ or
             , text """
 (the percentage relates to total decisions, not total applications in the chosen year).
 """ ]
-        , img [ title "Country bar", src "/assets/barchart6.png" ] [] 
+        , img [ title "Country bar", src "/assets/barchart10.png" ] [] 
         , p [] [ text """
 In addition, a slider provides the possibility to explore each year from 2000 until last year individually, but also to observe temporal evolutions and changes. Above the time slider, a bar graph provides an overview of the development of the proportion of complementary protection in relation to total decisions in the chosen countries of asylum from 2000 on.
 """ ]
-        , img [ title "Time slider", src "/assets/barchart6.png" ] []
+        , img [ title "Time slider", src "/assets/timeline.png" ] []
         , p [] [ text """
 When  stopped for a few seconds in one year, an animation of footprints entering the bar charts starts. These footprints set the absolute number of decisions per year per country of asylum in relation to the number of inhabitants of that country: One footprint represents one decision per 500,000 inhabitants.
 """ ]
-        , img [ title "Footprints", src "/assets/barchart6.png" ] []
+        , img [ title "Footprints", src "/assets/Footprints.png" ] []
         , p [] [ text """
 The total number of decisions per 500,000 inhabitants is displayed in a sentence beneath the country names.
 """ ]
-        , img [ title "total decision per 500,000 inhabitants", src "/assets/barchart6.png" ] []
+        , img [ title "total decision per 500,000 inhabitants", src "/assets/total decision per 500,000 inhabitants.png" ] []
         , p [] [ text """
 When hovering above a footprint, you can find out the number of decisions in this footprint’s category. Beyond indicating numbers, the footprints serve to remind you that it is human beings over whom asylum decisions are made.
 """ ]
-        , img [ title "number in category", src "/assets/barchart6.png" ] []
+        , img [ title "number in category", src "/assets/hovering above a footprint.png" ] []
         , h2 []
             [ text "What the web app cannot show you"
             ]
