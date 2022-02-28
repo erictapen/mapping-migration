@@ -1,4 +1,4 @@
-@font-face {
+	@font-face {
     font-family: Karla;
     src: url('/assets/Karla-Regular.eot');
     src: url('/assets/Karla-Regular.eot?#iefix') format('embedded-opentype'),
@@ -82,6 +82,11 @@ h2 {
 #menubar .definition h2 {
     font-style: italic;
     margin-left: 0;
+}
+
+#menubar img {
+	margin-left: 0.5em;
+	width: 22em;
 }
 
 @keyframes blendin {
