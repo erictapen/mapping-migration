@@ -576,7 +576,7 @@ update msg model =
 {-| Total length of the animation of footprints in ms.
 -}
 footprintAnimationLength =
-    3000
+    9000
 
 
 {-| We can't really compute the whole animation sequence for every frame, so
@@ -598,8 +598,8 @@ prepareFootprintMovement ratio initSeed =
                             R.step
                                 (R.map ((+) direction >> (*) 0.5) <|
                                     R.float
-                                        (-0.2 * 2 * pi)
-                                        (0.2 * 2 * pi)
+                                        (-0.3 * 2 * pi)
+                                        (0.3 * 2 * pi)
                                 )
                                 seed0
 
@@ -623,7 +623,7 @@ prepareFootprintMovement ratio initSeed =
                             newCursor
                             ( newDirection, newLength, max 10 newDt )
         in
-        move (ratio * 1000) initSeed ( 0, 0 ) ( 0, 20, 100 )
+        move (ratio * 1000) initSeed ( 0, 0 ) ( 0, 10, 150 )
 
 
 {-| Initial state for AnimationState
@@ -700,7 +700,7 @@ updateMissingMigrantsAnimationState delta aS =
     case aS of
         Wait t ->
             if t - delta <= 0 then
-                FootprintsMoving 4000 <|
+                FootprintsMoving 10000 <|
                     List.singleton <|
                         prepareFootprintMovement 0 <|
                             initialSeed 42
