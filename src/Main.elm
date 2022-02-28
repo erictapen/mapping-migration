@@ -798,7 +798,7 @@ menuItem ( cc, country ) =
 
 selectLegend : String -> Html Msg
 selectLegend description =
-    div [ style "text-align: right; display: flex;" ]
+    div [ style "text-align: right; display: flex; margin-bottom: 0.2em;" ]
         [ div [ style "flex: 1; margin-right: 0.3em;" ] [ hr [ style "color: #898ba9;" ] [] ]
         , text description
         ]
