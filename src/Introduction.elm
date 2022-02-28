@@ -166,7 +166,7 @@ Beyond the comparison of relative proportions between decision categories within
         , p [] [ text """
 On our web app, you can select a country of origin, two European countries of asylum and a specific year.
 """ ]
-        , img [ title "Länderauswahl", src "/assets/barchart10.png" ] []
+        , img [ title "Länderauswahl", src "/assets/barchart6.png" ] []
         , p []
             [ text """
 The app then shows you the decisions made on asylum applications in these countries of asylum in the chosen year. To  contextualize these numbers and offer you the opportunity to compare  between and within countries, two visual components are used: A bar chart visualizes the share of each decision category in a given country. That way, you can immediately see what percent of decisions fell under
@@ -183,7 +183,7 @@ or
 """ ]
         , img [ title "Country bar", src "/assets/barchart6.png" ] [] 
         , p [] [ text """
-In addition, a slider provides the possibility to explore each year from 2000 until last year individually, but also to observe temporal evolutions and changes. Above the time slider, a bar graph provides an overview of the development of total decisions in the chosen countries of asylum from 2000 on.
+In addition, a slider provides the possibility to explore each year from 2000 until last year individually, but also to observe temporal evolutions and changes. Above the time slider, a bar graph provides an overview of the development of the proportion of complementary protection in relation to total decisions in the chosen countries of asylum from 2000 on.
 """ ]
         , img [ title "Time slider", src "/assets/barchart6.png" ] []
         , p [] [ text """
