@@ -1560,8 +1560,8 @@ coaPopulation maybeCountry =
 
 {-| The complete menu bar to the left
 -}
-menubar : List (Html Msg) -> Html Msg
-menubar html =
+menubar : Bool -> List (Html Msg) -> Html Msg
+menubar introductionOpen html =
     div
         [ id "menubar"
         , style <|
@@ -1576,7 +1576,14 @@ menubar html =
                 ++ " scrollbar-width: none;"
                 -- no scrollbar for IE, Edge
                 ++ " -ms-overflow-style: none;"
-                ++ " border-right: lightgray 1px solid;"
+                ++ " border-right: "
+                ++ (if introductionOpen then
+                        "lightgray"
+
+                    else
+                        "transparent"
+                   )
+                ++ " 1px solid;"
         ]
         ([ h1 [] [ text appTitle ] ]
             ++ html
@@ -1600,7 +1607,7 @@ view model =
 
             Ok state ->
                 [ div []
-                    ([ menubar
+                    ([ menubar state.shortIntroductionVisible
                         (if state.shortIntroductionVisible then
                             [ Introduction.introduction ToggleIntroduction ]
 
