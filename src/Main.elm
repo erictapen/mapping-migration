@@ -1503,7 +1503,7 @@ footprintLegend infoFootprintsVisible =
         [ style <|
             "padding-left: 1em;"
                 ++ " margin-top: 2em;"
-                ++ " margin-bottom: 2em"
+                ++ " margin-bottom: 0.5em"
         ]
         ([ svg
             [ width "1em"
@@ -1645,19 +1645,29 @@ view model =
                                                                 state.coa2
                                                                 coaS.coa2SelectState
                                                             , footprintLegend state.infoFootprintsVisible
-                                                            , div [ style "height: 5em;" ]
-                                                                [ temporalSvg
-                                                                    coaS.year
-                                                                    ( state.coa1, state.coa2 )
-                                                                    coaS.availableCOAs
-                                                                , yearInput currentYear
-                                                                , p [ style "font-size: 4em; margin-top: 0;" ] [ text coaS.year ]
-                                                                , button
-                                                                    [ class "introduction_button"
-                                                                    , onClick ToggleIntroduction
+                                                            , div [ style "margin-bottom: 2em;" ]
+                                                                [ div [ style "display: flex;" ]
+                                                                    [ div
+                                                                        [ style "flex: 1;" ]
+                                                                        [ p
+                                                                            [ style "font-size: 250%; margin-bottom: 0;" ]
+                                                                            [ text coaS.year ]
+                                                                        ]
+                                                                    , div [ style "width: 70%" ]
+                                                                        [ temporalSvg
+                                                                            coaS.year
+                                                                            ( state.coa1, state.coa2 )
+                                                                            coaS.availableCOAs
+                                                                        , yearInput currentYear
+                                                                        ]
                                                                     ]
-                                                                    [ text "Read introduction" ]
                                                                 ]
+                                                            , button
+                                                                [ class "introduction_button"
+                                                                , onClick ToggleIntroduction
+                                                                , style "border-radius: 0.3em; background: none; font-size: 100%;"
+                                                                ]
+                                                                [ text "Read introduction" ]
                                                             ]
                                            )
 
