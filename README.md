@@ -1,10 +1,8 @@
-Visit the current prototype at [mappingmigration.erictapen.name](https://mappingmigration.erictapen.name/)
+# How European States Decide on Asylum
 
 
-For testing the application run:
+Visit the live verson of the site at [mappingmigration.erictapen.name](https://mappingmigration.erictapen.name/).
 
-```
-elm reactor
-```
+For browsing the local build, you have to employ some sort of webserver, as our application rewrites URLs, which isn't compatible with just opening the html in the browser as a `file://` type of URL.
 
-Then open `http://localhost:8000` in a web browser and navigate to `src/Main.elm`.
+Also please note that it is possible that this site performs badly in Safari. We noticed these issues when we were too deep into the development process already, were we couldn't retract from some technical decisions anymore.
