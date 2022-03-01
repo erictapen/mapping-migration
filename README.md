@@ -5,7 +5,7 @@ Visit the live verson of the site at [mappingmigration.erictapen.name](https://m
 
 ![](./preview.png)
 
-You can also find the source code at [https://github.com/erictapen/mapping-migration/](https://github.com/erictapen/mappingmigration/releases/tag/submission).
+You can also find the source code at [https://github.com/erictapen/mapping-migration/](https://github.com/erictapen/mapping-migration/releases/tag/submission).
 
 For browsing the local build, you have to employ some sort of webserver, as our application rewrites URLs, which isn't compatible with just opening the html in the browser as a `file://` type of URL.
 
