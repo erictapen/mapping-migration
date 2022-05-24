@@ -12,10 +12,15 @@
 
       defaultPackage.x86_64-linux = self.packages.x86_64-linux.webapp;
 
-      packages.x86_64-linux.webapp = import ./default.nix {
-        inherit nixpkgs config;
-        revision = self.rev or "dirty";
-      };
+      packages.x86_64-linux.webapp = let
+        webapp = import ./default.nix {
+            inherit nixpkgs config;
+            revision = self.rev or "dirty";
+          };
+       in pkgs.runCommand "mappingmigration" { } ''
+         mkdir -p $out/mapping
+         ln -s ${webapp} $out/mapping/asylum
+       '';
 
       nixosModule = import ./module.nix self.packages.x86_64-linux.webapp;
 

@@ -62,7 +62,11 @@ import Svg.Attributes as SA
 import Task
 import Time
 import Url exposing (Url)
-import Url.Parser exposing ((</>), string)
+import Url.Parser as UP exposing ((</>), string)
+
+
+basePath =
+    "/mapping/asylum"
 
 
 main =
@@ -80,7 +84,7 @@ init : () -> Url -> Browser.Navigation.Key -> ( Model, Cmd Msg )
 init _ url key =
     let
         ( coo, coa1, coa2 ) =
-            withDefault defaultUrlTriple <| Url.Parser.parse urlTriple url
+            withDefault defaultUrlTriple <| UP.parse urlTriple url
     in
     ( Ok
         { currentYear = Nothing
@@ -215,14 +219,19 @@ type Msg
 -}
 currentUrl : ApplicationState -> String
 currentUrl { coo, coa1, coa2 } =
-    "/" ++ coo ++ "/" ++ coa1 ++ "/" ++ coa2
+    basePath ++ "/" ++ coo ++ "/" ++ coa1 ++ "/" ++ coa2
 
 
 {-| Parse COA/COA1/COA2 triple from an URL.
 -}
-urlTriple : Url.Parser.Parser (( String, String, String ) -> a) a
+urlTriple : UP.Parser (( String, String, String ) -> a) a
 urlTriple =
-    Url.Parser.map (\coo -> \coa1 -> \coa2 -> ( coo, coa1, coa2 )) <| string </> string </> string
+    UP.map (\coo -> \coa1 -> \coa2 -> ( coo, coa1, coa2 )) <|
+        UP.s "mapping"
+            </> UP.s "asylum"
+            </> string
+            </> string
+            </> string
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -513,7 +522,7 @@ update msg model =
                                 Just coaS ->
                                     let
                                         ( coo, coa1, coa2 ) =
-                                            withDefault defaultUrlTriple <| Url.Parser.parse urlTriple url
+                                            withDefault defaultUrlTriple <| UP.parse urlTriple url
 
                                         newState =
                                             { state | coo = coo, coa1 = coa1, coa2 = coa2 }
@@ -1160,7 +1169,7 @@ categoryLegend xPos width categoryName linewrapHeuristic msg infoVisible explana
             , if infoVisible then
                 div [ style <| infoboxStyle ++ "top: 5em; " ++ ("left: " ++ fromFloat xPos ++ "%; ") ]
                     ([ if width < linewrapHeuristic then
-                        p [ style "margin-top: 0;"] [ text <| (fromInt <| round width) ++ "% " ++ categoryName ]
+                        p [ style "margin-top: 0;" ] [ text <| (fromInt <| round width) ++ "% " ++ categoryName ]
 
                        else
                         text ""

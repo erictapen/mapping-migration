@@ -1,49 +1,49 @@
 	@font-face {
     font-family: Karla;
-    src: url('/assets/Karla-Regular.eot');
-    src: url('/assets/Karla-Regular.eot?#iefix') format('embedded-opentype'),
-    url('/assets/Karla-Regular.woff') format('woff'),
-    url('/assets/Karla-Regular.ttf') format('truetype');
+    src: url('/mapping/asylum/assets/Karla-Regular.eot');
+    src: url('/mapping/asylum/assets/Karla-Regular.eot?#iefix') format('embedded-opentype'),
+    url('/mapping/asylum/assets/Karla-Regular.woff') format('woff'),
+    url('/mapping/asylum/assets/Karla-Regular.ttf') format('truetype');
     font-style: normal;
     font-weight: normal;
 }
 
 @font-face {
     font-family: Karla;
-    src: url('/assets/Karla-Italic[wght].eot');
-    src: url('/assets/Karla-Italic[wght].eot?#iefix') format('embedded-opentype'),
-    url('/assets/Karla-Italic[wght].woff') format('woff'),
-    url('/assets/Karla-Italic[wght].ttf') format('truetype');
+    src: url('/mapping/asylum/assets/Karla-Italic[wght].eot');
+    src: url('/mapping/asylum/assets/Karla-Italic[wght].eot?#iefix') format('embedded-opentype'),
+    url('/mapping/asylum/assets/Karla-Italic[wght].woff') format('woff'),
+    url('/mapping/asylum/assets/Karla-Italic[wght].ttf') format('truetype');
     font-style: italic;
     font-weight: normal;
 }
 
 @font-face {
     font-family: Karla;
-    src: url('/assets/Karla-Medium.eot');
-    src: url('/assets/Karla-Medium.eot?#iefix') format('embedded-opentype'),
-    url('/assets/Karla-Medium.woff') format('woff'),
-    url('/assets/Karla-Medium.ttf') format('truetype');
+    src: url('/mapping/asylum/assets/Karla-Medium.eot');
+    src: url('/mapping/asylum/assets/Karla-Medium.eot?#iefix') format('embedded-opentype'),
+    url('/mapping/asylum/assets/Karla-Medium.woff') format('woff'),
+    url('/mapping/asylum/assets/Karla-Medium.ttf') format('truetype');
     font-style: normal;
     font-weight: 500;
 }
 
 @font-face {
     font-family: Karla;
-    src: url('/assets/Karla-Bold.eot');
-    src: url('/assets/Karla-Bold.eot?#iefix') format('embedded-opentype'),
-    url('/assets/Karla-Bold.woff') format('woff'),
-    url('/assets/Karla-Bold.ttf') format('truetype');
+    src: url('/mapping/asylum/assets/Karla-Bold.eot');
+    src: url('/mapping/asylum/assets/Karla-Bold.eot?#iefix') format('embedded-opentype'),
+    url('/mapping/asylum/assets/Karla-Bold.woff') format('woff'),
+    url('/mapping/asylum/assets/Karla-Bold.ttf') format('truetype');
     font-style: normal;
     font-weight: 700;
 }
 
 @font-face {
     font-family: Karla;
-    src: url('/assets/Karla-ExtraBold.eot');
-    src: url('/assets/Karla-ExtraBold.eot?#iefix') format('embedded-opentype'),
-    url('/assets/Karla-ExtraBold.woff') format('woff'),
-    url('/assets/Karla-ExtraBold.ttf') format('truetype');
+    src: url('/mapping/asylum/assets/Karla-ExtraBold.eot');
+    src: url('/mapping/asylum/assets/Karla-ExtraBold.eot?#iefix') format('embedded-opentype'),
+    url('/mapping/asylum/assets/Karla-ExtraBold.woff') format('woff'),
+    url('/mapping/asylum/assets/Karla-ExtraBold.ttf') format('truetype');
     font-style: normal;
     font-weight: 800;
 }

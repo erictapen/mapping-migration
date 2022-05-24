@@ -41,12 +41,12 @@ in
             '';
           in
           {
-            "= /favicon.ico" = {
+            "= /mapping/asylum/favicon.ico" = {
               root = webapp;
               tryFiles = "$uri =404";
               priority = 999;
             };
-            "/assets/" = {
+            "/mapping/asylum/assets/" = {
               root = webapp;
               tryFiles = "$uri =404";
               priority = 999;
@@ -62,11 +62,12 @@ in
               priority = 999;
             };
             # catch all for everything else
-            "/" = {
+            "/mapping/asylum/" = {
               root = webapp;
-              tryFiles = "/index.html =404";
+              tryFiles = "/mapping/asylum/index.html =404";
               priority = 1000;
             };
+            "/".return = "301 /mapping/asylum/";
           };
         enableACME = true;
         forceSSL = true;
