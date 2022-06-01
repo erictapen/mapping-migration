@@ -1615,7 +1615,7 @@ view model =
                 [ text "An error occured while fetching the asylum decisions!" ]
 
             Ok state ->
-                [ div []
+                [ div [style "overflow: hidden;" ]
                     ([ menubar state.shortIntroductionVisible
                         (if state.shortIntroductionVisible then
                             [ Introduction.introduction ToggleIntroduction ]
@@ -1690,7 +1690,7 @@ view model =
                                     [ div
                                         [ style <|
                                             "float: left;"
-                                                ++ " width: 60%;"
+                                                ++ " width: calc(80% - 24em);"
                                                 ++ " margin-left: 3em;"
                                         ]
                                         [ missingMigrantsInfobox state.missingMigrants
