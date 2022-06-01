@@ -1,5 +1,5 @@
 {
-  description = "A very basic flake";
+  description = "Mapping asylum for Mapping Cities – Making Cities";
 
   inputs.nixpkgs.url = "github:NixOS/Nixpkgs/nixos-unstable";
 
