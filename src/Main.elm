@@ -1580,7 +1580,7 @@ menubar introductionOpen html =
                 ++ " margin-right: 2em;"
                 ++ " padding-right: 4em;"
                 ++ " overflow-y: scroll;"
-                ++ " height: 100vh;"
+                ++ " height: 98vh;"
                 -- no scrollbar for Firefox
                 ++ " scrollbar-width: none;"
                 -- no scrollbar for IE, Edge
