@@ -1,4 +1,4 @@
-	@font-face {
+@font-face {
     font-family: Karla;
     src: url('/mapping/asylum/assets/Karla-Regular.eot');
     src: url('/mapping/asylum/assets/Karla-Regular.eot?#iefix') format('embedded-opentype'),
@@ -84,9 +84,8 @@ h2 {
 }
 
 #menubar img {
-	margin-left: 0.5em;
-	width: 22em;
-	height: 8em;
+    margin-left: 0.5em;
+    width: 22em;
 }
 
 @keyframes blendin {
