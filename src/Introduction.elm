@@ -4,7 +4,10 @@ import Html exposing (Html, a, br, button, div, h2, hr, img, li, ol, p, span, su
 import Html.Attributes exposing (attribute, class, href, id, src, style, title)
 import Html.Events exposing (onClick)
 
-basePath = "/mapping/asylum"
+
+basePath =
+    "/mapping/asylum"
+
 
 introduction : msg -> Html msg
 introduction hideIntroduction =
@@ -181,7 +184,8 @@ or
             , span [ style "font-style" "italic" ] [ text "otherwise closed" ]
             , text """
 (the percentage relates to total decisions, not total applications in the chosen year).
-""" ]
+"""
+            ]
         , img [ title "Country bar", src <| basePath ++ "/assets/barchart10.png" ] []
         , p [] [ text """
 In addition, a slider provides the possibility to explore each year from 2000 until last year individually, but also to observe temporal evolutions and changes. Above the time slider, a bar graph provides an overview of the development of the proportion of complementary protection in relation to total decisions in the chosen countries of asylum from 2000 on.
@@ -280,29 +284,35 @@ The project was completed in February 2022. You can access the source code of th
             [ text "Sources of data"
             ]
         , p []
-            [ text """
-Refugee Statistics: UNHCR Refugee Population Statistics Database (latest data from mid-2021). Documentation of the API: 
+            [ ul []
+                [ li []
+                    [ span [ style "font-weight" "bold" ] [ text "Refugee Statistics" ]
+                    , br [] []
+                    , text """
+UNHCR Refugee Population Statistics Database (latest data from mid-2021). Documentation of the API: 
 """
-            , a [ href "https://api.unhcr.org/docs/refugee-statistics.html" ] [ text "Refugee Statistics API." ]
-            , text """
+                    , a [ href "https://api.unhcr.org/docs/refugee-statistics.html" ] [ text "Refugee Statistics API." ]
+                    , text """
 Broader information: 
 """
-            , a [ href "https://www.unhcr.org/refugee-statistics/download/" ] [ text "Refugee Data Finder." ]
-            , text """
+                    , a [ href "https://www.unhcr.org/refugee-statistics/download/" ] [ text "Refugee Data Finder." ]
+                    , text """
 Please take into account these
 """
-            , a [ href "https://www.unhcr.org/terms-and-conditions-data.html" ] [ text "terms of use" ]
-            , text """
+                    , a [ href "https://www.unhcr.org/terms-and-conditions-data.html" ] [ text "terms of use" ]
+                    , text """
 if using the data. 
 """
-            , br [] []
-            , text """
-Inhabitant numbers: 
-"""
-            , a [ href "https://github.com/datasets/population" ] [ text "https://github.com/datasets/population" ]
-            , text """
+                    ]
+                , li []
+                    [ span [ style "font-weight" "bold" ] [ text "Inhabitant numbers" ]
+                    , br [] []
+                    , a [ href "https://github.com/datasets/population" ] [ text "https://github.com/datasets/population" ]
+                    , text """
 (latest update April 2020)
 """
+                    ]
+                ]
             ]
         , h2 []
             [ text "References"
@@ -310,39 +320,54 @@ Inhabitant numbers:
         , p [] [ text """
 Apart from the following references, information on data structure and decision categories was elaborated in personal correspondence with UNHCR members. We hereby would like to thank them for their time and effort in supporting us with this project.
 """ ]
-        , p []
-            [ text """
-Bundesamt für Migration und Flüchtlinge (2021): Subsidiärer Schutz. Accessed February 15th, 2022 under
+        , ul []
+            [ li []
+                [ span [ style "font-style" "italic" ] [ text "Bundesamt für Migration und Flüchtlinge (2021):" ]
+                , text """
+ Subsidiärer Schutz. 
 """
-            , a [ href "https://www.bamf.de/DE/Themen/AsylFluechtlingsschutz/AblaufAsylverfahrens/Schutzformen/SubisidiaerSchutz/subisidiaerschutz-node.html" ] [ text "https://www.bamf.de/DE/Themen/AsylFluechtlingsschutz/AblaufAsylverfahrens/Schutzformen/SubisidiaerSchutz/subisidiaerschutz-node.html." ]
-            , br [] []
-            , text """
-Expert Group on Refugee and Internally Displaced Persons Statistics (2018): International Recommendations on Refugee Statistics, published by European Union and the United Nations, Luxembourg. Accessed January 10th, 2022 under 
+                , a [ href "https://www.bamf.de/DE/Themen/AsylFluechtlingsschutz/AblaufAsylverfahrens/Schutzformen/SubisidiaerSchutz/subisidiaerschutz-node.html" ] [ text "Accessed February 15th, 2022" ]
+                ]
+            , li []
+                [ span [ style "font-style" "italic" ] [ text "Expert Group on Refugee and Internally Displaced Persons Statistics (2018):" ]
+                , text """
+ International Recommendations on Refugee Statistics, published by European Union and the United Nations, Luxembourg. 
 """
-            , a [ href "https://unstats.un.org/unsd/demographic-social/Standards-and-Methods/files/Principles_and_Recommendations/International-Migration/2018_1746_EN_08-E.pdf" ] [ text "https://unstats.un.org/unsd/demographic-social/Standards-and-Methods/files/Principles_and_Recommendations/International-Migration/2018_1746_EN_08-E.pdf." ]
-            , br [] []
-            , text """
-Hanewinkel, Vera (2021): Flucht und Asyl in Deutschland. Accessed February 15th, 2022 under 
+                , a [ href "https://unstats.un.org/unsd/demographic-social/Standards-and-Methods/files/Principles_and_Recommendations/International-Migration/2018_1746_EN_08-E.pdf" ] [ text "Accessed January 10th, 2022" ]
+                ]
+            , li []
+                [ span [ style "font-style" "italic" ] [ text "Hanewinkel, Vera (2021):" ]
+                , text """
+ Flucht und Asyl in Deutschland. 
 """
-            , a [ href "https://www.bpb.de/themen/migration-integration/laenderprofile/deutschland/344086/flucht-und-asyl-in-deutschland/" ] [ text "https://www.bpb.de/themen/migration-integration/laenderprofile/deutschland/344086/flucht-und-asyl-in-deutschland/." ]
-            , br [] []
-            , text """
-Malkki, Liisa (1992): National Geographic: The Rooting of Peoples and the Territorialization of National Identity among Scholars and Refugees. Cultural Anthropology 7(1), 24-44.
+                , a [ href "https://www.bpb.de/themen/migration-integration/laenderprofile/deutschland/344086/flucht-und-asyl-in-deutschland/" ] [ text "Accessed February 15th, 2022" ]
+                ]
+            , li []
+                [ span [ style "font-style" "italic" ] [ text "Malkki, Liisa (1992):" ]
+                , text """
+ National Geographic: The Rooting of Peoples and the Territorialization of National Identity among Scholars and Refugees. Cultural Anthropology 7(1), 24-44.
 """
-            , br [] []
-            , text """
-UNHCR (2021): What is a refugee? Accessed January 11th, 2022 under 
+                ]
+            , li []
+                [ span [ style "font-style" "italic" ] [ text "UNHCR (2021):" ]
+                , text """
+ What is a refugee? 
 """
-            , a [ href "https://www.unhcr.org/what-is-a-refugee.html" ] [ text "https://www.unhcr.org/what-is-a-refugee.html." ]
-            , br [] []
-            , text """
-UNHCR (2022): Persons who are forcibly displaced, stateless and others of concern to UNHCR. Accessed January 10th, 2022 under 
+                , a [ href "https://www.unhcr.org/what-is-a-refugee.html" ] [ text "Accessed January 11th, 2022" ]
+                ]
+            , li []
+                [ span [ style "font-style" "italic" ] [ text "UNHCR (2022):" ]
+                , text """
+ Persons who are forcibly displaced, stateless and others of concern to UNHCR. 
 """
-            , a [ href "https://www.unhcr.org/refugee-statistics/methodology/definition/" ] [ text "https://www.unhcr.org/refugee-statistics/methodology/definition/." ]
-            , br [] []
-            , text """
-Zetter, Roger (2007): More Labels, Fewer Refugees: Remaking the Refugee Label in an Era of Globalization. Journal of Refugee Studies 20(2), 172-192.
+                , a [ href "https://www.unhcr.org/refugee-statistics/methodology/definition/" ] [ text "Accessed January 10th, 2022" ]
+                ]
+            , li []
+                [ span [ style "font-style" "italic" ] [ text "Zetter, Roger (2007):" ]
+                , text """
+ More Labels, Fewer Refugees: Remaking the Refugee Label in an Era of Globalization. Journal of Refugee Studies 20(2), 172-192.
 """
+                ]
             ]
         , hr [] []
         , ol []
