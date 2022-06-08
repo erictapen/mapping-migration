@@ -1,0 +1,5 @@
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteBase /mapping/asylum/
+RewriteRule ^.* index.html
+</IfModule>
