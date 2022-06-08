@@ -25,12 +25,8 @@ import Maybe exposing (withDefault)
 import String exposing (fromInt)
 
 
-
--- baseUrl = "https://api.unhcr.org"
-
-
 baseUrl =
-    "https://mappingmigration.erictapen.name/unhcr-api"
+    "https://api.unhcr.org"
 
 
 
