@@ -51,7 +51,8 @@ let
         cp ${./assets}/*.png $out/assets/
         cp ${./README.md} $out/README.md
         cp ${./.htaccess} $out/.htaccess
-        ${imagemagick}/bin/magick convert assets/favicon-32.png assets/favicon-16.png $out/favicon.ico
+        cp ${./assets}/.htaccess $out/assets/.htaccess
+        ${imagemagick}/bin/magick convert assets/favicon-32.png assets/favicon-16.png $out/assets/favicon.ico
         cp ${google-fonts}/share/fonts/truetype/Karla-* $out/assets/
         ${haskellPackages.webify}/bin/webify --no-svg $out/assets/Karla-*.ttf
       '';
